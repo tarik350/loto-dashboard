@@ -9,8 +9,13 @@ export default function SidebarItemList() {
   const pathname = usePathname();
 
   return (
-    <div className=" flex flex-col gap-2   mx-4">
-      <h1 className="  text-[28px] font-[800]   my-4  ">Logo</h1>
+    <div className=" flex flex-col gap-2   mx-4 ">
+      <h1
+        className="  text-[28px] font-[800]   mt-4  mb-6 mx-auto border-2 text-white border-white px-12 py-4
+      "
+      >
+        Logo
+      </h1>
 
       <ul className="  flex flex-col gap-2  ">
         {sidebarItems.map((item, index) => {

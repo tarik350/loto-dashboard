@@ -148,7 +148,7 @@ export default function Login() {
           Create account
         </span>
       </p>
-      <button className=" w-full  bg-textColor  text-white py-4 rounded-xl font-[500]">
+      <button className=" w-full  bg-purple  text-white py-4 rounded-xl font-[500]">
         {loading ? "Loading..." : "Login"}
       </button>
     </form>

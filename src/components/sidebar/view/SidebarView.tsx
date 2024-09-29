@@ -12,9 +12,9 @@ export default function Sidebar({ className }: { className: string }) {
       <button
         onClick={() => {
           Cookies.remove("loggedIn");
-          router.push("/auth/login");
+          router.push("/login");
         }}
-        className=" mx-4  mb-12 bg-white  text-black h-12 w-max px-12 rounded-xl"
+        className=" mx-auto my-8 bg-white  text-black h-12 w-max px-12 rounded-xl"
       >
         Logout
       </button>

@@ -289,7 +289,7 @@ export default function Register() {
         </div>
 
         <button
-          className="w-full  bg-textColor text-white text-sm md:text-base p-4 heading-five rounded-xl flex items-center justify-center"
+          className="w-full  bg-purple text-white text-sm md:text-base p-4 heading-five rounded-xl flex items-center justify-center"
           type="submit"
         >
           {loading ? "Loading..." : "Signup"}

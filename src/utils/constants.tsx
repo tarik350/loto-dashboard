@@ -1,7 +1,16 @@
 import { CiSettings } from "react-icons/ci";
 import { GrHome } from "react-icons/gr";
 import { sidebarItemType } from "./types";
-import { BiGame, BiHome } from "react-icons/bi";
+import {
+  BiCategory,
+  BiGame,
+  BiHome,
+  BiMessageSquareEdit,
+  BiMobileVibration,
+  BiPaperclip,
+  BiPaperPlane,
+  BiSolidMobile,
+} from "react-icons/bi";
 
 export type imageType = "profilePics" | "idcard";
 const sidebarItems: sidebarItemType[] = [
@@ -16,6 +25,25 @@ const sidebarItems: sidebarItemType[] = [
     icon: BiGame,
     className: "sidebar-icon",
     route: "/dashboard/games",
+  },
+  {
+    title: "Game Category",
+    icon: BiCategory,
+    className: "sidebar-icon",
+    route: "/dashboard/gamecategory",
+  },
+
+  {
+    title: "Audit",
+    icon: BiMessageSquareEdit,
+    className: "sidebar-icon",
+    route: "/dashboard/audit",
+  },
+  {
+    title: "Activity Log",
+    icon: BiPaperPlane,
+    className: "sidebar-icon",
+    route: "/dashboard/activitylog",
   },
 
   {

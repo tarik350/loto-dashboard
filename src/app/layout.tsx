@@ -8,7 +8,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className=" h-screen grid grid-cols-2 ">
-        <nav className=" bg-textColor w-full flex  ">
+        <nav className=" bg-purple w-full flex  ">
           <h1 className="text-white text-[44px] font-[700] m-auto border-[12px] py-12 px-24">
             Logo
           </h1>
