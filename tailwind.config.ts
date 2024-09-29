@@ -13,6 +13,9 @@ const config: Config = {
         secondary: "#00aafd",
         transparentBg: "#F7F6FB",
         textColor: "#222262",
+        yellow: "#feaa11",
+        green: "#00f19c",
+        purple: "#9a0ae4",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
