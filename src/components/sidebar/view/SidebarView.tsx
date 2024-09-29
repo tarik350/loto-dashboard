@@ -8,7 +8,9 @@ export default function Sidebar({ className }: { className: string }) {
   const router = useRouter();
   return (
     <nav className={` ${className}`}>
-      <SidebarItemList />
+      <div className="  h-full overflow-y-auto">
+        <SidebarItemList />
+      </div>
       <button
         onClick={() => {
           Cookies.remove("loggedIn");

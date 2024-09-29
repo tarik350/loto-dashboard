@@ -1,4 +1,4 @@
-import { CiSettings } from "react-icons/ci";
+import { CiMoneyBill, CiSettings } from "react-icons/ci";
 import { GrHome } from "react-icons/gr";
 import { sidebarItemType } from "./types";
 import {
@@ -7,10 +7,14 @@ import {
   BiHome,
   BiMessageSquareEdit,
   BiMobileVibration,
+  BiMoney,
+  BiMoneyWithdraw,
   BiPaperclip,
   BiPaperPlane,
+  BiSolidBank,
   BiSolidMobile,
 } from "react-icons/bi";
+import { MdOutlineMoney } from "react-icons/md";
 
 export type imageType = "profilePics" | "idcard";
 const sidebarItems: sidebarItemType[] = [
@@ -45,7 +49,36 @@ const sidebarItems: sidebarItemType[] = [
     className: "sidebar-icon",
     route: "/dashboard/activitylog",
   },
-
+  {
+    title: "Deposit",
+    icon: CiMoneyBill,
+    className: "sidebar-icon",
+    route: "/dashboard/deposit",
+  },
+  {
+    title: "Deposit",
+    icon: CiMoneyBill,
+    className: "sidebar-icon",
+    route: "/dashboard/deposit",
+  },
+  {
+    title: "Deposit",
+    icon: CiMoneyBill,
+    className: "sidebar-icon",
+    route: "/dashboard/deposit",
+  },
+  {
+    title: "Deposit",
+    icon: CiMoneyBill,
+    className: "sidebar-icon",
+    route: "/dashboard/deposit",
+  },
+  {
+    title: "Financial Report",
+    icon: BiSolidBank,
+    className: "sidebar-icon",
+    route: "/dashboard/financialreport",
+  },
   {
     title: "Setting",
     icon: CiSettings,

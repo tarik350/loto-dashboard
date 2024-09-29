@@ -18,7 +18,8 @@ export default function RootLayout({
     <html lang="en">
       {isMounted && (
         <body className="grid grid-cols-[18rem_calc(100%_-18rem)] w-screen h-screen ">
-          <Sidebar className="  bg-purple  shadow-xl    h-full   flex flex-col  justify-between" />
+          <Sidebar className="    shadow-xl    overflow-hidden   bg-purple  flex flex-col  justify-between" />
+
           <main className=" overflow-auto   m-8 ">{children}</main>
         </body>
       )}
