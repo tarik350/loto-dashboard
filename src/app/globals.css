@@ -107,6 +107,7 @@
 .category-table tbody tr:nth-child(odd) {
   background-color: white; /* White */
 }
+
 .create-category__sidebar__container {
   @apply flex flex-col z-10 gap-2 px-2;
 }

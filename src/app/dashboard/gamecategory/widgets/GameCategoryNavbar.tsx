@@ -4,6 +4,7 @@ import CreateGameCategoryModal from "@/utils/modals/CreateGameCategoryModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { AiOutlineFileImage } from "react-icons/ai";
 import {
   BiFilter,
   BiPlusCircle,
@@ -18,7 +19,9 @@ export default function GameCategoryNavbar() {
 
   return (
     <div className=" flex justify-between w-full">
-      <CreateGameCategoryModal isOpen={modalOpen} setIsOpen={setModalOpen} />
+      <AnimatePresence>
+        {modalOpen && <CreateGameCategoryModal setIsOpen={setModalOpen} />}
+      </AnimatePresence>
 
       <button
         type="button"
