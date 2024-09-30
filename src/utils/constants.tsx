@@ -55,24 +55,7 @@ const sidebarItems: sidebarItemType[] = [
     className: "sidebar-icon",
     route: "/dashboard/deposit",
   },
-  {
-    title: "Deposit",
-    icon: CiMoneyBill,
-    className: "sidebar-icon",
-    route: "/dashboard/deposit",
-  },
-  {
-    title: "Deposit",
-    icon: CiMoneyBill,
-    className: "sidebar-icon",
-    route: "/dashboard/deposit",
-  },
-  {
-    title: "Deposit",
-    icon: CiMoneyBill,
-    className: "sidebar-icon",
-    route: "/dashboard/deposit",
-  },
+
   {
     title: "Financial Report",
     icon: BiSolidBank,
