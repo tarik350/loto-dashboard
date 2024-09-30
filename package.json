@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.18",
     "@types/uuid": "^10.0.0",
     "firebase": "^10.12.5",
     "framer-motion": "^11.3.24",

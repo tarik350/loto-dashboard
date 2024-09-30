@@ -1,14 +1,33 @@
 "use client";
+import CreateGameCategoryModal from "@/utils/modals/CreateGameCategoryModal";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { BiFilter, BiPlusCircle, BiSearch } from "react-icons/bi";
+import {
+  BiDownArrow,
+  BiDownArrowAlt,
+  BiFilter,
+  BiPlusCircle,
+  BiSearch,
+  BiSolidArrowFromTop,
+  BiSolidDownArrow,
+} from "react-icons/bi";
+import { RiDropdownList } from "react-icons/ri";
 
 export default function GameCategoryNavbar() {
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [selectedDropdown, setSelectedDropdown] = useState<"Name" | "ID">("ID");
-
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
   return (
     <div className=" flex justify-between w-full">
-      <button className="bg-purple  text-white w-max px-6 h-[3rem] rounded-xl flex  justify-center items-center gap-2">
+      <CreateGameCategoryModal isOpen={modalOpen} setIsOpen={setModalOpen} />
+
+      <button
+        type="button"
+        onClick={() => {
+          setModalOpen(!modalOpen);
+        }}
+        className="bg-purple  text-white w-max px-6 h-[3rem] rounded-xl flex  justify-center items-center gap-2"
+      >
         <BiPlusCircle className="" size={23} />
         <p className="  font-[600]">Create Game Category</p>
       </button>
@@ -19,7 +38,7 @@ export default function GameCategoryNavbar() {
             placeholder={`Please type ${selectedDropdown}`}
             className=" border-2 border-purple min-w-[15rem] rounded-l-xl px-2"
           />
-          <div className=" relative">
+          <div className=" ">
             <button
               type="button"
               onClick={() => {
