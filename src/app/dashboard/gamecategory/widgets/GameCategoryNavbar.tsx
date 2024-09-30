@@ -1,7 +1,9 @@
 "use client";
+import { CreateGameCategoryRequestDto } from "@/utils/dto/createGameCategoryRequestDto";
 import CreateGameCategoryModal from "@/utils/modals/CreateGameCategoryModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   BiFilter,
   BiPlusCircle,
@@ -13,116 +15,10 @@ export default function GameCategoryNavbar() {
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [selectedDropdown, setSelectedDropdown] = useState<"Name" | "ID">("ID");
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+
   return (
     <div className=" flex justify-between w-full">
-      {/* <CreateGameCategoryModal isOpen={modalOpen} setIsOpen={setModalOpen} /> */}
-      <AnimatePresence>
-        {modalOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className=" bg-black   bg-opacity-30 z-50 fixed right-0 top-0 w-full h-full flex justify-end items-center"
-            onClick={() => setModalOpen(false)}
-          >
-            <motion.div
-              initial={{
-                width: "0vw",
-              }}
-              animate={{
-                width: `30vw`,
-                transition: {
-                  ease: "easeOut",
-                },
-              }}
-              exit={{
-                width: "0vw",
-                transition: {
-                  ease: "easeIn",
-                },
-              }}
-              onClick={(event) => event.stopPropagation()}
-              className="h-screen  overflow-auto flex flex-col gap-[.5rem] justify-center relative items-center"
-            >
-              <div className="absolute   inset-0 bg-gradient-to-bl from-yellow/90 via-purple to-green/70 overflow-hidden "></div>
-
-              <div className="  create-category__sidebar__container overflow-auto  py-12">
-                <h2 className=" heading-two  text-center">
-                  Craete a Game Category
-                </h2>
-                <label className=" ">
-                  Game Title
-                  <input
-                    type="text"
-                    className=" "
-                    placeholder="Game Category Title"
-                  />
-                </label>{" "}
-                <label className=" ">
-                  Game Title (Amharic)
-                  <input type="text" className=" " placeholder="የጫዋታ እርእስ" />
-                </label>{" "}
-                <label className=" ">
-                  Game Duration
-                  <div className="    relative">
-                    <button
-                      type="button"
-                      className=" flex justify-between items-center "
-                    >
-                      <p className=" gradient-text-color ">Select Duration</p>
-                      <BiSolidDownArrow
-                        className="fill-purple text-purple"
-                        size={20}
-                      />
-                    </button>
-                    <div className=" h-max w-[20rem] bg-white absolute top-[3.5rem] z-50 flex flex-col  justify-start text-black"></div>
-                  </div>
-                </label>{" "}
-                <label className=" ">
-                  Winning Prize
-                  <input
-                    type="text"
-                    className=" "
-                    placeholder="Winning prize"
-                  />
-                </label>
-                <label className=" ">
-                  2nd Place prize
-                  <input
-                    type="text"
-                    className=" "
-                    placeholder="2nd place prize"
-                  />
-                </label>
-                <label className=" ">
-                  3nd Place prize
-                  <input
-                    type="text"
-                    className=" "
-                    placeholder="3rd place prize"
-                  />
-                </label>
-                <label className=" ">
-                  Ticket Price
-                  <input type="text" className=" " placeholder="Ticket price" />
-                </label>{" "}
-                <label className=" ">
-                  Number of Ticket
-                  <input
-                    type="text"
-                    className=" "
-                    placeholder="Number of Ticket"
-                  />
-                </label>
-                <button type="submit" className="  mt-4 min-h-[3rem]">
-                  <p className=" gradient-text-color">Create Game Category</p>
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <CreateGameCategoryModal isOpen={modalOpen} setIsOpen={setModalOpen} />
 
       <button
         type="button"

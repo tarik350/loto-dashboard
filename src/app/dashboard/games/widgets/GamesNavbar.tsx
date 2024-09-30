@@ -74,7 +74,7 @@ export default function GamesNavbar() {
         className="flex items-center gap-2 mt-4"
       >
         <BiFilter className=" text-purple" />
-        <p className=" text-black font-[600] text-purple">Filter by</p>
+        <p className="  font-[600] text-purple">Filter by</p>
         <IoIosArrowDown
           className={`${
             !isFitlerVisible ? "" : " rotate-180"
