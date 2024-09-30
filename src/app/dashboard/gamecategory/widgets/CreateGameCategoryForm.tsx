@@ -28,7 +28,7 @@ export default function CreateGameCategoryForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="  create-category__sidebar__container overflow-auto  py-12"
+      className="  create-category__sidebar__container   overflow-auto  py-12"
     >
       <h2 className=" heading-two  text-center mb-4">Craete a Game Category</h2>
       <label className=" ">

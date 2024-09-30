@@ -1,28 +1,19 @@
 "use client";
-import { CreateGameCategoryRequestDto } from "@/utils/dto/createGameCategoryRequestDto";
-import CreateGameCategoryModal from "@/utils/modals/CreateGameCategoryModal";
-import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { AiOutlineFileImage } from "react-icons/ai";
-import {
-  BiFilter,
-  BiPlusCircle,
-  BiSearch,
-  BiSolidDownArrow,
-} from "react-icons/bi";
+import { BiFilter, BiPlusCircle, BiSearch } from "react-icons/bi";
 
-export default function GameCategoryNavbar() {
+export default function GameCategoryNavbar({
+  setModalOpen,
+  modalOpen,
+}: {
+  setModalOpen: (value: boolean) => void;
+  modalOpen: boolean;
+}) {
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [selectedDropdown, setSelectedDropdown] = useState<"Name" | "ID">("ID");
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   return (
     <div className=" flex justify-between w-full">
-      <AnimatePresence>
-        {modalOpen && <CreateGameCategoryModal setIsOpen={setModalOpen} />}
-      </AnimatePresence>
-
       <button
         type="button"
         onClick={() => {
