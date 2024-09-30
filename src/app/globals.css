@@ -114,13 +114,19 @@
   @apply text-white font-[600] grid gap-2 items-center;
 }
 .create-category__sidebar__container label input {
-  @apply w-[20rem] h-[3rem] bg-white text-black font-[400] px-4;
+  @apply w-full h-[3rem] bg-white text-black font-[400] px-4;
 }
 
 .create-category__sidebar__container button {
-  @apply w-[20rem] h-[3rem] bg-white px-4;
+  @apply w-full h-[3rem] bg-white px-4;
 }
 
 .gradient-text-color {
   @apply text-transparent font-[600]  bg-gradient-to-r from-yellow via-purple to-green bg-clip-text;
+}
+
+.heading-two {
+  font-size: 2rem;
+  font-weight: 600;
+  color: white;
 }
