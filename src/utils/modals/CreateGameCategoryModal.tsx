@@ -58,28 +58,36 @@ export default function CreateGameCategoryModal({
 }) {
   return (
     <div className="  ">
-      <div onClick={() => setIsOpen(false)} className="   modal-bg"></div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={() => setIsOpen(false)}
+        className="   modal-bg cursor-pointer"
+      ></motion.div>
 
       <motion.div
         initial={{
+          // opacity: 0,
           width: "0vw",
         }}
         animate={{
           width: `30vw`,
-
+          opacity: 1,
           transition: {
             ease: "easeOut",
-            //   duration: 0.,
+            duration: 0.3,
           },
         }}
         exit={{
           width: "0vw",
+          opacity: 0,
           transition: {
             ease: "easeIn",
-            //   duration: 0.15,
+            duration: 0.3,
           },
         }}
-        className="  modal-container  modal-background "
+        className="  modal-container   modal-background "
       >
         <div
           style={{ width: "22vw", height: "100%" }}
