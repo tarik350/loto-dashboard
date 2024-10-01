@@ -3,15 +3,14 @@ import {
   deleteDoc,
   doc,
   DocumentReference,
+  getDoc,
   getDocs,
   setDoc,
 } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
-import {
-  CreateGameCategoryRequestDto,
-  CreateGameCategoryResponseDto,
-} from "@/utils/dto/createGameCategoryDto";
+import { CreateGameCategoryResponseDto } from "@/utils/dto/createGameCategoryDto";
+import { GameRequestDto } from "@/utils/dto/gameDto";
 import { db } from "@/utils/firebaseConfig";
 import { GenericResponse } from "@/utils/types";
 
@@ -21,40 +20,26 @@ import { createResponse } from "../apiHelper";
 export async function POST(request: NextRequest) {
   try {
     // Parse the JSON body
-    const data: CreateGameCategoryRequestDto = await request.json();
 
-    // Validate the request body
-    const {
-      title,
-      duration,
-      winningPrize,
-      secondPlacePrize,
-      thirdPlacePrize,
-      ticketPrice,
-      numberOfTicket,
-    }: CreateGameCategoryRequestDto = data;
+    const data: GameRequestDto = await request.json();
 
-    if (
-      !title?.en ||
-      !title?.am ||
-      !["hourly", "daily", "weekly", "monthly"].includes(duration) ||
-      winningPrize == null ||
-      secondPlacePrize == null ||
-      thirdPlacePrize == null ||
-      ticketPrice == null ||
-      numberOfTicket == null
-    ) {
-      const response: GenericResponse<null> = {
-        status: 400,
-        message: "Invalid request body",
-        content: null,
-      };
-      return NextResponse.json(response, { status: 400 });
-    }
+    const docRef: DocumentReference = doc(collection(db, "games"));
 
-    // Reference to your Firestore collection
-    // const docRef: DocumentReference = doc(db, "gamecategories", title.en);
-    const docRef: DocumentReference = doc(collection(db, "gamecategories"));
+    //todo
+    //get game category with the id
+    //get number of ticket from response dto
+    //create a list of Ticketnumberdto for range 1 - number of tickets
+    //create a game with the id and the list of tickte number dto as requets payload
+
+    //not get like this rather there is a way to get that value only ( ticket count)
+
+    //eager loading => in firebase read about it
+    // const gameCategory = await getDoc(
+    //   doc(collection(db, "gamecategories", data.gameCategoryId))
+    // );
+
+    // const querySnapshot: CreateGameCategoryResponseDto =
+    //   gameCategory.data() as CreateGameCategoryResponseDto;
 
     // Store the data in Firestore
     await setDoc(docRef, { ...data, id: docRef.id });
@@ -63,7 +48,7 @@ export async function POST(request: NextRequest) {
     const response: GenericResponse<Record<string, any>> = {
       status: 201,
       message: "Game category created successfully",
-      content: { gameCategoryId: docRef.id },
+      content: { gameId: docRef.id },
     };
 
     return NextResponse.json(response, { status: 201 });
@@ -84,7 +69,7 @@ export async function POST(request: NextRequest) {
 // GET request handler
 export async function GET() {
   try {
-    const querySnapshot = await getDocs(collection(db, "gamecategories"));
+    const querySnapshot = await getDocs(collection(db, "gamecategory"));
     const gameCategories: CreateGameCategoryResponseDto[] = [];
 
     querySnapshot.forEach((doc) => {
@@ -123,7 +108,7 @@ export async function DELETE(req: NextRequest) {
   try {
     const { id } = await req.json();
 
-    const docRef = doc(db, "gamecategories", id);
+    const docRef = doc(db, "gamecategory", id);
     await deleteDoc(docRef);
 
     return NextResponse.json(
