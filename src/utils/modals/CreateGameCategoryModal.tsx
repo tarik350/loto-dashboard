@@ -61,12 +61,30 @@ export default function CreateGameCategoryModal({
       <div onClick={() => setIsOpen(false)} className="   modal-bg"></div>
 
       <motion.div
-        initial={{ width: "0vw" }}
-        animate={{ width: "30vw" }}
-        exit={{ width: "0vw" }}
-        className=" modal-container  modal-background "
+        initial={{
+          width: "0vw",
+        }}
+        animate={{
+          width: `30vw`,
+
+          transition: {
+            ease: "easeOut",
+            //   duration: 0.,
+          },
+        }}
+        exit={{
+          width: "0vw",
+          transition: {
+            ease: "easeIn",
+            //   duration: 0.15,
+          },
+        }}
+        className="  modal-container  modal-background "
       >
-        <div className=" relative z-50 ">
+        <div
+          style={{ width: "22vw", height: "100%" }}
+          className="  m-auto relative z-50 flex justify-center items-center "
+        >
           <CreateGameCategoryForm />
         </div>
       </motion.div>
