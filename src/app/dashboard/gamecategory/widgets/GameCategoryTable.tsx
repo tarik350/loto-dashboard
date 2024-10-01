@@ -2,7 +2,9 @@
 import { deleteGameCategory } from "@/services/gameCategoryServices";
 import { httpRequestStatus } from "@/utils/constants";
 import { CreateGameCategoryResponseDto } from "@/utils/dto/createGameCategoryDto";
+import LoadingSpiner from "@/utils/widgets/LoadingSpinner";
 import { useEffect, useState } from "react";
+import { Oval } from "react-loader-spinner";
 
 export default function GameCategoryTable({
   response,
@@ -42,7 +44,9 @@ export default function GameCategoryTable({
       return (
         <tr>
           <td className="p-5 text-center bg-purple-50" colSpan={8}>
-            <p className="font-[600] text-gray-500">Loading</p>
+            <div className=" flex justify-center items-center">
+              <LoadingSpiner dimension={30} />
+            </div>
           </td>
         </tr>
       );
@@ -79,9 +83,17 @@ export default function GameCategoryTable({
               onClick={() => {
                 onDelete(item.id);
               }}
-              className="bg-red-500 text-white p-1 rounded"
+              className="bg-red-500 text-white p-1 rounded w-[3.4rem] h-full"
             >
-              {deleteLoading[item.id] ? "Loading..." : "Delete"}
+              {deleteLoading[item.id] ? (
+                <LoadingSpiner
+                  dimension={20}
+                  forgroundColor="#9a0ae4"
+                  backgroundColor="white"
+                />
+              ) : (
+                "Delete"
+              )}
             </button>
           </td>
         </tr>
@@ -103,7 +115,7 @@ export default function GameCategoryTable({
           <th className="p-3 w-10"></th>
         </tr>
       </thead>
-      <tbody className="border-b-2">{getTableContent()}</tbody>
+      <tbody className="">{getTableContent()}</tbody>
     </table>
   );
 }

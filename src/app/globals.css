@@ -103,7 +103,7 @@
 }
 
 .category-table tbody tr:nth-child(even) {
-  background-color: #e8ebee; /* Subtle light gray */
+  background-color: #dbdfe3;
 }
 
 .category-table tbody tr:nth-child(odd) {

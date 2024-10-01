@@ -1,6 +1,8 @@
 "use client";
 import { createGameCategory } from "@/services/gameCategoryServices";
+import { httpRequestStatus } from "@/utils/constants";
 import { CreateGameCategoryRequestDto } from "@/utils/dto/createGameCategoryDto";
+import LoadingSpiner from "@/utils/widgets/LoadingSpinner";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { BiSolidDownArrow } from "react-icons/bi";
@@ -10,7 +12,8 @@ export default function CreateGameCategoryForm({
 }: {
   refetch: () => void;
 }) {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [createStatus, setCreateStatus] =
+    useState<httpRequestStatus>("initial");
   const {
     handleSubmit,
     formState: { errors },
@@ -28,15 +31,14 @@ export default function CreateGameCategoryForm({
       return;
     }
     try {
-      setLoading(true);
+      setCreateStatus("loading");
       const response = await createGameCategory(d);
       if (response.status === 201) {
+        setCreateStatus("success");
         refetch();
       }
     } catch (err) {
-      debugger;
-    } finally {
-      setLoading(false);
+      setCreateStatus("error");
     }
   };
 
@@ -189,7 +191,13 @@ export default function CreateGameCategoryForm({
       </label>
       <button type="submit" className="  mt-4 min-h-[3rem]">
         <p className=" gradient-text-color">
-          {loading ? "Loading..." : "Create Game Category"}
+          {createStatus === "loading" ? (
+            <div className=" flex justify-center items-center">
+              <LoadingSpiner dimension={30} />
+            </div>
+          ) : (
+            "Create Game Category"
+          )}
         </p>
       </button>
     </form>
