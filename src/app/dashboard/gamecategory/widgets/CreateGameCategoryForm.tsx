@@ -1,10 +1,16 @@
 "use client";
-import { CreateGameCategoryRequestDto } from "@/utils/dto/createGameCategoryRequestDto";
+import { createGameCategory } from "@/services/gameCategoryServices";
+import { CreateGameCategoryRequestDto } from "@/utils/dto/createGameCategoryDto";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { BiSolidDownArrow } from "react-icons/bi";
 
-export default function CreateGameCategoryForm() {
+export default function CreateGameCategoryForm({
+  refetch,
+}: {
+  refetch: () => void;
+}) {
+  const [loading, setLoading] = useState<boolean>(false);
   const {
     handleSubmit,
     formState: { errors },
@@ -16,13 +22,22 @@ export default function CreateGameCategoryForm() {
   } = useForm<CreateGameCategoryRequestDto>();
   const [showDurationDropdown, setShowDurationDropdown] =
     useState<boolean>(false);
-  const onSubmit = (d: CreateGameCategoryRequestDto) => {
+  const onSubmit = async (d: CreateGameCategoryRequestDto) => {
     if (!d.duration) {
       setError("duration", { message: "required" });
       return;
     }
-    //todo form validation done create a game category
-    //todo make a request to create a game category
+    try {
+      setLoading(true);
+      const response = await createGameCategory(d);
+      if (response.status === 201) {
+        refetch();
+      }
+    } catch (err) {
+      debugger;
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -173,7 +188,9 @@ export default function CreateGameCategoryForm() {
         </div>
       </label>
       <button type="submit" className="  mt-4 min-h-[3rem]">
-        <p className=" gradient-text-color">Create Game Category</p>
+        <p className=" gradient-text-color">
+          {loading ? "Loading..." : "Create Game Category"}
+        </p>
       </button>
     </form>
   );

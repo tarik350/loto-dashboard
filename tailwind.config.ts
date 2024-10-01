@@ -17,6 +17,8 @@ const config: Config = {
         green: "#00f19c",
         purple: "#9a0ae4",
         lavender: "#E39FF6",
+        strongPurple: "#8A2BE2", // Strong Purple
+        darkPurple: "#4B0082",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

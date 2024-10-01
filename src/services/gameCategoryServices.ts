@@ -1,0 +1,74 @@
+// api/gameCategoryApi.ts
+
+import {
+  CreateGameCategoryRequestDto,
+  CreateGameCategoryResponseDto,
+} from "@/utils/dto/createGameCategoryDto";
+import { GenericResponse } from "@/utils/types";
+
+export async function createGameCategory(
+  data: CreateGameCategoryRequestDto
+): Promise<GenericResponse<{ id: number }>> {
+  try {
+    const response = await fetch("/api/gamecategory", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.message || "Failed to create game category");
+    }
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getGameCategory(): Promise<
+  GenericResponse<CreateGameCategoryResponseDto[]>
+> {
+  try {
+    const response = await fetch("/api/gamecategory", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.message || "Failed to create game category");
+    }
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+export async function deleteGameCategory({
+  id,
+}: {
+  id: string;
+}): Promise<GenericResponse<{ id: string }>> {
+  try {
+    // Pass the id in the URL
+    const response = await fetch(`/api/gamecategory`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id }),
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.message || "Failed to delete game category");
+    }
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}

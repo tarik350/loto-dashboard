@@ -1,10 +1,4 @@
-import {
-  ref,
-  uploadString,
-  getDownloadURL,
-  uploadBytes,
-  getStorage,
-} from "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 import { Timestamp } from "firebase/firestore";
 

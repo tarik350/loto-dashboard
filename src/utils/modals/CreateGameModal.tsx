@@ -1,8 +1,7 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import ModalLayout from "./ModalLayout";
+
 import { useEffect, useRef } from "react";
-import ParentComponent from "./ModalLayout";
 
 export default function CreateGameModal({
   isOpen,
@@ -25,9 +24,5 @@ export default function CreateGameModal({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  return (
-    <ModalLayout isOpen={isOpen} setIsOpen={setIsOpen}>
-      <div>thie children goes hrer</div>
-    </ModalLayout>
-  );
+  return <div>thie children goes hrer</div>;
 }

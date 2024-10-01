@@ -69,4 +69,5 @@ const sidebarItems: sidebarItemType[] = [
   },
 ];
 
+export type httpRequestStatus = "initial" | "loading" | "success" | "error";
 export { sidebarItems };

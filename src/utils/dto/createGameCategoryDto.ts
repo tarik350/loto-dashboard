@@ -1,4 +1,4 @@
-export interface CreateGameCategoryRequestDto {
+interface CreateGameCategoryDto {
   title: {
     en: string;
     am: string;
@@ -9,4 +9,8 @@ export interface CreateGameCategoryRequestDto {
   thirdPlacePrize: number;
   ticketPrice: number;
   numberOfTicket: number;
+}
+export interface CreateGameCategoryRequestDto extends CreateGameCategoryDto {}
+export interface CreateGameCategoryResponseDto extends CreateGameCategoryDto {
+  id: string;
 }
