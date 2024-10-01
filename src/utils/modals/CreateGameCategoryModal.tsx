@@ -22,7 +22,7 @@ export default function CreateGameCategoryModal({
 
       <motion.div
         initial={{
-          // opacity: 0,
+          opacity: 0,
           width: "0vw",
         }}
         animate={{

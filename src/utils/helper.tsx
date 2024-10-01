@@ -1,9 +1,9 @@
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-
 import { Timestamp } from "firebase/firestore";
-
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
-import { imageType } from "./constants";
+import { httpRequestStatus, imageType } from "./constants";
+import { CreateGameCategoryResponseDto } from "./dto/createGameCategoryDto";
+import LoadingSpiner from "./widgets/LoadingSpinner";
 export function passwordStrength(password: string) {
   let score = 0;
 
@@ -79,3 +79,75 @@ export function normalizePhoneNumber(value: string): string {
     return value; // This shouldn't happen if regex catches all cases
   }
 }
+
+export const getTableContentForGameCategory = ({
+  fetchStatus,
+  response,
+  deleteLoading,
+  onDelete,
+}: {
+  fetchStatus: httpRequestStatus;
+  response?: CreateGameCategoryResponseDto[];
+  deleteLoading: Record<string, boolean>;
+  onDelete: (id: string) => void;
+}) => {
+  if (fetchStatus === "loading") {
+    return (
+      <tr>
+        <td className="p-5 text-center bg-purple-50" colSpan={8}>
+          <div className=" flex justify-center items-center">
+            <LoadingSpiner dimension={30} />
+          </div>
+        </td>
+      </tr>
+    );
+  } else if (response && response.length === 0) {
+    return (
+      <tr>
+        <td className="p-5 text-center bg-purple-50" colSpan={8}>
+          <p className="font-[600] text-gray-500">No category for now</p>
+        </td>
+      </tr>
+    );
+  } else {
+    return response?.map((item, index) => (
+      <tr key={index} className="text-center">
+        <td className="p-3">{item.id}</td>
+        {/* max-w-[15rem] */}
+        <td className="p-3 flex flex-col justify-start items-start  text-start">
+          <span className="block">• {item.title.en}</span>
+          <span className="block">• {item.title.am}</span>{" "}
+        </td>
+        <td className="p-3">{item.winningPrize}</td>
+        <td className="p-3">{item.secondPlacePrize}</td>
+        <td className="p-3">{item.thirdPlacePrize}</td>
+        <td className="p-3">{item.ticketPrice}</td>
+        <td className="p-3">{item.numberOfTicket}</td>
+        <td className="p-3">
+          {/* Add edit button or action */}
+          <button className="bg-blue-500 text-white p-1 rounded">Edit</button>
+        </td>
+        <td className="p-3">
+          {/* Add delete button or action */}
+          <button
+            type="button"
+            onClick={() => {
+              onDelete(item.id);
+            }}
+            className="bg-red-500 text-white p-1 rounded w-[3.4rem] h-full"
+          >
+            {deleteLoading[item.id] ? (
+              <LoadingSpiner
+                dimension={20}
+                forgroundColor="#9a0ae4"
+                backgroundColor="white"
+              />
+            ) : (
+              "Delete"
+            )}
+          </button>
+        </td>
+      </tr>
+    ));
+  }
+};
