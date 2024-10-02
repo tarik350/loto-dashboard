@@ -134,7 +134,7 @@ export default function CreateGameModal({
                     <table className="dropdown-table">
                       <thead>
                         <tr>
-                          <th>ID</th>
+                          <th>Ticket count</th>
                           <th>Title</th>
                           <th>Winning Prizes</th>
                         </tr>
@@ -151,7 +151,7 @@ export default function CreateGameModal({
                               setValue("category", item);
                             }}
                           >
-                            <td>{item.id}</td>
+                            <td>{item.numberOfTicket}</td>
                             <td>
                               <span className="block">• {item.title.en}</span>{" "}
                               <br />

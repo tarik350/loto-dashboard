@@ -15,7 +15,7 @@ export interface GameResponseDto extends GameDto {
 }
 
 export interface TicketNumberDto {
-  id: string;
+  id: number;
   value: number;
   status: ticketNumberStatus;
 }

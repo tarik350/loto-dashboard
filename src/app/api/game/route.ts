@@ -46,7 +46,8 @@ export async function POST(request: NextRequest) {
     const ticketNumbers: TicketNumberDto[] = Array.from(
       { length: numberOfTickets },
       (_, index) => ({
-        id: "", // Placeholder, will be set later
+        // id: "", // Placeholder, will be set later
+        id: index + 1,
         value: index + 1, // Value represents the ticket number
         status: "free", // Initial status is "free"
       })
@@ -69,8 +70,8 @@ export async function POST(request: NextRequest) {
     // Create sub-collection for ticket numbers
     const ticketCollectionRef = collection(docRef, "ticketNumbers");
     const ticketPromises = ticketNumbers.map(async (ticket, index) => {
-      const ticketDocRef = doc(ticketCollectionRef); // Create a document reference
-      ticket.id = ticketDocRef.id; // Set the ID for the ticket number
+      const ticketDocRef = doc(ticketCollectionRef, ticket.id.toString()); // Create a document reference
+      // ticket.id = ticketDocRef.id; // Set the ID for the ticket number
       return setDoc(ticketDocRef, ticket); // Save the ticket number document
     });
 
