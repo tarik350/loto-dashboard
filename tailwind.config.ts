@@ -17,6 +17,7 @@ const config: Config = {
         green: "#00f19c",
         purple: "#9a0ae4",
         lavender: "#E39FF6",
+        softLavender: "#EEE9FB",
         strongPurple: "#8A2BE2", // Strong Purple
         darkPurple: "#4B0082",
       },
@@ -27,6 +28,10 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // require("@tailwindcss/forms"),
+    // require("@tailwindcss/typography"),
+    // require("@tailwindcss/aspect-ratio"),
+  ],
 };
 export default config;

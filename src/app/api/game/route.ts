@@ -10,55 +10,88 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 
 import { CreateGameCategoryResponseDto } from "@/utils/dto/createGameCategoryDto";
-import { GameRequestDto } from "@/utils/dto/gameDto";
+import { GameRequestDto, TicketNumberDto } from "@/utils/dto/gameDto";
 import { db } from "@/utils/firebaseConfig";
 import { GenericResponse } from "@/utils/types";
 
 import { createResponse } from "../apiHelper";
+import { gameStatus } from "@/utils/constants";
 
 //POST HANDLER
+
 export async function POST(request: NextRequest) {
   try {
     // Parse the JSON body
+    const data: { gameCategoryId: string } = await request.json();
+    const docRef = doc(collection(db, "games"));
 
-    const data: GameRequestDto = await request.json();
+    // Get game category with the ID
+    const gameCategoryDoc = await getDoc(
+      doc(collection(db, "gamecategories"), data.gameCategoryId)
+    );
 
-    const docRef: DocumentReference = doc(collection(db, "games"));
+    //check if game category exists
+    if (!gameCategoryDoc.exists()) {
+      return NextResponse.json(
+        { status: 404, message: "Game category not found" },
+        { status: 404 }
+      );
+    }
 
-    //todo
-    //get game category with the id
-    //get number of ticket from response dto
-    //create a list of Ticketnumberdto for range 1 - number of tickets
-    //create a game with the id and the list of tickte number dto as requets payload
+    // Get number of tickets from the game category
+    const gameCategoryData = gameCategoryDoc.data();
+    const numberOfTickets = gameCategoryData.numberOfTicket;
 
-    //not get like this rather there is a way to get that value only ( ticket count)
+    // Create a list of TicketNumberDto for range 1 - numberOfTickets
+    const ticketNumbers: TicketNumberDto[] = Array.from(
+      { length: numberOfTickets },
+      (_, index) => ({
+        id: "", // Placeholder, will be set later
+        value: index + 1, // Value represents the ticket number
+        status: "free", // Initial status is "free"
+      })
+    );
 
-    //eager loading => in firebase read about it
-    // const gameCategory = await getDoc(
-    //   doc(collection(db, "gamecategories", data.gameCategoryId))
-    // );
+    // Store the game data with an additional gameStatus property
+    const gameData: {
+      gameCategoryId: string;
+      id: string;
+      gameStatus: gameStatus;
+    } = {
+      ...data,
+      id: docRef.id, // Set the game ID
+      gameStatus: "started", // Add the gameStatus property
+    };
 
-    // const querySnapshot: CreateGameCategoryResponseDto =
-    //   gameCategory.data() as CreateGameCategoryResponseDto;
+    // Save the game document
+    await setDoc(docRef, gameData);
 
-    // Store the data in Firestore
-    await setDoc(docRef, { ...data, id: docRef.id });
+    // Create sub-collection for ticket numbers
+    const ticketCollectionRef = collection(docRef, "ticketNumbers");
+    const ticketPromises = ticketNumbers.map(async (ticket, index) => {
+      const ticketDocRef = doc(ticketCollectionRef); // Create a document reference
+      ticket.id = ticketDocRef.id; // Set the ID for the ticket number
+      return setDoc(ticketDocRef, ticket); // Save the ticket number document
+    });
+
+    // Wait for all ticket documents to be written
+    await Promise.all(ticketPromises);
 
     // Return success response
-    const response: GenericResponse<Record<string, any>> = {
+    const response = {
       status: 201,
-      message: "Game category created successfully",
+      message: "Game created successfully",
       content: { gameId: docRef.id },
     };
 
     return NextResponse.json(response, { status: 201 });
   } catch (error: any) {
-    console.error("Error creating game category:", error);
+    console.error("Error creating game:", error);
 
     // Return error response
-    const response: GenericResponse<string> = {
+    const response = {
       status: 500,
-      message: "Failed to create game category",
+      message: "Failed to create game",
       content: error.toString(),
     };
 

@@ -52,8 +52,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(response, { status: 400 });
     }
 
-    // Reference to your Firestore collection
-    // const docRef: DocumentReference = doc(db, "gamecategories", title.en);
     const docRef: DocumentReference = doc(collection(db, "gamecategories"));
 
     // Store the data in Firestore

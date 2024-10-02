@@ -1,12 +1,21 @@
-import { ticketNumberStatus } from "../constants";
+import { gameStatus, ticketNumberStatus } from "../constants";
 
-export interface GameRequestDto {
+interface GameDto {
   gameCategoryId: string;
-  ticketNumbers: TikcetNumberDto[];
-  numberOfTicketSold: number;
+}
+export interface GameRequestDto extends GameDto {
+  id: string;
+  gameStatus: gameStatus;
 }
 
-interface TikcetNumberDto {
+export interface GameResponseDto extends GameDto {
+  ticketNumbers: TicketNumberDto[];
+  numberOfTicketSold: number;
+  gameStatus: string;
+}
+
+export interface TicketNumberDto {
+  id: string;
   value: number;
-  stauts: ticketNumberStatus;
+  status: ticketNumberStatus;
 }

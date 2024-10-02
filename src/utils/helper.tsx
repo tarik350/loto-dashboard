@@ -95,7 +95,7 @@ export const getTableContentForGameCategory = ({
     return (
       <tr>
         <td className="p-5 text-center bg-purple-50" colSpan={8}>
-          <div className=" flex justify-center items-center">
+          <div className=" flex justify-center items-center py-12">
             <LoadingSpiner dimension={30} />
           </div>
         </td>
@@ -105,7 +105,7 @@ export const getTableContentForGameCategory = ({
     return (
       <tr>
         <td className="p-5 text-center bg-purple-50" colSpan={8}>
-          <p className="font-[600] text-gray-500">No category for now</p>
+          <p className="font-[600] text-gray-500 py-12">No category for now</p>
         </td>
       </tr>
     );

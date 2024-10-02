@@ -71,4 +71,6 @@ const sidebarItems: sidebarItemType[] = [
 
 export type httpRequestStatus = "initial" | "loading" | "success" | "error";
 export type ticketNumberStatus = "sold" | "locked" | "free";
-export { sidebarItems };
+export type gameStatus = "started" | "completed";
+const authPages = ["login", "register"];
+export { sidebarItems, authPages };

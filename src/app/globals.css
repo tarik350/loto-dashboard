@@ -3,6 +3,23 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary: #ef4444; /* Red */
+  --secondary: #00aafd; /* Blue */
+  --transparent-bg: #f7f6fb; /* Light background */
+  --text-color: #222262; /* Dark text */
+  --yellow: #feaa11; /* Yellow */
+  --green: #00f19c; /* Green */
+  --purple: #9a0ae4; /* Purple */
+  --lavender: #e39ff6; /* Lavender */
+  --soft-lavender: #eee9fb; /* Soft Lavender */
+  --strong-purple: #8a2be2; /* Strong Purple */
+  --dark-purple: #4b0082; /* Dark Purple */
+  --text-white: #ffffff; /* White text for the header */
+  --border-color: #e5e7eb; /* Border color */
+  --hover-bg-color: #f3f4f6;
+}
+
 .sidebar-icon {
   @apply w-6 h-6 mx-2 my-1;
 }
@@ -218,5 +235,50 @@
       rgba(255, 255, 255, 0.5),
       rgba(255, 255, 255, 0) 70%
     ),
-    #9a0ae4; /* Softer White to Transparent */
+    var(--purple); /* Softer White to Transparent */
+}
+
+.min-h-dropdown {
+  min-height: 12rem;
+}
+
+/* Styles for the dropdown table */
+.dropdown-table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+}
+
+.dropdown-table thead {
+  border-bottom: 2px solid var(--border-color); /* Bottom border for header */
+}
+
+.dropdown-table th {
+  font-weight: bold;
+  padding: 0.5rem 0rem;
+}
+
+.dropdown-table th:first-child {
+  width: 8rem; /* Smaller width for the ID column */
+}
+
+.dropdown-table tbody td {
+  cursor: pointer;
+  /* top right bottom left */
+  padding: 0.5rem 2rem 0.5rem 0rem;
+  font-weight: normal;
+}
+
+.dropdown-table tbody .row {
+  border-bottom: 1px solid var(--border-color); /* Bottom border for rows */
+}
+
+.dropdown-table tbody tr:hover {
+  background-color: var(--hover-bg-color); /* Subtle gray on hover */
+}
+
+.dropdown-table td:first-child {
+  word-break: break-word; /* Ensure long text wraps inside the cell */
+  overflow-wrap: break-word; /* Ensure long words break to fit within the max-width */
+  white-space: normal; /* Allow wrapping */
 }

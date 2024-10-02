@@ -6,21 +6,21 @@ import { useState } from "react";
 import { BiFilter, BiPlusCircle, BiSearch } from "react-icons/bi";
 import { IoIosArrowDown } from "react-icons/io";
 
-export default function GamesNavbar() {
+export default function GamesNavbar({
+  setModalOpen,
+}: {
+  setModalOpen: (value: boolean) => void;
+}) {
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [isFitlerVisible, setIsFilterVisible] = useState<boolean>(false);
-  const [modalOpen, setIsModalOpen] = useState<boolean>(false);
   const fitlerButtonController = useAnimation();
   return (
     <div className=" flex flex-col justify-start items-start">
-      {modalOpen && (
-        <CreateGameModal isOpen={modalOpen} setIsOpen={setIsModalOpen} />
-      )}
       <div className=" flex justify-between w-full">
         <button
           type="button"
           onClick={() => {
-            setIsModalOpen(modalOpen);
+            setModalOpen(true);
           }}
           className="bg-purple  text-white w-[12rem] h-[3rem] rounded-xl flex  justify-center items-center gap-2"
         >
