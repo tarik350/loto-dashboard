@@ -2,9 +2,11 @@ import { CiMoneyBill, CiSettings } from "react-icons/ci";
 import { GrHome } from "react-icons/gr";
 import { sidebarItemType } from "./types";
 import {
+  BiArchiveOut,
   BiCategory,
   BiGame,
   BiHome,
+  BiLock,
   BiMessageSquareEdit,
   BiMobileVibration,
   BiMoney,
@@ -15,6 +17,7 @@ import {
   BiSolidMobile,
 } from "react-icons/bi";
 import { MdOutlineMoney } from "react-icons/md";
+import { BsFilePerson } from "react-icons/bs";
 
 export type imageType = "profilePics" | "idcard";
 const sidebarItems: sidebarItemType[] = [
@@ -60,6 +63,24 @@ const sidebarItems: sidebarItemType[] = [
     icon: BiSolidBank,
     className: "sidebar-icon",
     route: "/dashboard/financialreport",
+  },
+  {
+    title: "Admin users",
+    icon: BiLock,
+    className: "sidebar-icon",
+    route: "/dashboard/adminusers",
+    subRoute: [
+      {
+        title: "Users",
+        icon: BsFilePerson,
+        route: "/dashboard/users",
+      },
+      {
+        title: "Roles",
+        icon: BiArchiveOut,
+        route: "/dashboard/roles",
+      },
+    ],
   },
   {
     title: "Setting",

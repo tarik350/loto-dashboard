@@ -118,8 +118,10 @@ export async function GET(request: NextRequest) {
   }
 }
 
-//todo post method to create a user
-
+///create admin users based on permissions
+//authenticated route
+//only user with the permission to create user are allowed to make a request
+//other requesting this even though they are authenticated will get an error
 export async function POST(request: NextRequest) {
   try {
     const verificationResponse = await verifyIdToken();

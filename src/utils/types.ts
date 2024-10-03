@@ -6,7 +6,7 @@ export type sidebarItemType = {
   icon: React.FC<SvgProps>;
   className?: string;
   route: string;
-  //   subMenu?: { title: string; icon: React.FC<SvgProps>; className?: string }[];
+  subRoute?: { title: string; icon: React.FC<SvgProps>; route: string }[];
 };
 export interface SvgProps extends React.SVGProps<SVGSVGElement> {
   className?: string;
