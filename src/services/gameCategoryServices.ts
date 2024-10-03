@@ -1,5 +1,6 @@
 // api/gameCategoryApi.ts
 
+import * as api from "@/utils/apiServiceHelper";
 import {
   CreateGameCategoryRequestDto,
   CreateGameCategoryResponseDto,
@@ -10,12 +11,10 @@ export async function createGameCategory(
   data: CreateGameCategoryRequestDto
 ): Promise<GenericResponse<{ id: number }>> {
   try {
-    const response = await fetch("/api/gamecategory", {
+    const response = await api.authenticatedPost({
+      url: "/api/gameCategory",
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+      body: {},
     });
 
     const result = await response.json();
@@ -32,12 +31,7 @@ export async function getGameCategory(): Promise<
   GenericResponse<CreateGameCategoryResponseDto[]>
 > {
   try {
-    const response = await fetch("/api/gamecategory", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await api.authenticatedGet({ url: "/api/gamecategory" });
 
     const result = await response.json();
     if (!response.ok) {
@@ -55,12 +49,10 @@ export async function deleteGameCategory({
 }): Promise<GenericResponse<{ id: string }>> {
   try {
     // Pass the id in the URL
-    const response = await fetch(`/api/gamecategory`, {
+    const response = await api.authenticatedPost({
+      url: "/api/gamecategory",
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id }),
+      body: {},
     });
 
     const result = await response.json();
@@ -69,6 +61,7 @@ export async function deleteGameCategory({
     }
     return result;
   } catch (error) {
+    debugger;
     throw error;
   }
 }

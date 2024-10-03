@@ -2,7 +2,6 @@ import {
   collection,
   deleteDoc,
   doc,
-  DocumentReference,
   getDoc,
   getDocs,
   setDoc,
@@ -10,18 +9,17 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 
 import { CreateGameCategoryResponseDto } from "@/utils/dto/createGameCategoryDto";
-import { GameRequestDto, TicketNumberDto } from "@/utils/dto/gameDto";
-import { db } from "@/utils/firebaseConfig";
+import { TicketNumberDto } from "@/utils/dto/gameDto";
+import { db } from "@/utils/firebase/firebaseConfig";
 import { GenericResponse } from "@/utils/types";
 
-import { createResponse } from "../apiHelper";
 import { gameStatus } from "@/utils/constants";
+import { createResponse } from "../helper/apiHelper";
 
 //POST HANDLER
 
 export async function POST(request: NextRequest) {
   try {
-    // Parse the JSON body
     const data: { gameCategoryId: string } = await request.json();
     const docRef = doc(collection(db, "games"));
 

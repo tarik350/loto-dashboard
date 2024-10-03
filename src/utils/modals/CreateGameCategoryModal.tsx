@@ -2,6 +2,8 @@
 
 import CreateGameCategoryForm from "@/app/dashboard/gamecategory/widgets/CreateGameCategoryForm";
 import { motion } from "framer-motion";
+import ModalLayout from "./ModalLayout";
+import { useState } from "react";
 
 export default function CreateGameCategoryModal({
   setIsOpen,
@@ -10,46 +12,21 @@ export default function CreateGameCategoryModal({
   setIsOpen: (value: boolean) => void;
   refetch: () => void;
 }) {
-  return (
-    <div className="  ">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={() => setIsOpen(false)}
-        className="   modal-bg cursor-pointer"
-      ></motion.div>
+  const [isTitleVisible, setIsTitleVisible] = useState(false);
 
-      <motion.div
-        initial={{
-          opacity: 0,
-          width: "0vw",
-        }}
-        animate={{
-          width: `30vw`,
-          opacity: 1,
-          transition: {
-            ease: "easeOut",
-            duration: 0.3,
-          },
-        }}
-        exit={{
-          width: "0vw",
-          opacity: 0,
-          transition: {
-            ease: "easeIn",
-            duration: 0.3,
-          },
-        }}
-        className="  modal-container blackpurple-gradient-background"
-      >
-        <div
-          style={{ width: "22vw", height: "100%" }}
-          className="  m-auto relative z-50 flex justify-center items-center "
-        >
-          <CreateGameCategoryForm refetch={refetch} />
-        </div>
-      </motion.div>
-    </div>
+  return (
+    <ModalLayout
+      setIsOpen={setIsOpen}
+      configMethod={(value: boolean) => {
+        setIsTitleVisible(value);
+      }}
+    >
+      <div className="  ">
+        <CreateGameCategoryForm
+          isTitleVisible={isTitleVisible}
+          refetch={refetch}
+        />
+      </div>
+    </ModalLayout>
   );
 }

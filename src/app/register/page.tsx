@@ -5,10 +5,16 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "@/utils/firebaseConfig";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  signInWithCustomToken,
+} from "firebase/auth";
+import { auth, db } from "@/utils/firebase/firebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
 
+import * as api from "@/utils/apiServiceHelper";
+import { GenericResponse } from "@/utils/types";
 export default function Register() {
   const {
     register,
@@ -43,27 +49,47 @@ export default function Register() {
     } else {
       showTermsErrorMessage(false);
     }
-    const { email, password, fullName } = d;
+    const { email, password, fullName: username } = d;
     try {
       setLoading(true);
-      const credential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const resposen = await api.post({
+        url: "/api/admin/signup",
+        method: "POST",
+        body: { email, password, username },
+      });
+      const data: GenericResponse<string> = await resposen.json();
+      if (data.status === 201 && data.content) {
+        const credential = await signInWithCustomToken(auth, data.content);
+        if (!credential.user.emailVerified) {
+          sendEmailVerification(credential.user);
+          setModalMessage("please verify your email and login again");
+          setShowModal(true);
+          return;
+        }
 
-      if (credential.user) {
-        //what if auth is successful but adding to firestore is not?
-        await setDoc(doc(db, "admins", credential.user.uid), {
-          fullName,
-          email,
-          password,
-        });
+        const token = await credential.user.getIdToken();
 
-        Cookies.set("loggedIn", "true");
-        Cookies.set("uid", credential.user.uid);
-        router.push("/dashboard");
+        localStorage.setItem("token", token);
       }
+
+      // const credential = await createUserWithEmailAndPassword(
+      //   auth,
+      //   email,
+      //   password
+      // );
+
+      // if (credential.user) {
+      //   //what if auth is successful but adding to firestore is not?
+      //   await setDoc(doc(db, "admins", credential.user.uid), {
+      //     fullName,
+      //     email,
+      //     password,
+      //   });
+
+      //   Cookies.set("loggedIn", "true");
+      //   Cookies.set("uid", credential.user.uid);
+      //   router.push("/dashboard");
+      // }
     } catch (error) {
       setModalMessage("Error while registering a user");
       setShowModal(false);

@@ -26,8 +26,7 @@ export default function GameCategoryTable({
       if (response.status === 200) {
         refetch();
       }
-    } catch (error) {
-      debugger;
+    } catch (error: any) {
     } finally {
       setDeleteLoading((prev) => ({ ...prev, [id]: false }));
     }

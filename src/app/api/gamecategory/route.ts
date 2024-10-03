@@ -12,10 +12,11 @@ import {
   CreateGameCategoryRequestDto,
   CreateGameCategoryResponseDto,
 } from "@/utils/dto/createGameCategoryDto";
-import { db } from "@/utils/firebaseConfig";
+import { db } from "@/utils/firebase/firebaseConfig";
 import { GenericResponse } from "@/utils/types";
 
-import { createResponse } from "../apiHelper";
+import { createResponse, verifyIdToken } from "../helper/apiHelper";
+import * as firestore from "firebase-admin/firestore";
 
 //POST HANDLER
 export async function POST(request: NextRequest) {
@@ -82,6 +83,46 @@ export async function POST(request: NextRequest) {
 // GET request handler
 export async function GET() {
   try {
+    // //verify the request token
+    // const verificationResponse = await verifyIdToken();
+    // if (verificationResponse.status === 403) {
+    //   return NextResponse.json(verificationResponse, { status: 403 });
+    // }
+
+    // const decodedToken = verificationResponse.content;
+    // if (!decodedToken) {
+    //   return NextResponse.json(
+    //     {
+    //       message: "Invalid token",
+    //       status: 403,
+    //     },
+    //     { status: 403 }
+    //   );
+    // }
+    // const user = await firestore
+    //   .getFirestore()
+    //   .collection("user")
+    //   .where("id", "==", decodedToken.uid)
+    //   .get();
+    // const userData = user.docs[0].data() as UserDto;
+    // if (!userData.admin) {
+    //   return {
+    //     status: 403,
+    //     message: "unauthrized | only admin action",
+    //   };
+    // }
+
+    // //check if user has the premissin to access this resource
+    // const permissions = userData.permission;
+    // if (!permissions?.includes("MAKE_PAYMENT")) {
+    //   return NextResponse.json(
+    //     {
+    //       status: 403,
+    //       messaging: "Permission denied",
+    //     },
+    //     { status: 403 }
+    //   );
+    // }
     const querySnapshot = await getDocs(collection(db, "gamecategories"));
     const gameCategories: CreateGameCategoryResponseDto[] = [];
 
@@ -121,6 +162,24 @@ export async function DELETE(req: NextRequest) {
   try {
     const { id } = await req.json();
 
+    //verify the request token
+    const verificationResponse = await verifyIdToken();
+    if (verificationResponse.status !== 200) {
+      return NextResponse.json(verificationResponse, { status: 403 });
+    }
+
+    //check if user has the premissin to access this resource
+    const permissions = verificationResponse.content?.permission;
+    if (!permissions?.includes("ADMIN_DELETE_GAME_CATEGORY")) {
+      return NextResponse.json(
+        {
+          status: 403,
+          messaging: "Permission denied",
+        },
+        { status: 403 }
+      );
+    }
+
     const docRef = doc(db, "gamecategories", id);
     await deleteDoc(docRef);
 
@@ -142,4 +201,14 @@ export async function DELETE(req: NextRequest) {
       )
     );
   }
+}
+
+//expermental user dto
+interface UserDto {
+  admin: boolean;
+  permission: string[];
+  password: string;
+  phone: string;
+  username: string;
+  id: string;
 }

@@ -39,6 +39,7 @@ export default function CreateGameModal({
     clearErrors,
     setError,
   } = useForm<{ category: CreateGameCategoryResponseDto }>();
+
   const onSubmit = async ({
     category,
   }: {
@@ -84,8 +85,9 @@ export default function CreateGameModal({
   return (
     <ModalLayout setIsOpen={setIsOpen}>
       <div
+        //to give veritcal space from the top
         style={{ height: "60%" }}
-        className="  flex justify-center items-center  min-w-[20rem]"
+        className="  flex justify-center items-center  w-full"
       >
         <form
           onSubmit={handleSubmit(onSubmit)}

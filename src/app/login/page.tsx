@@ -1,12 +1,17 @@
 "use client";
 
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  sendEmailVerification,
+  signInWithCustomToken,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import { auth } from "../../utils/firebaseConfig";
+import { auth } from "../../utils/firebase/firebaseConfig";
+import * as api from "@/utils/apiServiceHelper";
 
 export default function Login() {
   const router = useRouter();
@@ -28,16 +33,19 @@ export default function Login() {
   const handleLogin = async (d: any) => {
     try {
       const { email, password } = d;
-      setLoading(true);
       const credential = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
 
-      if (credential.user) {
-        Cookies.set("loggedIn", "true");
-        Cookies.set("uid", credential.user.uid);
+      if (!credential.user.emailVerified) {
+        setModalMessage("Verify your email");
+        sendEmailVerification(credential.user);
+        setShowModal(true);
+      } else {
+        const token = await credential.user.getIdToken();
+        localStorage.setItem("token", token);
         router.push("/dashboard");
       }
     } catch (e) {
