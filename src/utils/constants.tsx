@@ -16,8 +16,11 @@ import {
   BiSolidBank,
   BiSolidMobile,
 } from "react-icons/bi";
-import { MdOutlineMoney } from "react-icons/md";
+import { MdOutlineMoney, MdVerifiedUser } from "react-icons/md";
 import { BsFilePerson } from "react-icons/bs";
+import { FaUser } from "react-icons/fa";
+import { LuServer } from "react-icons/lu";
+import { SiSecurityscorecard } from "react-icons/si";
 
 export type imageType = "profilePics" | "idcard";
 const sidebarItems: sidebarItemType[] = [
@@ -72,13 +75,18 @@ const sidebarItems: sidebarItemType[] = [
     subRoute: [
       {
         title: "Users",
-        icon: BsFilePerson,
+        icon: FaUser,
         route: "/dashboard/users",
       },
       {
         title: "Roles",
-        icon: BiArchiveOut,
         route: "/dashboard/roles",
+        icon: SiSecurityscorecard,
+      },
+      {
+        title: "Permissions",
+        route: "/dashboard/permissions",
+        icon: MdVerifiedUser,
       },
     ],
   },

@@ -3,7 +3,7 @@ import CustomePagination from "@/utils/widgets/CustomePagination";
 import GenericFilterNavbar from "@/utils/widgets/GenericFilterNavbar";
 import { useEffect, useState } from "react";
 import { FaSort } from "react-icons/fa";
-export default function RolesPage() {
+export default function PermissionsPage() {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [userIds, setUserIds] = useState<number[]>([]);
   const [isChecked, setIsChecked] = useState<Record<number, boolean>>({});
@@ -29,20 +29,16 @@ export default function RolesPage() {
   };
   return (
     <div>
-      {/* <DashboardNavbar
-        title={"Dashbaord / roles"}
-        Icon={<MdVerifiedUser size={22} className=" fill-purple" />}
-      /> */}
       <div className=" mb-8">
         <GenericFilterNavbar
           setModalOpen={setModalOpen}
           filterStrings={["username", "email"]}
-          buttonTitle={"Create Role"}
+          buttonTitle={"Create Permissions"}
         />
       </div>
       <div className="generic-table__container">
         <div className="generic-table__header">
-          <h2>Roles</h2>
+          <h2>Permissions</h2>
           {Object.values(isChecked).some((item) => item === true) && (
             <button
               type="button"

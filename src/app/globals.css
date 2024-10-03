@@ -282,3 +282,165 @@
   overflow-wrap: break-word; /* Ensure long words break to fit within the max-width */
   white-space: normal; /* Allow wrapping */
 }
+
+/* Container for the table and header */
+.generic-table__container {
+  width: 100%;
+  padding: 2rem;
+  border-radius: 15px;
+  border: 1px solid #e2e8f0;
+
+  background-color: #f9f9f9;
+}
+
+/* Styling for the table header */
+.generic-table__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.generic-table__header h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Table styling */
+.generic-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: white;
+  border-radius: 15px;
+
+  overflow: hidden;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Table head styling */
+.generic-table thead th {
+  background-color: #9a0ae4;
+  padding: 0.9rem;
+  text-align: left;
+  color: white;
+  font-weight: bold;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.generic-table thead th:first-child {
+  border-radius: 15px 0 0 0;
+}
+
+.generic-table thead th:last-child {
+  border-radius: 0 15px 0 0;
+}
+
+/* Table row styling */
+.generic-table tbody tr {
+  border-bottom: 1px solid #e2e8f0;
+  cursor: pointer;
+}
+
+.generic-table tbody tr:last-child {
+  border-bottom: none;
+}
+.generic-table tbody tr:hover {
+  background-color: var(--hover-bg-color);
+}
+
+.generic-table tbody td {
+  padding: 1rem;
+  color: #2d3748;
+}
+
+/* Input checkbox styling */
+.generic-table input[type="checkbox"] {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+/* General padding and font size adjustments */
+.generic-table td,
+.generic-table th {
+  font-size: 0.875rem;
+}
+
+/* Mobile responsive design */
+@media (max-width: 768px) {
+  .generic-table thead {
+    display: none;
+  }
+
+  .generic-table,
+  .generic-table tbody,
+  .generic-table tr,
+  .generic-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .generic-table tbody td {
+    padding-left: 50%;
+    position: relative;
+    text-align: right;
+  }
+
+  .generic-table tbody td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 50%;
+    padding-left: 1rem;
+    text-align: left;
+    font-weight: bold;
+  }
+}
+
+/* General table and container styling (same as before) */
+
+/* Sortable header styling */
+.generic-table th.sortable {
+  position: relative;
+  cursor: pointer;
+  padding-right: 2rem;
+}
+
+.generic-table th.sortable:hover {
+  background-color: #b333f3;
+}
+
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1.3rem;
+  height: 1.3rem;
+  background-color: transparent;
+  border: 2px solid;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #6b3bff;
+  border-color: #6b3bff;
+}
+
+input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 14px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -60%) rotate(45deg);
+  transition: all 0.2s ease;
+}
+
+input[type="checkbox"]:hover {
+  border-color: #4c29b8;
+}
