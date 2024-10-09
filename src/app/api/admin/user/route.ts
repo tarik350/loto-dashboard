@@ -3,11 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { getAuth, UserRecord } from "firebase-admin/auth";
 import initAdmin from "@/utils/firebase/adminConfig";
-import {
-  checkUesrPermission,
-  getUserWithEmailFromFirestore,
-  verifyIdToken,
-} from "../../helper/apiHelper";
+import { checkUesrPermission, verifyIdToken } from "../../helper/apiHelper";
 import { getFirestore } from "firebase-admin/firestore";
 import { usedDynamicAPIs } from "next/dist/server/app-render/dynamic-rendering";
 import { permission } from "process";
@@ -18,6 +14,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { auth } from "@/utils/firebase/firebaseConfig";
+import { getUserWithEmailFromFirestore } from "@/repository/userRepository";
 
 initAdmin();
 

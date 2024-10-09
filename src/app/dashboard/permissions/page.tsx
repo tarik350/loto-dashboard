@@ -1,6 +1,8 @@
 "use client";
+import CreatePermissionModal from "@/utils/modals/CreatePermissionModal";
 import CustomePagination from "@/utils/widgets/CustomePagination";
 import GenericFilterNavbar from "@/utils/widgets/GenericFilterNavbar";
+import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { FaSort } from "react-icons/fa";
 export default function PermissionsPage() {
@@ -29,6 +31,9 @@ export default function PermissionsPage() {
   };
   return (
     <div>
+      <AnimatePresence>
+        {modalOpen && <CreatePermissionModal setIsOpen={setModalOpen} />}
+      </AnimatePresence>
       <div className=" mb-8">
         <GenericFilterNavbar
           setModalOpen={setModalOpen}
@@ -36,6 +41,7 @@ export default function PermissionsPage() {
           buttonTitle={"Create Permissions"}
         />
       </div>
+
       <div className="generic-table__container">
         <div className="generic-table__header">
           <h2>Permissions</h2>

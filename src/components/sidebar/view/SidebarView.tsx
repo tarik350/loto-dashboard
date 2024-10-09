@@ -7,8 +7,8 @@ import SidebarItemList from "../widgets/SideBarItemList";
 export default function Sidebar({ className }: { className: string }) {
   const router = useRouter();
   return (
-    <nav className={` ${className}`}>
-      <div className="  h-full overflow-y-auto">
+    <nav className={`    ${className}`}>
+      <div className=" h-full overflow-auto">
         <SidebarItemList />
       </div>
       <button

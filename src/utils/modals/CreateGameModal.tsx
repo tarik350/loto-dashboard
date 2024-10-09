@@ -1,21 +1,19 @@
 "use client";
-import { AnimatePresence, motion } from "framer-motion";
 
-import { useEffect, useRef, useState } from "react";
-import ModalLayout from "./ModalLayout";
+import { getGameCategory } from "@/services/gameCategoryServices";
+import { createGame } from "@/services/gameServices";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { BiSolidDownArrow } from "react-icons/bi";
-import { httpRequestStatus } from "../constants";
-import LoadingSpiner from "../widgets/LoadingSpinner";
 import Skeleton from "react-loading-skeleton";
-import { getGameCategory } from "@/services/gameCategoryServices";
+import { httpRequestStatus } from "../constants";
 import { CreateGameCategoryResponseDto } from "../dto/createGameCategoryDto";
-import { createGame } from "@/services/gameServices";
-import { ImTelegram } from "react-icons/im";
+import LoadingSpiner from "../widgets/LoadingSpinner";
+import ModalLayout from "./ModalLayout";
 
 export default function CreateGameModal({
-  isOpen,
   setIsOpen,
+  isOpen,
 }: {
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
@@ -85,9 +83,11 @@ export default function CreateGameModal({
   return (
     <ModalLayout setIsOpen={setIsOpen}>
       <div
-        //to give veritcal space from the top
-        style={{ height: "60%" }}
-        className="  flex justify-center items-center  w-full"
+        style={{
+          height: "60%",
+          //   width: "100%",
+        }}
+        className="  flex justify-center items-center  w-full  "
       >
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -125,7 +125,7 @@ export default function CreateGameModal({
                 </button>
               )}
               {showDurationDropdown && (
-                <div className="  w-full bg-white absolute top-[3.5rem] z-50 flex flex-col  justify-start text-black">
+                <div className="  dropdown-table__container  ">
                   {gameCategories.length === 0 ? (
                     <div className=" min-h-dropdown  flex justify-center items-center ">
                       <p className=" m-auto  gradient-text-color">
@@ -133,7 +133,7 @@ export default function CreateGameModal({
                       </p>
                     </div>
                   ) : (
-                    <table className="dropdown-table">
+                    <table className="  dropdown-table  ">
                       <thead>
                         <tr>
                           <th>Ticket count</th>
@@ -199,6 +199,7 @@ export default function CreateGameModal({
               )}
             </p>
           </button>
+          <div className="tableFixHead"></div>
         </form>
       </div>
     </ModalLayout>

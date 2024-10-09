@@ -166,6 +166,7 @@
 .modal-bg {
   background-color: rgba(1, 1, 1, 0.6);
   position: absolute;
+  z-index: 10;
   top: 0;
   right: 0;
   width: 100%;
@@ -177,7 +178,8 @@
   position: absolute;
   right: 0;
   top: 0;
-  padding: 0 2rem;
+  z-index: 10;
+  padding: 0 1rem;
   margin: auto;
 }
 .modal-container-center {
@@ -242,45 +244,59 @@
   min-height: 12rem;
 }
 
+/* Container for the dropdown table */
+.dropdown-table__container {
+  max-height: 20rem;
+  overflow: auto;
+  position: absolute;
+  top: 3.5rem;
+  background-color: white;
+  color: black;
+  width: inherit;
+}
+
 /* Styles for the dropdown table */
 .dropdown-table {
   width: 100%;
   text-align: left;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
-.dropdown-table thead {
-  border-bottom: 2px solid var(--border-color); /* Bottom border for header */
+/* Table column alignment */
+.dropdown-table th,
+.dropdown-table td {
+  padding: 0.5rem;
+  width: 100%;
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+.dropdown-table thead > tr {
+  background-color: var(--soft-lavender);
 }
 
-.dropdown-table th {
-  font-weight: bold;
-  padding: 0.5rem 0rem;
-}
-
-.dropdown-table th:first-child {
-  width: 8rem; /* Smaller width for the ID column */
-}
-
-.dropdown-table tbody td {
-  cursor: pointer;
-  /* top right bottom left */
-  padding: 0.5rem 2rem 0.5rem 0rem;
-  font-weight: normal;
-}
-
-.dropdown-table tbody .row {
-  border-bottom: 1px solid var(--border-color); /* Bottom border for rows */
-}
-
-.dropdown-table tbody tr:hover {
-  background-color: var(--hover-bg-color); /* Subtle gray on hover */
-}
-
+/* Adjusted width for the first column */
+.dropdown-table th:first-child,
 .dropdown-table td:first-child {
-  word-break: break-word; /* Ensure long text wraps inside the cell */
-  overflow-wrap: break-word; /* Ensure long words break to fit within the max-width */
-  white-space: normal; /* Allow wrapping */
+  min-width: 8rem;
+}
+
+/* Bottom border for rows */
+.dropdown-table tbody .row {
+  border-bottom: 1px solid var(--hover-bg-color);
+  font: 100;
+}
+
+/* Row hover effect */
+.dropdown-table tbody tr:hover {
+  background-color: var(--lavender);
+}
+
+/* Ensure long text wraps properly */
+.dropdown-table td:last-child {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 /* Container for the table and header */
@@ -289,7 +305,6 @@
   padding: 2rem;
   border-radius: 15px;
   border: 1px solid #e2e8f0;
-
   background-color: #f9f9f9;
 }
 
@@ -313,7 +328,6 @@
   border-spacing: 0;
   background-color: white;
   border-radius: 15px;
-
   overflow: hidden;
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
 }
@@ -324,6 +338,7 @@
   padding: 0.9rem;
   text-align: left;
   color: white;
+  z-index: 0;
   font-weight: bold;
   border-bottom: 2px solid #e2e8f0;
 }

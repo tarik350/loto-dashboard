@@ -69,21 +69,6 @@ function getTypesenseClient(): Client {
   return typesense;
 }
 
-async function getUserWithEmailFromFirestore(
-  user: UserRecord
-): Promise<Record<string, any>> {
-  try {
-    const userData = await getFirestore()
-      .collection("admins")
-      .where("email", "==", user.email)
-      .limit(1)
-      .get();
-    return userData.docs[0].data();
-  } catch (error) {
-    throw error;
-  }
-}
-
 async function typesenseCollectionExists(name: string): Promise<boolean> {
   try {
     const exists = await getTypesenseClient().collections(name).exists();
@@ -101,7 +86,6 @@ export {
   createResponse,
   getTypesenseClient,
   verifyIdToken,
-  getUserWithEmailFromFirestore,
   typesenseCollectionExists,
 };
 

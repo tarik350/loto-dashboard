@@ -57,14 +57,12 @@ export async function POST(request: NextRequest) {
         await getFirestore()
           .collection("admins")
           .add({ ...addPayload, uid: user.uid });
-        //add user data to typesesnse
-        // const client = getTypesenseClient();
-        // const typesenseRes = await client
-        //   .collections("users")
-        //   .documents()
-        //   .create(addPayload);
-        // console.log("created");
-        // console.log(typesenseRes);
+        // add user data to typesesnse
+        const client = getTypesenseClient();
+        const res = await client
+          .collections("users")
+          .documents()
+          .create(addPayload);
 
         return NextResponse.json(
           { status: 201, message: "user created successfully", content: token },

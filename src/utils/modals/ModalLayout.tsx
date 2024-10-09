@@ -64,7 +64,7 @@ export default function ModalLayout({
   //   },
   // };
   return (
-    <div className="  ">
+    <div className="    ">
       <motion.div
         variants={parentVariant}
         initial="initial"

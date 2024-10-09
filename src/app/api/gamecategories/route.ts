@@ -14,11 +14,11 @@ import * as firestore from "firebase-admin/firestore";
 import {
   createResponse,
   getTypesenseClient,
-  getUserWithEmailFromFirestore,
   typesenseCollectionExists,
   verifyIdToken,
 } from "../helper/apiHelper";
 import { initTypesense } from "../helper/initTypesense";
+import { getUserWithEmailFromFirestore } from "@/repository/userRepository";
 
 //POST HANDLER
 export async function POST(request: NextRequest) {
