@@ -1,15 +1,9 @@
 import { GenericResponse } from "@/utils/types";
 import { auth } from "firebase-admin"; // Assuming Firebase Admin SDK is set up
+import { DecodedIdToken, UserRecord } from "firebase-admin/auth";
+import { getFirestore } from "firebase-admin/firestore";
 import { headers } from "next/headers";
-import {
-  cert,
-  getApps,
-  initializeApp,
-  ServiceAccount,
-} from "firebase-admin/app";
-import serviceAccountKey from "../../../../serviceAccountKey.json";
-import { DecodedIdToken } from "firebase-admin/auth";
-import { NextRequest } from "next/server";
+import Typesense, { Client } from "typesense";
 
 const createResponse = <T>(
   status: number,
@@ -61,5 +55,54 @@ const checkUesrPermission = (
 ): boolean => {
   return permissions.includes(permission);
 };
+function getTypesenseClient(): Client {
+  const typesense: Client = new Typesense.Client({
+    nodes: [
+      {
+        host: "localhost",
+        port: 9090,
+        protocol: "http",
+      },
+    ],
+    apiKey: "xyz",
+  });
+  return typesense;
+}
 
-export { verifyIdToken, createResponse, checkUesrPermission };
+async function getUserWithEmailFromFirestore(
+  user: UserRecord
+): Promise<Record<string, any>> {
+  try {
+    const userData = await getFirestore()
+      .collection("admins")
+      .where("email", "==", user.email)
+      .limit(1)
+      .get();
+    return userData.docs[0].data();
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function typesenseCollectionExists(name: string): Promise<boolean> {
+  try {
+    const exists = await getTypesenseClient().collections(name).exists();
+    if (!exists) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export {
+  checkUesrPermission,
+  createResponse,
+  getTypesenseClient,
+  verifyIdToken,
+  getUserWithEmailFromFirestore,
+  typesenseCollectionExists,
+};
+
+//get typesense cleint

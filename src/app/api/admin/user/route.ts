@@ -3,7 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { getAuth, UserRecord } from "firebase-admin/auth";
 import initAdmin from "@/utils/firebase/adminConfig";
-import { checkUesrPermission, verifyIdToken } from "../../helper/apiHelper";
+import {
+  checkUesrPermission,
+  getUserWithEmailFromFirestore,
+  verifyIdToken,
+} from "../../helper/apiHelper";
 import { getFirestore } from "firebase-admin/firestore";
 import { usedDynamicAPIs } from "next/dist/server/app-render/dynamic-rendering";
 import { permission } from "process";
@@ -45,19 +49,15 @@ export async function GET(request: NextRequest) {
     let user: UserRecord;
     //check if the user has permission to access other people's profile
     //if so grant access
+
     //else if the user does not have permission throw an error saying
     user = await getAuth().getUser(verifyResponse.content.uid);
+    const userFirestoreData = await getUserWithEmailFromFirestore(user);
 
     //get the authenticated user record from firestore
-    const userData = await getFirestore()
-      .collection("admins")
-      .where("email", "==", user.email)
-      .limit(1)
-      .get();
-
     //check if querystring is set and docs are empty
     //in production this should not happen b/c if a user has a token that means it will be registred on firestore
-    if (queryStringUid && userData.docs.length === 0) {
+    if (queryStringUid && userFirestoreData.docs.length === 0) {
       //trying to access ohter people information while not having profile informaiton
       //registered in the firestore
       return NextResponse.json(
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const permission: string[] = userData.docs[0].data()?.permissions;
+    const permission: string[] = userFirestoreData.docs[0].data()?.permissions;
     if (permission) {
       if (queryStringUid && permission.includes("ADMIN_GET_USER_PROFILE")) {
         //has permission to access other user profile

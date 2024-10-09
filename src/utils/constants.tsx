@@ -21,6 +21,7 @@ import { BsFilePerson } from "react-icons/bs";
 import { FaUser } from "react-icons/fa";
 import { LuServer } from "react-icons/lu";
 import { SiSecurityscorecard } from "react-icons/si";
+import { CollectionCreateSchema } from "typesense/lib/Typesense/Collections";
 
 export type imageType = "profilePics" | "idcard";
 const sidebarItems: sidebarItemType[] = [
@@ -98,8 +99,50 @@ const sidebarItems: sidebarItemType[] = [
   },
 ];
 
+//TYPESENSE SCHEMAS
+
+const gameCategorySchema: CollectionCreateSchema = {
+  name: "gamecategories",
+  fields: [
+    { name: "id", type: "string" },
+    { name: "categoryId", type: "string" },
+    { name: "title_en", type: "string" },
+    { name: "title_am", type: "string" },
+    { name: "duration", type: "string" },
+    { name: "winningPrize", type: "int32" },
+    { name: "secondPlacePrize", type: "int32" },
+    { name: "thirdPlacePrize", type: "int32" },
+    { name: "ticketPrice", type: "int32" },
+    { name: "numberOfTicket", type: "int32" },
+    //   { name: "createdAt", type: "string" },
+    //   { name: "updatedAt", type: "string" },
+  ],
+  default_sorting_field: "winningPrize",
+};
+
+const userSchema: CollectionCreateSchema = {
+  name: "users",
+  fields: [
+    { name: "uid", type: "string" },
+    { name: "email", type: "string" },
+    { name: "emailVerified", type: "bool" },
+    { name: "displayName", type: "string" },
+    { name: "disabled", type: "bool" },
+    { name: "lastSignInTime", type: "string" },
+    { name: "creationTime", type: "int32" },
+    { name: "lastRefreshTime", type: "string" },
+    { name: "tokensValidAfterTime", type: "string" },
+    { name: "provider_uid", type: "string" },
+    { name: "provider_displayName", type: "string" },
+    { name: "provider_email", type: "string" },
+    { name: "provider_providerId", type: "string" },
+  ],
+  // default_sorting_field: "creationTime",
+};
+
 export type httpRequestStatus = "initial" | "loading" | "success" | "error";
 export type ticketNumberStatus = "sold" | "locked" | "free";
 export type gameStatus = "started" | "completed";
 const authPages = ["login", "register"];
 export { sidebarItems, authPages };
+export { userSchema, gameCategorySchema };

@@ -33,6 +33,7 @@ export default function CreateGameCategoryForm({
       setError("duration", { message: "required" });
       return;
     }
+
     try {
       setCreateStatus("loading");
       const response = await createGameCategory(d);

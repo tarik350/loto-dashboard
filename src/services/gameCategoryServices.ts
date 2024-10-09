@@ -12,11 +12,10 @@ export async function createGameCategory(
 ): Promise<GenericResponse<{ id: number }>> {
   try {
     const response = await api.authenticatedPost({
-      url: "/api/gameCategory",
+      url: "/api/gamecategories",
       method: "POST",
-      body: {},
+      body: data,
     });
-
     const result = await response.json();
     if (!response.ok) {
       throw new Error(result.message || "Failed to create game category");
@@ -31,7 +30,7 @@ export async function getGameCategory(): Promise<
   GenericResponse<CreateGameCategoryResponseDto[]>
 > {
   try {
-    const response = await api.authenticatedGet({ url: "/api/gamecategory" });
+    const response = await api.authenticatedGet({ url: "/api/gamecategories" });
 
     const result = await response.json();
     if (!response.ok) {
@@ -50,9 +49,9 @@ export async function deleteGameCategory({
   try {
     // Pass the id in the URL
     const response = await api.authenticatedPost({
-      url: "/api/gamecategory",
+      url: "/api/gamecategories",
       method: "DELETE",
-      body: {},
+      body: { id },
     });
 
     const result = await response.json();
@@ -61,7 +60,7 @@ export async function deleteGameCategory({
     }
     return result;
   } catch (error) {
-    debugger;
+    console.log(error);
     throw error;
   }
 }

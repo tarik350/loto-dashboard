@@ -1,29 +1,51 @@
-import {
-  collection,
-  deleteDoc,
-  doc,
-  DocumentReference,
-  getDocs,
-  setDoc,
-} from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
+import "server-only";
 
 import {
   CreateGameCategoryRequestDto,
   CreateGameCategoryResponseDto,
 } from "@/utils/dto/createGameCategoryDto";
-import { db } from "@/utils/firebase/firebaseConfig";
 import { GenericResponse } from "@/utils/types";
 
-import { createResponse, verifyIdToken } from "../helper/apiHelper";
+import { gameCategorySchema } from "@/utils/constants";
+import initAdmin from "@/utils/firebase/adminConfig";
+import { getAuth } from "firebase-admin/auth";
 import * as firestore from "firebase-admin/firestore";
+import {
+  createResponse,
+  getTypesenseClient,
+  getUserWithEmailFromFirestore,
+  typesenseCollectionExists,
+  verifyIdToken,
+} from "../helper/apiHelper";
+import { initTypesense } from "../helper/initTypesense";
 
 //POST HANDLER
 export async function POST(request: NextRequest) {
+  initAdmin();
+  if (!(await typesenseCollectionExists("gamecategories"))) {
+    await initTypesense(gameCategorySchema);
+  }
+  //  else {
+  //   await deleteTypesenseSchema("gamecategories");
+  //   await initTypesense(gameCategorySchema);
+  // }
+
   try {
-    // Parse the JSON body
+    const decoded = await verifyIdToken();
+    if (decoded.status === 403) {
+      return NextResponse.json(decoded, { status: 403 });
+    }
+
     const data: CreateGameCategoryRequestDto = await request.json();
 
+    // Parse the JSON body
+    if (!data) {
+      return NextResponse.json(
+        { messge: "data is empty", status: 400 },
+        { status: 400 }
+      );
+    }
     // Validate the request body
     const {
       title,
@@ -35,6 +57,25 @@ export async function POST(request: NextRequest) {
       numberOfTicket,
     }: CreateGameCategoryRequestDto = data;
 
+    if (
+      !title ||
+      !duration ||
+      !winningPrize ||
+      !secondPlacePrize ||
+      !thirdPlacePrize ||
+      !ticketPrice ||
+      !numberOfTicket
+    ) {
+      return NextResponse.json(
+        {
+          message: "Validation error",
+          error:
+            "all fields title , duration , winningPrize , secondPlacePrize , thirdPlacePrize , ticketPrice , numberOfTicket are required",
+          status: 400,
+        },
+        { status: 400 }
+      );
+    }
     if (
       !title?.en ||
       !title?.am ||
@@ -53,21 +94,49 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(response, { status: 400 });
     }
 
-    const docRef: DocumentReference = doc(collection(db, "gamecategories"));
-
     // Store the data in Firestore
-    await setDoc(docRef, { ...data, id: docRef.id });
 
-    // Return success response
-    const response: GenericResponse<Record<string, any>> = {
-      status: 201,
-      message: "Game category created successfully",
-      content: { gameCategoryId: docRef.id },
+    const payload = {
+      ...data,
+      // id: docRef.id,
+      createdAt: firestore.FieldValue.serverTimestamp(), // Use FieldValue for timestamps
+      updatedAt: firestore.FieldValue.serverTimestamp(),
+    };
+    const docref = await firestore
+      .getFirestore()
+      .collection("gamecategories")
+      .add(payload);
+    docref.update({ id: docref.id });
+
+    const client = getTypesenseClient();
+    const typesensePayload: TypesenseGameCategoryDto = {
+      id: docref.id,
+      winningPrize: parseInt(payload.winningPrize.toString(), 10),
+      secondPlacePrize: parseInt(payload.secondPlacePrize.toString(), 10),
+      thirdPlacePrize: parseInt(payload.thirdPlacePrize.toString(), 10),
+      ticketPrice: parseInt(payload.ticketPrice.toString(), 10),
+      numberOfTicket: parseInt(payload.numberOfTicket.toString(), 10),
+      title_en: payload.title.en,
+      title_am: payload.title.am,
+      categoryId: docref.id,
+      duration: payload.duration,
     };
 
-    return NextResponse.json(response, { status: 201 });
+    await client
+      .collections("gamecategories")
+      .documents()
+      .upsert(typesensePayload);
+
+    return NextResponse.json(
+      {
+        status: 201,
+        message: "Game category created successfully",
+        content: { gameCategoryId: docref.id },
+      },
+      { status: 201 }
+    );
   } catch (error: any) {
-    console.error("Error creating game category:", error);
+    console.error(error);
 
     // Return error response
     const response: GenericResponse<string> = {
@@ -83,62 +152,29 @@ export async function POST(request: NextRequest) {
 // GET request handler
 export async function GET() {
   try {
-    // //verify the request token
-    // const verificationResponse = await verifyIdToken();
-    // if (verificationResponse.status === 403) {
-    //   return NextResponse.json(verificationResponse, { status: 403 });
-    // }
+    initAdmin();
 
-    // const decodedToken = verificationResponse.content;
-    // if (!decodedToken) {
-    //   return NextResponse.json(
-    //     {
-    //       message: "Invalid token",
-    //       status: 403,
-    //     },
-    //     { status: 403 }
-    //   );
-    // }
-    // const user = await firestore
-    //   .getFirestore()
-    //   .collection("user")
-    //   .where("id", "==", decodedToken.uid)
-    //   .get();
-    // const userData = user.docs[0].data() as UserDto;
-    // if (!userData.admin) {
-    //   return {
-    //     status: 403,
-    //     message: "unauthrized | only admin action",
-    //   };
-    // }
+    const snapshot = await firestore
+      .getFirestore()
+      .collection("gamecategories")
+      .get();
 
-    // //check if user has the premissin to access this resource
-    // const permissions = userData.permission;
-    // if (!permissions?.includes("MAKE_PAYMENT")) {
-    //   return NextResponse.json(
-    //     {
-    //       status: 403,
-    //       messaging: "Permission denied",
-    //     },
-    //     { status: 403 }
-    //   );
-    // }
-    const querySnapshot = await getDocs(collection(db, "gamecategories"));
     const gameCategories: CreateGameCategoryResponseDto[] = [];
 
-    querySnapshot.forEach((doc) => {
+    snapshot.forEach((doc) => {
       gameCategories.push({
-        id: doc.id,
-        title: doc.data().title,
-        duration: doc.data().duration,
-        winningPrize: doc.data().winningPrize,
-        secondPlacePrize: doc.data().secondPlacePrize,
-        thirdPlacePrize: doc.data().thirdPlacePrize,
-        ticketPrice: doc.data().ticketPrice,
-        numberOfTicket: doc.data().numberOfTicket,
+        id: doc?.id,
+        title: doc.data()?.title,
+        duration: doc.data()?.duration,
+        winningPrize: doc.data()?.winningPrize,
+        secondPlacePrize: doc.data()?.secondPlacePrize,
+        thirdPlacePrize: doc.data()?.thirdPlacePrize,
+        ticketPrice: doc.data()?.ticketPrice,
+        numberOfTicket: doc.data()?.numberOfTicket,
+        createdAt: doc.data()?.createdAt,
+        updatedAt: doc.data()?.updatedAt,
       });
     });
-
     // Return success response with game categories
     return NextResponse.json<GenericResponse<CreateGameCategoryResponseDto[]>>({
       status: 200,
@@ -160,16 +196,33 @@ export async function GET() {
 //DELETE HANDLER
 export async function DELETE(req: NextRequest) {
   try {
+    initAdmin();
     const { id } = await req.json();
 
     //verify the request token
-    const verificationResponse = await verifyIdToken();
-    if (verificationResponse.status !== 200) {
-      return NextResponse.json(verificationResponse, { status: 403 });
+    const decoded = await verifyIdToken();
+    if (decoded.status === 403) {
+      return NextResponse.json(decoded, { status: 403 });
     }
+    if (!decoded.content) {
+      return NextResponse.json(
+        {
+          message: " Invalid token",
+          status: 403,
+        },
+        { status: 403 }
+      );
+    }
+    //get authenticated user
+    const user = await getAuth().getUser(decoded.content.uid);
+
+    //get user permissions
+    const permissions = await getUserWithEmailFromFirestore(user).then(
+      (value) => value.permissions
+    );
 
     //check if user has the premissin to access this resource
-    const permissions = verificationResponse.content?.permission;
+    // const permissions = userFirestoreData;
     if (!permissions?.includes("ADMIN_DELETE_GAME_CATEGORY")) {
       return NextResponse.json(
         {
@@ -180,35 +233,53 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    const docRef = doc(db, "gamecategories", id);
-    await deleteDoc(docRef);
+    // const docRef = doc(db, "gamecategories", id);
 
-    return NextResponse.json(
-      createResponse<Record<string, string>>(
-        200,
-        "Game category deleted successfully",
-        { id }
-      )
-    );
+    const res = await firestore
+      .getFirestore()
+      .doc(`gamecategories/${id}`)
+      .delete();
+
+    console.log(res);
+    if (res.isEqual(res)) {
+      //successfully deleted
+      return NextResponse.json(
+        createResponse<Record<string, string>>(
+          200,
+          "Game category deleted successfully",
+          { id }
+        )
+      );
+    } else {
+      return NextResponse.json(
+        { status: 500, message: "error while deleting game category" },
+        { status: 500 }
+      );
+    }
+    // await deleteDoc(docRef);
   } catch (error: any) {
     return NextResponse.json(
-      createResponse<Record<string, any>>(
-        500,
-        "Failed to delete game category",
-        {
-          error: error.message,
-        }
-      )
+      {
+        message: "Failed to delete game category",
+        error: error.toString(),
+        status: 500,
+      },
+      { status: 500 }
     );
   }
 }
 
-//expermental user dto
-interface UserDto {
-  admin: boolean;
-  permission: string[];
-  password: string;
-  phone: string;
-  username: string;
+interface TypesenseGameCategoryDto {
   id: string;
+  title_en: string;
+  title_am: string;
+  categoryId: string;
+  duration: "hourly" | "daily" | "weekly" | "monthly";
+  winningPrize: number;
+  secondPlacePrize: number;
+  thirdPlacePrize: number;
+  ticketPrice: number;
+  numberOfTicket: number;
+  // createdAt: string;
+  // updatedAt: string;
 }

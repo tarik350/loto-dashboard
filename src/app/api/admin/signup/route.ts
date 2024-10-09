@@ -6,9 +6,20 @@ import { getAuth } from "firebase-admin/auth";
 import { error } from "console";
 import { getFirestore } from "firebase-admin/firestore";
 import { validateSignupRequestPaylaod } from "../../helper/validationHelper";
+import {
+  getTypesenseClient,
+  typesenseCollectionExists,
+} from "../../helper/apiHelper";
+import initAdmin from "@/utils/firebase/adminConfig";
+import { initTypesense } from "../../helper/initTypesense";
+import { userSchema } from "@/utils/constants";
 
 export async function POST(request: NextRequest) {
   try {
+    initAdmin();
+    if (!(await typesenseCollectionExists("users"))) {
+      await initTypesense(userSchema);
+    }
     const { email, password, username } = await request.json();
     const validation = validateSignupRequestPaylaod(request);
     if (!validation) {
@@ -36,6 +47,7 @@ export async function POST(request: NextRequest) {
     const transactionResponse = await getFirestore().runTransaction(
       async (t) => {
         const user = await getAuth().createUser(userPayload);
+        console.log(user);
 
         const token = await getAuth().createCustomToken(user.uid, {
           role: "admin",
@@ -45,6 +57,15 @@ export async function POST(request: NextRequest) {
         await getFirestore()
           .collection("admins")
           .add({ ...addPayload, uid: user.uid });
+        //add user data to typesesnse
+        // const client = getTypesenseClient();
+        // const typesenseRes = await client
+        //   .collections("users")
+        //   .documents()
+        //   .create(addPayload);
+        // console.log("created");
+        // console.log(typesenseRes);
+
         return NextResponse.json(
           { status: 201, message: "user created successfully", content: token },
           { status: 201 }

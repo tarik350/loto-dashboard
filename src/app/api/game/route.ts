@@ -77,13 +77,17 @@ export async function POST(request: NextRequest) {
     await Promise.all(ticketPromises);
 
     // Return success response
-    const response = {
-      status: 201,
-      message: "Game created successfully",
-      content: { gameId: docRef.id },
-    };
 
-    return NextResponse.json(response, { status: 201 });
+    //write the game to typesense
+
+    return NextResponse.json(
+      {
+        status: 201,
+        message: "Game created successfully",
+        content: { gameId: docRef.id },
+      },
+      { status: 201 }
+    );
   } catch (error: any) {
     console.error("Error creating game:", error);
 

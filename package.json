@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@babel/runtime": "^7.25.7",
     "@headlessui/react": "^1.7.18",
     "@types/uuid": "^10.0.0",
+    "babel-runtime": "^6.26.0",
     "firebase": "^10.12.5",
     "firebase-admin": "^12.6.0",
     "framer-motion": "^11.3.24",
@@ -25,6 +27,7 @@
     "react-loading-skeleton": "^3.4.0",
     "react-paginate": "^8.2.0",
     "server-only": "^0.0.1",
+    "typesense": "^1.8.2",
     "uuid": "^10.0.0"
   },
   "devDependencies": {

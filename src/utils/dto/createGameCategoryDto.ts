@@ -9,6 +9,8 @@ interface CreateGameCategoryDto {
   thirdPlacePrize: number;
   ticketPrice: number;
   numberOfTicket: number;
+  createdAt: string;
+  updatedAt: string;
 }
 export interface CreateGameCategoryRequestDto extends CreateGameCategoryDto {}
 export interface CreateGameCategoryResponseDto extends CreateGameCategoryDto {
