@@ -1,3 +1,5 @@
+import Cookies from "js-cookie";
+
 interface ApiProps {
   url: string;
 }
@@ -14,11 +16,14 @@ export async function authenticatedGet({ url, params }: GetApiProps) {
     if (params) {
       url = url + new URLSearchParams(params);
     }
+
+    const token = Cookies.get("token");
+
     const response = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     return response;
@@ -28,11 +33,13 @@ export async function authenticatedGet({ url, params }: GetApiProps) {
 }
 export async function authenticatedPost({ url, method, body }: PostApiProps) {
   try {
+    const token = Cookies.get("token");
+
     const response = await fetch(url, {
       method: method,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(body),
     });

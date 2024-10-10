@@ -69,7 +69,7 @@ export default function Register() {
 
         const token = await credential.user.getIdToken();
 
-        localStorage.setItem("token", token);
+        Cookies.set("token", token);
       }
 
       // const credential = await createUserWithEmailAndPassword(

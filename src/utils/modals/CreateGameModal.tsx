@@ -10,6 +10,7 @@ import { httpRequestStatus } from "../constants";
 import { CreateGameCategoryResponseDto } from "../dto/createGameCategoryDto";
 import LoadingSpiner from "../widgets/LoadingSpinner";
 import ModalLayout from "./ModalLayout";
+import style from "@/styles/table.module.css";
 
 export default function CreateGameModal({
   setIsOpen,
@@ -82,13 +83,7 @@ export default function CreateGameModal({
 
   return (
     <ModalLayout setIsOpen={setIsOpen}>
-      <div
-        style={{
-          height: "60%",
-          //   width: "100%",
-        }}
-        className="  flex justify-center items-center  w-full  "
-      >
+      <div className="create-gamemodal__container ">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className=" create-category__sidebar__container min-w-full flex"
@@ -125,7 +120,7 @@ export default function CreateGameModal({
                 </button>
               )}
               {showDurationDropdown && (
-                <div className="  dropdown-table__container  ">
+                <div className={style.table__container}>
                   {gameCategories.length === 0 ? (
                     <div className=" min-h-dropdown  flex justify-center items-center ">
                       <p className=" m-auto  gradient-text-color">
@@ -133,7 +128,7 @@ export default function CreateGameModal({
                       </p>
                     </div>
                   ) : (
-                    <table className="  dropdown-table  ">
+                    <table className={style.table}>
                       <thead>
                         <tr>
                           <th>Ticket count</th>
@@ -155,22 +150,17 @@ export default function CreateGameModal({
                           >
                             <td>{item.numberOfTicket}</td>
                             <td>
-                              <span className="block">• {item.title.en}</span>{" "}
-                              <br />
-                              <span className="block">
-                                • {item.title.am}
-                              </span>{" "}
+                              <span className="">• {item.title.en}</span> <br />
+                              <span className="">• {item.title.am}</span>{" "}
                             </td>
                             <td>
-                              <span className="block">
-                                1• {item.winningPrize}
-                              </span>{" "}
+                              <span className="">1• {item.winningPrize}</span>{" "}
                               <br />
-                              <span className="block">
+                              <span className="">
                                 2• {item.secondPlacePrize}
                               </span>{" "}
                               <br />
-                              <span className="block">
+                              <span className="">
                                 3• {item.thirdPlacePrize}
                               </span>{" "}
                             </td>

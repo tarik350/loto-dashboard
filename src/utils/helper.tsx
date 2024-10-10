@@ -112,6 +112,9 @@ export const getTableContentForGameCategory = ({
   } else {
     return response?.map((item, index) => (
       <tr key={index} className="text-center">
+        <td className="p-3">
+          <input type="checkbox" />
+        </td>
         <td className="p-3">{item.id}</td>
         {/* max-w-[15rem] */}
         <td className="p-3 flex flex-col justify-start items-start  text-start">

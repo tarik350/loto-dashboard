@@ -45,7 +45,7 @@ export default function Login() {
         setShowModal(true);
       } else {
         const token = await credential.user.getIdToken();
-        localStorage.setItem("token", token);
+        Cookies.set("token", token);
         router.push("/dashboard");
       }
     } catch (e) {

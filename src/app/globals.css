@@ -128,7 +128,20 @@
 }
 
 .create-category__sidebar__container {
-  @apply flex flex-col z-10 gap-2 px-2;
+  min-width: 100%;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  gap: 1rem;
+  padding: 0 1rem;
+  margin: auto 0;
+}
+.create-gamemodal__container {
+  margin: auto 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50%;
 }
 .create-category__sidebar__container label {
   @apply text-white font-[600] grid gap-2 items-center;
@@ -303,8 +316,6 @@
 .generic-table__container {
   width: 100%;
   padding: 2rem;
-  border-radius: 15px;
-  border: 1px solid #e2e8f0;
   background-color: #f9f9f9;
 }
 
@@ -370,7 +381,7 @@
 }
 
 /* Input checkbox styling */
-.generic-table input[type="checkbox"] {
+input[type="checkbox"] {
   transform: scale(1.2);
   cursor: pointer;
 }
@@ -458,4 +469,8 @@ input[type="checkbox"]:checked::after {
 
 input[type="checkbox"]:hover {
   border-color: #4c29b8;
+}
+
+.subtle_boxshadow {
+  box-shadow: 0.1rem 0.1rem 2rem 0.5rem rgba(0, 0, 0, 0.1);
 }

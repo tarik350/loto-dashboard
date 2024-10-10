@@ -1,0 +1,87 @@
+.table__container {
+  max-height: 20rem;
+  overflow: auto;
+  width: inherit;
+  position: absolute;
+  top: 4rem;
+  color: black;
+  background-color: white;
+  font-weight: 200;
+}
+.table__container__highlight {
+  margin: 2rem 0;
+  border-radius: 2rem;
+  padding: 1rem 2rem;
+  background-color: var(--hover-bg-color);
+}
+.table__container__highlight div h2 {
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+.table__container__fullheight {
+  margin: 1.5rem 0;
+  max-height: 40rem;
+  overflow: auto;
+  width: 100%;
+  box-shadow: 0.1rem 0.1rem 2rem 0.5rem rgba(0, 0, 0, 0.1);
+  border-radius: 1.5rem;
+  position: relative;
+  border-bottom: 0.2rem solid var(--purple);
+  color: black;
+  background-color: white;
+}
+
+.table {
+  border-collapse: collapse;
+  min-width: 100%;
+  font-size: 0.9rem;
+}
+.table thead tr {
+  background-color: var(--purple);
+  color: white;
+  z-index: 1;
+}
+
+.table thead tr {
+  position: sticky;
+  top: 0;
+}
+.table tbody td:first-child {
+  max-width: 1rem;
+}
+
+.table th,
+.table td {
+  padding: 1rem 0.5rem;
+  text-align: start;
+}
+.table tbody tr {
+  border-bottom: 2px solid var(--border-color);
+}
+.table tbody tr:nth-of-type(even) {
+  background-color: var(--hover-bg-color);
+}
+
+.table tbody tr:hover {
+  background-color: var(--soft-lavender);
+  cursor: pointer;
+}
+
+.table thead th:hover {
+  background-color: var(--dark-purple);
+  /* color: var(--purple); */
+  cursor: pointer;
+}
+.table tbody td:first-child,
+.table thead th:first-child {
+  width: 4rem;
+  max-width: 4rem;
+  padding-left: 1rem;
+}
+
+.table tbody td {
+  max-width: 8 rem; /* Adjust to your desired max width */
+  word-wrap: break-word; /* Break long words to wrap within the max-width */
+  white-space: normal; /* Allow content to wrap onto multiple lines */
+  vertical-align: top; /* Align text at the start of each cell */
+}

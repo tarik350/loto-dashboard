@@ -12,8 +12,9 @@ import ModalLayout from "./ModalLayout";
 import { authenticatedGet, authenticatedPost } from "../apiServiceHelper";
 import { GenericResponse } from "../types";
 import { settingDto } from "../dto/settingDto";
+import Skeleton from "react-loading-skeleton";
 
-type PermissionPayload = { permissionCategory: string; permissionName: string };
+type PermissionPayload = { category: string; name: string };
 export default function CreatePermissionModal({
   setIsOpen,
 }: {
@@ -31,6 +32,7 @@ export default function CreatePermissionModal({
   const [permissionCategories, setPermissionCategories] = useState<string[]>(
     []
   );
+
   const {
     register,
     handleSubmit,
@@ -52,11 +54,8 @@ export default function CreatePermissionModal({
       console.log(d);
       const data: GenericResponse<string> = await response.json();
       if (data.status === 200) {
-        debugger;
       }
-    } catch (error) {
-      debugger;
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -100,31 +99,31 @@ export default function CreatePermissionModal({
           <label className=" ">
             Permission Category
             <div className="relative">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowDurationDropdown(!showDurationDropdown);
-                }}
-                className=" flex justify-between items-center "
-              >
-                {fetchStatus === "loading" ? (
-                  <LoadingSpiner dimension={20} />
-                ) : (
+              {fetchStatus === "loading" ? (
+                <Skeleton baseColor="#d1d5db" height={50} />
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowDurationDropdown(!showDurationDropdown);
+                  }}
+                  className=" flex justify-between items-center "
+                >
                   <p
                     className={`${
-                      getValues("permissionCategory")
-                        ? "text-black "
-                        : "text-gray-400"
+                      getValues("category") ? "text-black " : "text-gray-400"
                     } font-[500]`}
                   >
-                    {getValues("permissionCategory") ?? "Select a category"}
+                    {getValues("category")
+                      ? `${getValues("category")}`
+                      : "Select Game Category"}
                   </p>
-                )}
-                <BiSolidDownArrow
-                  className="fill-purple text-purple"
-                  size={20}
-                />
-              </button>
+                  <BiSolidDownArrow
+                    className="fill-purple text-purple"
+                    size={20}
+                  />
+                </button>
+              )}
               {showDurationDropdown && permissionCategories.length > 0 && (
                 <div className=" h-max w-full bg-white absolute top-[3.5rem] z-50 flex flex-col  justify-start text-black">
                   <ul className="  ">
@@ -132,7 +131,7 @@ export default function CreatePermissionModal({
                       return (
                         <li
                           onClick={() => {
-                            setValue("permissionCategory", item);
+                            setValue("category", item);
                           }}
                           className=" "
                           key={index}
@@ -144,7 +143,7 @@ export default function CreatePermissionModal({
                   </ul>
                 </div>
               )}
-              {errors.permissionCategory && (
+              {errors.category && (
                 <p className=" text-red-500 font-[500] ">required</p>
               )}
             </div>
@@ -153,11 +152,11 @@ export default function CreatePermissionModal({
             Permission Name
             <p>
               <input
-                {...register("permissionName", { required: true })}
+                {...register("name", { required: true })}
                 type="text"
                 placeholder="Permission Name"
               />
-              {errors.permissionName && (
+              {errors.name && (
                 <p className=" text-red-500 font-[500] ">required</p>
               )}
             </p>
@@ -173,7 +172,6 @@ export default function CreatePermissionModal({
               )}
             </p>
           </button>
-          <div className="tableFixHead"></div>
         </form>
       </div>
     </ModalLayout>

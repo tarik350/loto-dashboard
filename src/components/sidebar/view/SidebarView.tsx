@@ -13,7 +13,7 @@ export default function Sidebar({ className }: { className: string }) {
       </div>
       <button
         onClick={() => {
-          localStorage.clear();
+          Cookies.remove("token");
           router.push("/login");
         }}
         className=" mx-auto my-8 bg-white  text-black h-12 w-max px-12 rounded-xl"
