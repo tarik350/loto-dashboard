@@ -17,5 +17,6 @@ export interface SvgProps extends React.SVGProps<SVGSVGElement> {
 export interface GenericResponse<T> {
   status: number;
   message: string;
-  content: T | null;
+  data: T | null;
+  error?: string;
 }

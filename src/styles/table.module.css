@@ -7,12 +7,14 @@
   color: black;
   background-color: white;
   font-weight: 200;
+  scroll-snap-type: y proximity;
 }
 .table__container__highlight {
   margin: 2rem 0;
   border-radius: 2rem;
   padding: 1rem 2rem;
   background-color: var(--hover-bg-color);
+  border: var(--border-color);
 }
 .table__container__highlight div h2 {
   font-weight: 600;
@@ -29,23 +31,23 @@
   border-bottom: 0.2rem solid var(--purple);
   color: black;
   background-color: white;
+  scroll-snap-type: y mandatory;
 }
 
 .table {
   border-collapse: collapse;
   min-width: 100%;
   font-size: 0.9rem;
+  scroll-snap-type: y mandatory;
 }
 .table thead tr {
   background-color: var(--purple);
   color: white;
   z-index: 1;
-}
-
-.table thead tr {
   position: sticky;
   top: 0;
 }
+
 .table tbody td:first-child {
   max-width: 1rem;
 }
@@ -57,6 +59,8 @@
 }
 .table tbody tr {
   border-bottom: 2px solid var(--border-color);
+  scroll-snap-align: start;
+  scroll-margin-top: 3.7rem; /* Adjust this value based on your table header height */
 }
 .table tbody tr:nth-of-type(even) {
   background-color: var(--hover-bg-color);

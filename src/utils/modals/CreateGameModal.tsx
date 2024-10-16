@@ -73,7 +73,7 @@ export default function CreateGameModal({
         const response = await getGameCategory();
         if (response.status === 200) {
           setFetchStatus("success");
-          setGameCategories(response.content!);
+          setGameCategories(response.data!);
         }
       } catch (error) {
         setFetchStatus("error");

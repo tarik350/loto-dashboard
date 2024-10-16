@@ -474,3 +474,12 @@ input[type="checkbox"]:hover {
 .subtle_boxshadow {
   box-shadow: 0.1rem 0.1rem 2rem 0.5rem rgba(0, 0, 0, 0.1);
 }
+
+.dropdown {
+  background-color: white;
+  height: max-content;
+  overflow: auto;
+  width: 100%;
+  position: absolute;
+  top: 4rem;
+}

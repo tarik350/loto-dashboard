@@ -38,8 +38,8 @@ export async function authenticatedPost({ url, method, body }: PostApiProps) {
     const response = await fetch(url, {
       method: method,
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
     });

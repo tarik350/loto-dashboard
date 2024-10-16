@@ -23,5 +23,14 @@ export async function GET(request: NextRequest) {
     );
     // if (firestoreUserData.permissions.includes("ADMIN_SETTING_GET")) {
     // }
-  } catch (error) {}
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        status: 500,
+        message: "Internal Server Error",
+        error: error.toString(),
+      },
+      { status: 500 }
+    );
+  }
 }

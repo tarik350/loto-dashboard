@@ -58,8 +58,8 @@ export default function Register() {
         body: { email, password, username },
       });
       const data: GenericResponse<string> = await resposen.json();
-      if (data.status === 201 && data.content) {
-        const credential = await signInWithCustomToken(auth, data.content);
+      if (data.status === 201 && data.data) {
+        const credential = await signInWithCustomToken(auth, data.data);
         if (!credential.user.emailVerified) {
           sendEmailVerification(credential.user);
           setModalMessage("please verify your email and login again");
@@ -114,7 +114,7 @@ export default function Register() {
     >
       {showModal && modalMessage && (
         <div className="modal" onClick={handleModalToggle}>
-          <div className="modal-content" onClick={handleModalClick}>
+          <div className="modal-data" onClick={handleModalClick}>
             <p className=" font-[700] text-lg text-red-500">{modalMessage}</p>
           </div>
         </div>

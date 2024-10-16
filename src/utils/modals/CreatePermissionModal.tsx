@@ -1,86 +1,108 @@
 "use client";
 
-import { getGameCategory } from "@/services/gameCategoryServices";
-import { createGame } from "@/services/gameServices";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { BiSolidDownArrow } from "react-icons/bi";
-import { httpRequestStatus } from "../constants";
-import { CreateGameCategoryResponseDto } from "../dto/createGameCategoryDto";
 import LoadingSpiner from "../widgets/LoadingSpinner";
 import ModalLayout from "./ModalLayout";
-import { authenticatedGet, authenticatedPost } from "../apiServiceHelper";
-import { GenericResponse } from "../types";
-import { settingDto } from "../dto/settingDto";
-import Skeleton from "react-loading-skeleton";
 
-type PermissionPayload = { category: string; name: string };
+import { permissionApi } from "@/store/permissionApi";
+import Skeleton from "react-loading-skeleton";
+import {
+  CategoryDto,
+  PermissionDto,
+  PermissionRequestDto,
+} from "../dto/permissionDto";
+
+// type PermissionPayload = { categoryId: PermissionCategoryDto; name: string };
 export default function CreatePermissionModal({
   setIsOpen,
 }: {
   setIsOpen: (value: boolean) => void;
 }) {
-  const [showDurationDropdown, setShowDurationDropdown] =
-    useState<boolean>(false);
-  const [createStatus, setCreateStatus] =
-    useState<httpRequestStatus>("initial");
-  const [fetchStatus, setFetchStatus] = useState<httpRequestStatus>("initial");
-  const [gameCategories, setGameCategories] = useState<
-    CreateGameCategoryResponseDto[]
-  >([]);
+  //query
+  const { data, isLoading, isSuccess, isError, error } =
+    permissionApi.useGetPermissionCategoriesQuery();
 
-  const [permissionCategories, setPermissionCategories] = useState<string[]>(
-    []
-  );
+  //mutation
+  const [createPermission, { isLoading: createLoading }] =
+    permissionApi.useCreatePermissionMutation();
+
+  //states
+  const [permissionCategories, setPermissionCategories] = useState<
+    CategoryDto[] | undefined
+  >(undefined);
+  const [showCategoryDropdown, setShowCategoryDropdown] =
+    useState<boolean>(false);
+  const [selectedCategory, setSelectedCategory] = useState<
+    CategoryDto | undefined
+  >(undefined);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    getValues,
-    reset,
     setValue,
     clearErrors,
     setError,
-  } = useForm<PermissionPayload>();
+  } = useForm<PermissionRequestDto>();
 
-  const onSubmit = async (d: PermissionPayload) => {
+  const onSubmit = async (data: PermissionRequestDto) => {
     try {
-      const response = await authenticatedPost({
-        url: "/api/admin/permission",
-        body: d,
-        method: "POST",
-      });
-      console.log(d);
-      const data: GenericResponse<string> = await response.json();
-      if (data.status === 200) {
+      const { categoryId, description, name } = data;
+      if (!categoryId) {
+        setError("categoryId", { message: "required" });
+        return;
       }
-    } catch (error) {}
+      const response = await createPermission({
+        categoryId,
+        description,
+        name,
+      }).unwrap();
+      if (response.status === 200) {
+        //todo show success some thing
+      }
+    } catch (error) {
+      //todo show error something
+    }
   };
 
   useEffect(() => {
-    reset();
-    (async () => {
-      try {
-        setFetchStatus("loading");
-        const response = await getGameCategory();
-        const res = await authenticatedGet({
-          url: "/api/admin/settings",
-        });
-        const settings: GenericResponse<settingDto> = await res.json();
-
-        if (settings) {
-          setPermissionCategories(settings.content?.permissionCategories!);
-        }
-        if (response.status === 200) {
-          setFetchStatus("success");
-          setGameCategories(response.content!);
-        }
-      } catch (error) {
-        setFetchStatus("error");
-      }
-    })();
-  }, []);
+    if (isSuccess && data) {
+      setPermissionCategories(data?.data!);
+    }
+  }, [isSuccess, data, isLoading]);
+  const getDropdownView = () => {
+    if (!isLoading && permissionCategories && permissionCategories.length > 0) {
+      return (
+        <div className=" dropdown">
+          <ul className="  ">
+            {permissionCategories?.map((item, index) => {
+              return (
+                <li
+                  onClick={() => {
+                    setValue("categoryId", item.id);
+                    clearErrors("categoryId");
+                    setSelectedCategory(item);
+                  }}
+                  className=" "
+                  key={index}
+                >
+                  {item.name}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      );
+    }
+    if (isLoading) {
+      return <div className=" dropdown">Loading</div>;
+    }
+    if (isError) {
+      return <div>{error.toString()}</div>;
+    }
+  };
 
   return (
     <ModalLayout setIsOpen={setIsOpen}>
@@ -99,23 +121,23 @@ export default function CreatePermissionModal({
           <label className=" ">
             Permission Category
             <div className="relative">
-              {fetchStatus === "loading" ? (
+              {isLoading ? (
                 <Skeleton baseColor="#d1d5db" height={50} />
               ) : (
                 <button
                   type="button"
                   onClick={() => {
-                    setShowDurationDropdown(!showDurationDropdown);
+                    setShowCategoryDropdown(!showCategoryDropdown);
                   }}
                   className=" flex justify-between items-center "
                 >
                   <p
                     className={`${
-                      getValues("category") ? "text-black " : "text-gray-400"
+                      selectedCategory ? "text-black " : "text-gray-400"
                     } font-[500]`}
                   >
-                    {getValues("category")
-                      ? `${getValues("category")}`
+                    {selectedCategory
+                      ? `${selectedCategory.name}`
                       : "Select Game Category"}
                   </p>
                   <BiSolidDownArrow
@@ -124,26 +146,9 @@ export default function CreatePermissionModal({
                   />
                 </button>
               )}
-              {showDurationDropdown && permissionCategories.length > 0 && (
-                <div className=" h-max w-full bg-white absolute top-[3.5rem] z-50 flex flex-col  justify-start text-black">
-                  <ul className="  ">
-                    {permissionCategories.map((item, index) => {
-                      return (
-                        <li
-                          onClick={() => {
-                            setValue("category", item);
-                          }}
-                          className=" "
-                          key={index}
-                        >
-                          {item}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
-              {errors.category && (
+              {getDropdownView()}
+              {/* {showCategoryDropdown && <div className=" dropdown   ">asdf</div>} */}
+              {errors.categoryId && (
                 <p className=" text-red-500 font-[500] ">required</p>
               )}
             </div>
@@ -161,9 +166,22 @@ export default function CreatePermissionModal({
               )}
             </p>
           </label>
+          <label className=" ">
+            Permission Description
+            <p>
+              <input
+                {...register("description", { required: false })}
+                type="text"
+                placeholder="Permission Description (optional) "
+              />
+              {/* {errors.description && (
+                <p className=" text-red-500 font-[500] ">required</p>
+              )} */}
+            </p>
+          </label>
           <button type="submit" className="  mt-4 min-h-[3rem]">
             <p className=" gradient-text-color">
-              {createStatus === "loading" ? (
+              {createLoading ? (
                 <div className=" flex justify-center items-center">
                   <LoadingSpiner dimension={30} />
                 </div>

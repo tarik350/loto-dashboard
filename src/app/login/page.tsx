@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { auth } from "../../utils/firebase/firebaseConfig";
 import * as api from "@/utils/apiServiceHelper";
+import { authApi } from "@/store/authApi";
 
 export default function Login() {
   const router = useRouter();
@@ -30,24 +31,25 @@ export default function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  const [login] = authApi.useLoginMutation();
   const handleLogin = async (d: any) => {
     try {
       const { email, password } = d;
-      const credential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      // const credential = await signInWithEmailAndPassword(
+      //   auth,
+      //   email,
+      //   password
+      // );
+      const response = await login({ email, password }).unwrap();
+      Cookies.set("token", response?.data?.token!);
+      router.push("/dashboard");
 
-      if (!credential.user.emailVerified) {
-        setModalMessage("Verify your email");
-        sendEmailVerification(credential.user);
-        setShowModal(true);
-      } else {
-        const token = await credential.user.getIdToken();
-        Cookies.set("token", token);
-        router.push("/dashboard");
-      }
+      // if (response.status == 200 && !response.data?.is_email_verified) {
+      //   setModalMessage("Verify your email");
+      //   setShowModal(true);
+      // } else {
+      // }
     } catch (e) {
       setModalMessage("Wrong credentials please try again");
       setShowModal(true);

@@ -153,6 +153,12 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   try {
     initAdmin();
+    const decoded = await verifyIdToken();
+    if (decoded.status === 403) {
+      return NextResponse.json(decoded, { status: 403 });
+    }
+    // const user = await getAuth().getUser(decoded.content?.uid!);
+    // const firestoreUserData = await getUserWithEmailFromFirestore(user);
 
     const snapshot = await firestore
       .getFirestore()
@@ -181,14 +187,15 @@ export async function GET() {
       message: "Game categories retrieved successfully",
       content: gameCategories,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error retrieving game categories:", error);
 
     // Return error response
-    return NextResponse.json<GenericResponse<null>>({
+    return NextResponse.json<GenericResponse<undefined>>({
       status: 500,
       message: "Internal server error",
-      content: null,
+      content: undefined,
+      error: error.toString(),
     });
   }
 }
@@ -240,7 +247,6 @@ export async function DELETE(req: NextRequest) {
       .doc(`gamecategories/${id}`)
       .delete();
 
-    console.log(res);
     if (res.isEqual(res)) {
       //successfully deleted
       return NextResponse.json(

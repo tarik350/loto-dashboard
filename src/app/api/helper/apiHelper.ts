@@ -3,7 +3,9 @@ import { auth } from "firebase-admin"; // Assuming Firebase Admin SDK is set up
 import { DecodedIdToken, UserRecord } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import { headers } from "next/headers";
+import { AiOutlineConsoleSql } from "react-icons/ai";
 import Typesense, { Client } from "typesense";
+import ConversationModel from "typesense/lib/Typesense/ConversationModel";
 
 const createResponse = <T>(
   status: number,
@@ -41,6 +43,7 @@ const verifyIdToken = async (): Promise<{
 
     return { status: 200, content: decodedToken, message: "verified" };
   } catch (error: any) {
+    console.error(error);
     return {
       status: 403,
       message: "unauthorized",
@@ -56,17 +59,21 @@ const checkUesrPermission = (
   return permissions.includes(permission);
 };
 function getTypesenseClient(): Client {
-  const typesense: Client = new Typesense.Client({
-    nodes: [
-      {
-        host: "localhost",
-        port: 9090,
-        protocol: "http",
-      },
-    ],
-    apiKey: "xyz",
-  });
-  return typesense;
+  try {
+    const typesense: Client = new Typesense.Client({
+      nodes: [
+        {
+          host: "localhost",
+          port: 9090,
+          protocol: "http",
+        },
+      ],
+      apiKey: "xyz",
+    });
+    return typesense;
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function typesenseCollectionExists(name: string): Promise<boolean> {
@@ -77,6 +84,7 @@ async function typesenseCollectionExists(name: string): Promise<boolean> {
     }
     return true;
   } catch (error) {
+    console.log("here is ther errro");
     throw error;
   }
 }

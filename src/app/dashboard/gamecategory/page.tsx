@@ -23,7 +23,7 @@ export default function GameCategoryView() {
       const response: GenericResponse<CreateGameCategoryResponseDto[]> =
         await getGameCategory();
       if (response.status === 200) {
-        setResponse(response.content!);
+        setResponse(response.data!);
         setFetchStatus("success");
       }
     } catch (error) {
