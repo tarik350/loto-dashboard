@@ -5,13 +5,18 @@ import {
 } from "@/utils/dto/permissionDto";
 import { GenericResponse } from "@/utils/types";
 import { api } from "./api";
+import { PaginationDto, PaginationRequestDto } from "@/utils/dto/paginationDto";
 
 export const permissionApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getPermissions: builder.query<GenericResponse<PermissionDto[]>, void>({
-      query: () => ({
-        url: "admin/permissions",
+    getPermissions: builder.query<
+      GenericResponse<PaginationDto<PermissionDto[]>>,
+      PaginationRequestDto & { category_id?: number }
+    >({
+      query: (params) => ({
+        url: `admin/permissions`,
         method: "GET",
+        params,
       }),
       providesTags: ["permissions"],
     }),
@@ -19,10 +24,10 @@ export const permissionApi = api.injectEndpoints({
       GenericResponse<PermissionDto>,
       PermissionRequestDto
     >({
-      query: (body) => ({
+      query: ({ categoryId, name, description }) => ({
         url: "admin/permissions",
         method: "POST",
-        body,
+        body: { name, description, category_id: categoryId },
       }),
       invalidatesTags: ["permissions"],
     }),
@@ -30,11 +35,17 @@ export const permissionApi = api.injectEndpoints({
       GenericResponse<PermissionDto>,
       { ids: number | number[] }
     >({
-      query: (body) => ({
-        url: "admin/permissions",
-        method: "DELETE",
-        body,
-      }),
+      query: ({ ids }) => {
+        const url = Array.isArray(ids)
+          ? "admin/permissions"
+          : `admin/permissions/${ids}`;
+        const body = Array.isArray(ids) ? { ids } : null;
+        return {
+          url,
+          method: "DELETE",
+          body,
+        };
+      },
       invalidatesTags: ["permissions"],
     }),
     getPermissionCategories: builder.query<
@@ -46,6 +57,16 @@ export const permissionApi = api.injectEndpoints({
         method: "GET",
       }),
       providesTags: ["categories"],
+    }),
+    searchPermissions: builder.mutation<
+      GenericResponse<PaginationDto<PermissionDto[]>>,
+      { query: string }
+    >({
+      query: (params) => ({
+        url: "admin/search/permissions",
+        method: "GET",
+        params,
+      }),
     }),
   }),
 });

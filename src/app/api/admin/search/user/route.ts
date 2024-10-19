@@ -38,8 +38,7 @@ export async function GET(request: NextRequest) {
     };
     console.log(params);
     const response = await client.collections("users").retrieve();
-    //   .documents()
-    //   .search(params);
+    console.log(response.num_documents);
     return NextResponse.json(
       { status: 200, content: response, messaging: "search successful" },
 

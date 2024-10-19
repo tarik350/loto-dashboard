@@ -1,164 +1,39 @@
 import { permissionApi } from "@/store/permissionApi";
 import style from "@/styles/table.module.css";
-import { httpRequestStatus } from "@/utils/constants";
-import { PermissionDto } from "@/utils/dto/permissionDto";
 import CustomePagination from "@/utils/widgets/CustomePagination";
 import {
   default as LoadingSpiner,
   default as LoadingSpinner,
 } from "@/utils/widgets/LoadingSpinner";
-import { useEffect, useReducer } from "react";
+import { Dispatch, use, useEffect } from "react";
 import { FaSort } from "react-icons/fa";
 import { IoWarning } from "react-icons/io5";
-import { MdDelete } from "react-icons/md";
+import {
+  PermissionActionType,
+  PermissionTableActionTypes,
+  PermissionTableState,
+} from "./permissionTableStore";
 
-// An enum with all the types of actions to use in our reducer
-enum PermissionTableActionTypes {
-  ADD_PERMISSIONS = "ADD_PERMISSIONS",
-  ADD_ALL_ISCHECKED = "ADD_ALL_ISCHECKED",
-  ADD_ISCHECKED = "ADD_ISCHECKED",
-  REMOVE_ISCHECKED = "REMOVE_ISCHECKED",
-  CLEAR_ISCHECKED = "CLEAR_ISCHECKED",
-  SET_LOADING_STATUS = "SET_LOADING_STATUS",
-  SET_BULK_DELETE_LOADING = "SET_BULK_DELETE_LOADING",
-  SET_DELETE_LOADING = "SET_DELETE_LOADING",
-}
+export default function PermissionTable({
+  state,
+  dispatch,
+}: {
+  state: PermissionTableState;
+  dispatch: Dispatch<PermissionActionType>;
+}) {
+  //queries and mutations
+  const { data, isLoading, isError, isSuccess, refetch, isFetching } =
+    permissionApi.useGetPermissionsQuery({
+      page: state.currentPage,
+      category_id: state.filterCategoryId,
+    });
+  const [deletePermission] = permissionApi.useDeletePermissionMutation();
 
-// An interface for our actions
-interface AddPermissionsAction {
-  type: PermissionTableActionTypes.ADD_PERMISSIONS;
-  payload: PermissionDto[];
-}
-
-interface AddIsCheckedAction {
-  type: PermissionTableActionTypes.ADD_ISCHECKED;
-  payload: number;
-}
-
-interface RemoveIsCheckedAction {
-  type: PermissionTableActionTypes.REMOVE_ISCHECKED;
-  payload: number;
-}
-interface AddAllIsCheckedAction {
-  type: PermissionTableActionTypes.ADD_ALL_ISCHECKED;
-  payload: Record<string, boolean>;
-}
-interface RemoveAllIsCheckedAction {
-  type: PermissionTableActionTypes.CLEAR_ISCHECKED;
-  payload: Record<string, boolean>;
-}
-interface SetLoadingStatusAction {
-  type: PermissionTableActionTypes.SET_LOADING_STATUS;
-  payload: httpRequestStatus;
-}
-interface SetBulkDeleteLoadingAction {
-  type: PermissionTableActionTypes.SET_BULK_DELETE_LOADING;
-  payload: {
-    value: httpRequestStatus;
-    message?: string;
-  };
-}
-interface SetDeleteLoadingAction {
-  type: PermissionTableActionTypes.SET_DELETE_LOADING;
-  paylaod: { key: number; value: boolean };
-}
-
-// Add other action interfaces here...
-
-// Combine all action types into one discriminated union type
-type PermissionActionType =
-  | AddPermissionsAction
-  | AddIsCheckedAction
-  | RemoveIsCheckedAction
-  | AddAllIsCheckedAction
-  | RemoveAllIsCheckedAction
-  | SetLoadingStatusAction
-  | SetBulkDeleteLoadingAction
-  | SetDeleteLoadingAction;
-// Add other action interfaces as needed...
-// An interface for our state
-interface PermissionTableState {
-  isChecked: Record<number, boolean>;
-  permissions: PermissionDto[];
-  loading: httpRequestStatus;
-  bulkDeleteLoading: {
-    value: httpRequestStatus;
-    message?: string;
-  };
-  deleteLoading: Record<string, boolean>;
-}
-
-// Our reducer function that uses a switch statement to handle our actions
-function permissionReducer(
-  state: PermissionTableState,
-  action: PermissionActionType
-): PermissionTableState {
-  switch (action.type) {
-    case PermissionTableActionTypes.ADD_PERMISSIONS:
-      return {
-        ...state,
-        permissions: action.payload,
-      };
-
-    case PermissionTableActionTypes.ADD_ISCHECKED:
-      return {
-        ...state,
-        isChecked: { ...state.isChecked, [action.payload]: true },
-      };
-
-    case PermissionTableActionTypes.REMOVE_ISCHECKED:
-      return {
-        ...state,
-        isChecked: { ...state.isChecked, [action.payload]: false },
-      };
-
-    case PermissionTableActionTypes.SET_LOADING_STATUS:
-      return {
-        ...state,
-        loading: action.payload,
-      };
-    case PermissionTableActionTypes.ADD_ALL_ISCHECKED:
-      return {
-        ...state,
-        isChecked: action.payload,
-      };
-    case PermissionTableActionTypes.CLEAR_ISCHECKED:
-      return {
-        ...state,
-        isChecked: action.payload,
-      };
-    case PermissionTableActionTypes.SET_BULK_DELETE_LOADING:
-      return {
-        ...state,
-        bulkDeleteLoading: action.payload,
-      };
-    case PermissionTableActionTypes.SET_DELETE_LOADING:
-      return {
-        ...state,
-        deleteLoading: {
-          ...state.deleteLoading,
-          [action.paylaod.key]: action.paylaod.value,
-        },
-      };
-    default:
-      return state;
-  }
-}
-
-export default function PermissionTable({}: {}) {
-  const [state, dispatch] = useReducer(permissionReducer, {
-    isChecked: {},
-    permissions: [],
-    loading: "initial",
-    bulkDeleteLoading: {
-      value: "initial",
-    },
-    deleteLoading: {},
-  });
+  //helper methods
   const resetAllCheckbox = () => {
     dispatch({
       type: PermissionTableActionTypes.ADD_ALL_ISCHECKED,
-      payload: state.permissions.reduce<Record<string, boolean>>(
+      payload: state.permissions.permissions.reduce<Record<string, boolean>>(
         (prev, current) => {
           prev[current.id] = false;
           return prev;
@@ -167,10 +42,11 @@ export default function PermissionTable({}: {}) {
       ),
     });
   };
+
   const setAllcheckbox = () => {
     dispatch({
       type: PermissionTableActionTypes.ADD_ALL_ISCHECKED,
-      payload: state.permissions.reduce<Record<string, boolean>>(
+      payload: state.permissions.permissions.reduce<Record<string, boolean>>(
         (prev, current) => {
           prev[current.id] = true;
           return prev;
@@ -179,29 +55,7 @@ export default function PermissionTable({}: {}) {
       ),
     });
   };
-  const { data, isLoading, isSuccess, isError, error } =
-    permissionApi.useGetPermissionsQuery();
-  const [deletePermission] = permissionApi.useDeletePermissionMutation();
-  useEffect(() => {
-    if (isLoading) {
-      dispatch({
-        type: PermissionTableActionTypes.SET_LOADING_STATUS,
-        payload: "success",
-      });
-    }
-    if (isSuccess && data) {
-      dispatch({
-        type: PermissionTableActionTypes.ADD_PERMISSIONS,
-        payload: data.data ?? [],
-      });
-    }
-    if (isError || error) {
-      dispatch({
-        type: PermissionTableActionTypes.SET_LOADING_STATUS,
-        payload: "error",
-      });
-    }
-  }, [data, isSuccess, error, isError]);
+
   const onDelete = async (ids: number | number[]) => {
     const isBulk = Array.isArray(ids);
     try {
@@ -216,35 +70,16 @@ export default function PermissionTable({}: {}) {
           paylaod: { key: ids, value: true },
         });
       }
-      const response = await deletePermission({ ids }).unwrap();
-      // const resposne = await authenticatedPost({
-      //   url: "/api/admin/permission",
-      //   method: "DELETE",
-      //   body: { ids: id },
-      // });
-      // const data: GenericResponse<string | string[]> = await resposne.json();
-      if (response.status === 200) {
-        dispatch({
-          type: PermissionTableActionTypes.SET_BULK_DELETE_LOADING,
-          payload: {
-            value: "success",
-            message: `Permission deleted successfull : ${response.data?.id}`,
-          },
-        });
-        // debugger;
-      }
-      // else {
-      //   dispatch({
-      //     type: PermissionTableActionTypes.SET_BULK_DELETE_LOADING,
-      //     payload: {
-      //       value: "error",
-      //       message: `Error while deleting a permission: ${id}`,
-      //     },
-      //   });
-      //   // debugger;
-      // }
+      await deletePermission({ ids }).unwrap();
+      //todo show delete success message
+      dispatch({
+        type: PermissionTableActionTypes.SET_BULK_DELETE_LOADING,
+        payload: {
+          value: "success",
+          message: "All permissions deleted successfully",
+        },
+      });
     } catch (error: any) {
-      // debugger;
       dispatch({
         type: PermissionTableActionTypes.SET_BULK_DELETE_LOADING,
         payload: {
@@ -258,8 +93,29 @@ export default function PermissionTable({}: {}) {
           type: PermissionTableActionTypes.SET_DELETE_LOADING,
           paylaod: { key: ids, value: false },
         });
+      resetAllCheckbox();
     }
   };
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      dispatch({
+        type: PermissionTableActionTypes.ADD_PERMISSIONS,
+        payload: {
+          permissions: data?.data?.data!,
+          pages: data?.data?.last_page!,
+        },
+      });
+    }
+  }, [isSuccess, isFetching, data]);
+  useEffect(() => {
+    if (!state.isSearch) {
+      refetch();
+    }
+  }, [state.isSearch]);
+  useEffect(() => {
+    refetch();
+  }, [state.filterCategoryId]);
   return (
     <div className={style.table__container__highlight}>
       <div className="flex justify-between items-end">
@@ -313,14 +169,22 @@ export default function PermissionTable({}: {}) {
               <th className="sortable">
                 <p>Permission Category</p>
               </th>
-              <th></th>
             </tr>
           </thead>
-          <tbody>{renderTableBody(state, dispatch, onDelete)}</tbody>
+          <tbody>{renderTableBody(state, isLoading, isError, dispatch)}</tbody>
         </table>
       </div>
       <div className=" mt-8">
-        <CustomePagination pageCount={5} handlePageClick={() => {}} />
+        <CustomePagination
+          pageCount={state.permissions.pages!}
+          handlePageClick={({ selected }: { selected: number }) => {
+            dispatch({
+              type: PermissionTableActionTypes.SET_CURRENT_PAGE,
+              payload: selected + 1,
+            });
+            refetch();
+          }}
+        />
       </div>
     </div>
   );
@@ -328,12 +192,11 @@ export default function PermissionTable({}: {}) {
 
 function renderTableBody(
   state: PermissionTableState,
-  dispatch: (value: PermissionActionType) => void,
-  onDelete: (value: number | number[]) => void
+  isLoading: boolean,
+  isError: boolean,
+  dispatch: (value: PermissionActionType) => void
 ) {
-  //delete logic
-
-  if (state.loading === "loading") {
+  if (isLoading) {
     return (
       <tr>
         <td className="p-5 text-center bg-purple-50" colSpan={8}>
@@ -345,7 +208,7 @@ function renderTableBody(
     );
   }
 
-  if (state.loading === "error") {
+  if (isError) {
     return (
       <tr>
         <td className="p-5 text-center text-red-500" colSpan={8}>
@@ -358,8 +221,8 @@ function renderTableBody(
     );
   }
 
-  if (state.permissions && state.permissions.length > 0) {
-    return state.permissions.map((item, index) => (
+  if (state.permissions && state.permissions.permissions.length > 0) {
+    return state.permissions.permissions.map((item, index) => (
       <tr key={index}>
         <td>
           <input
@@ -383,26 +246,6 @@ function renderTableBody(
         <td>{item.id}</td>
         <td className="font-[600]">{item.name}</td>
         <td>{item.categories.name}</td>
-        <td className="w-[1rem]">
-          <div className="flex justify-between gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                onDelete(item.id);
-              }}
-            >
-              {state.deleteLoading[item.id] ? (
-                <LoadingSpiner dimension={15} />
-              ) : (
-                <MdDelete
-                  size={30}
-                  className="hover:fill-darkPurple"
-                  color="#9a0ae4"
-                />
-              )}
-            </button>
-          </div>
-        </td>
       </tr>
     ));
   }

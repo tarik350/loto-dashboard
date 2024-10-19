@@ -483,3 +483,18 @@ input[type="checkbox"]:hover {
   position: absolute;
   top: 4rem;
 }
+.filter-dropdown__container {
+  border-radius: 0.5rem;
+}
+.filter-dropdown__container li:not(:last-child) {
+  border-bottom: 1px solid var(--purple);
+}
+.filter-dropdown__container li {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+.filter-dropdown__container li:hover {
+  background-color: var(--purple);
+  color: white;
+  transition: ease-in-out 0.1s;
+}

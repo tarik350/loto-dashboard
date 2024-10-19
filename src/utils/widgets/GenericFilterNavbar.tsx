@@ -1,19 +1,33 @@
 "use client";
 
+import {
+  PermissionActionType,
+  PermissionTableActionTypes,
+  PermissionTableState,
+} from "@/app/dashboard/permissions/widgets/permissionTableStore";
+import { permissionApi } from "@/store/permissionApi";
 import CreateGameModal from "@/utils/modals/CreateGameModal";
 import { motion, useAnimation } from "framer-motion";
-import { useState } from "react";
+import { Dispatch, useState } from "react";
 import { BiFilter, BiPlusCircle, BiSearch } from "react-icons/bi";
 import { IoIosArrowDown } from "react-icons/io";
+import { handleErrorResponse, parseValidationErrors } from "../helper";
+import PermissionFilter from "@/app/dashboard/permissions/widgets/PermissionFilter";
 
 export default function GenericFilterNavbar({
   setModalOpen,
   filterStrings,
   buttonTitle,
+  searchMethod,
+  dispatch,
+  state,
 }: {
   buttonTitle: string;
+  dispatch: Dispatch<PermissionActionType>;
   filterStrings: string[];
   setModalOpen: (value: boolean) => void;
+  searchMethod: (query: string) => void;
+  state: PermissionTableState;
 }) {
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [isFitlerVisible, setIsFilterVisible] = useState<boolean>(false);
@@ -22,6 +36,7 @@ export default function GenericFilterNavbar({
   );
 
   const fitlerButtonController = useAnimation();
+
   return (
     <div className=" flex flex-col justify-start items-start">
       <div className=" flex justify-between w-full">
@@ -35,12 +50,16 @@ export default function GenericFilterNavbar({
           <BiPlusCircle className="" size={23} />
           <p className="  font-[600]">{buttonTitle}</p>
         </button>
-        <div className="flex gap-2">
-          <div className=" flex">
-            <input
-              type="text"
-              className=" border-2 border-purple min-w-[15rem] rounded-l-xl"
-            />
+        <div className="">
+          <input
+            type="text"
+            onChange={(event) => {
+              searchMethod(event.target.value);
+            }}
+            placeholder="Permission name"
+            className=" border-2 border-purple   h-[3rem] font-[500] rounded-xl px-4"
+          />
+          {/* <div className=" flex">
             <div className=" relative">
               <button
                 type="button"
@@ -72,11 +91,11 @@ export default function GenericFilterNavbar({
                 </ul>
               )}
             </div>
-          </div>
-          <button className="bg-purple  text-white w-[8rem] h-[3rem] rounded-xl flex  justify-center items-center gap-2">
+          </div> */}
+          {/* <button className="bg-purple  text-white w-[8rem] h-[3rem] rounded-xl flex  justify-center items-center gap-2">
             <BiSearch className="" size={23} />
             <p className="  font-[600]">Search</p>
-          </button>
+          </button> */}
         </div>
       </div>
       <motion.button
@@ -99,6 +118,12 @@ export default function GenericFilterNavbar({
           } transition-all ease-in-out duration-150 text-purple `}
         />
       </motion.button>
+      {isFitlerVisible && (
+        <PermissionFilter
+          dispatch={dispatch}
+          categoryId={state.filterCategoryId}
+        />
+      )}
     </div>
   );
 }

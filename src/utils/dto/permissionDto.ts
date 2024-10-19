@@ -1,5 +1,7 @@
 // import { PermissionCategoryDto } from "./settingDto";
 
+import { PaginationRequestDto } from "./paginationDto";
+
 // export interface PermissionDto {
 //   name: string;
 //   category: PermissionCategoryDto;

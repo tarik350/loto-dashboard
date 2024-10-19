@@ -155,4 +155,27 @@ export const getTableContentForGameCategory = ({
   }
 };
 
+export function parseValidationErrors(
+  errors: Record<string, string[]>
+): string {
+  let parsedMessage = "";
+
+  for (const [field, messages] of Object.entries(errors)) {
+    const fieldErrors = messages.join(" ");
+
+    parsedMessage += `${fieldErrors}\n`;
+  }
+
+  return parsedMessage.trim();
+}
+
+export function handleErrorResponse(error: any) {
+  if (error?.status === 422) {
+    return parseValidationErrors(error?.data?.error);
+  } else if (error?.status === 500) {
+    return "Something went wrong on our side. Please try again later.";
+  } else {
+    return error?.message || "An unknown error occurred. Please try again.";
+  }
+}
 //api helpers

@@ -18,5 +18,19 @@ export interface GenericResponse<T> {
   status: number;
   message: string;
   data: T | null;
-  error?: string;
+  error?: Record<string, string[]> | string;
 }
+
+interface Error {
+  query: string[];
+}
+
+// {
+//   "message": "Validation error occurred",
+//   "status": 422,
+//   "error": {
+//       "query": [
+//           "The query field is required."
+//       ]
+//   }
+// }

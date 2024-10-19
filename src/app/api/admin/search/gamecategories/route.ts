@@ -1,13 +1,23 @@
 import "server-only";
-import { getTypesenseClient } from "@/app/api/helper/apiHelper";
+import {
+  getTypesenseClient,
+  typesenseCollectionExists,
+} from "@/app/api/helper/apiHelper";
 
 import initAdmin from "@/utils/firebase/adminConfig";
 import { NextRequest, NextResponse } from "next/server";
 import { SearchParams } from "typesense/lib/Typesense/Documents";
+import {
+  deleteTypesenseSchema,
+  initTypesense,
+  updateTypesenseSchema,
+} from "@/app/api/helper/initTypesense";
+import { userSchema } from "@/utils/constants";
 
 export async function GET(request: NextRequest) {
   try {
     initAdmin();
+    await initTypesense(userSchema);
 
     const querystring = request.nextUrl.searchParams;
 
@@ -33,10 +43,9 @@ export async function GET(request: NextRequest) {
       q,
     };
 
-    const response = await client
-      .collections("gamecategories")
-      .documents()
-      .search(params);
+    const response = await client.collections("gamecategories").retrieve();
+
+    console.log(response.num_documents);
 
     return NextResponse.json(
       { status: 200, content: response, messaging: "search successful" },

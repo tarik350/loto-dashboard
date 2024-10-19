@@ -2,9 +2,15 @@ import { CollectionCreateSchema } from "typesense/lib/Typesense/Collections";
 import { getTypesenseClient } from "./apiHelper";
 
 export async function initTypesense(collectionSchema: CollectionCreateSchema) {
-  const typesense = getTypesenseClient();
-  await typesense.collections().create(collectionSchema);
-  console.log("SCHEMA CREATED");
+  try {
+    console.log("creating ");
+    const typesense = getTypesenseClient();
+    await typesense.collections().create(collectionSchema);
+    console.log("SCHEMA CREATED");
+  } catch (error) {
+    console.log("error");
+    throw error;
+  }
 }
 export async function updateTypesenseSchema(
   collectionName: string,

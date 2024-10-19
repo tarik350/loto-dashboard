@@ -69,38 +69,45 @@ export default function CreatePermissionModal({
 
   useEffect(() => {
     if (isSuccess && data) {
-      setPermissionCategories(data?.data!);
+      setPermissionCategories(data.data!);
     }
-  }, [isSuccess, data, isLoading]);
+  }, [isSuccess, data]);
   const getDropdownView = () => {
-    if (!isLoading && permissionCategories && permissionCategories.length > 0) {
+    if (isLoading) {
       return (
-        <div className=" dropdown">
-          <ul className="  ">
-            {permissionCategories?.map((item, index) => {
-              return (
-                <li
-                  onClick={() => {
-                    setValue("categoryId", item.id);
-                    clearErrors("categoryId");
-                    setSelectedCategory(item);
-                  }}
-                  className=" "
-                  key={index}
-                >
-                  {item.name}
-                </li>
-              );
-            })}
-          </ul>
+        <div className="flex justify-center items-centers py-12">
+          <LoadingSpiner dimension={30} />
         </div>
       );
     }
-    if (isLoading) {
-      return <div className=" dropdown">Loading</div>;
+
+    if (permissionCategories && permissionCategories.length === 0) {
+      return (
+        <div className="flex justify-center items-centers py-12">
+          <p className=" font-[500]  text-gray-400">No Categries found</p>
+        </div>
+      );
     }
-    if (isError) {
-      return <div>{error.toString()}</div>;
+    if (permissionCategories && permissionCategories.length > 0) {
+      return (
+        <ul className="  ">
+          {permissionCategories?.map((item, index) => {
+            return (
+              <li
+                onClick={() => {
+                  setValue("categoryId", item.id);
+                  clearErrors("categoryId");
+                  setSelectedCategory(item);
+                }}
+                className=" "
+                key={index}
+              >
+                {item.name}
+              </li>
+            );
+          })}
+        </ul>
+      );
     }
   };
 
@@ -146,8 +153,12 @@ export default function CreatePermissionModal({
                   />
                 </button>
               )}
-              {getDropdownView()}
-              {/* {showCategoryDropdown && <div className=" dropdown   ">asdf</div>} */}
+              {showCategoryDropdown && (
+                <div className=" h-max w-full bg-white absolute top-[3.5rem] z-50 flex flex-col  justify-start text-black">
+                  {getDropdownView()}
+                </div>
+              )}
+
               {errors.categoryId && (
                 <p className=" text-red-500 font-[500] ">required</p>
               )}
