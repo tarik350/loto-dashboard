@@ -20,6 +20,20 @@ export const permissionApi = api.injectEndpoints({
       }),
       providesTags: ["permissions"],
     }),
+    getPermissionsWithCategory: builder.query<
+      GenericResponse<
+        PaginationDto<(CategoryDto & { permissions?: PermissionDto[] })[]>
+      >,
+      // PaginationRequestDto & { category_id?: number }
+      void
+    >({
+      query: () => ({
+        url: `admin/categories/permissions`,
+        method: "GET",
+      }),
+      providesTags: ["permissions"],
+    }),
+
     createPermission: builder.mutation<
       GenericResponse<PermissionDto>,
       PermissionRequestDto

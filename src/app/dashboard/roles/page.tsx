@@ -1,6 +1,7 @@
 "use client";
 import CustomePagination from "@/utils/widgets/CustomePagination";
 import GenericFilterNavbar from "@/utils/widgets/GenericFilterNavbar";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaSort } from "react-icons/fa";
 export default function RolesPage() {
@@ -27,18 +28,18 @@ export default function RolesPage() {
       }, {})
     );
   };
+  const router = useRouter();
   return (
     <div>
-      {/* <DashboardNavbar
-        title={"Dashbaord / roles"}
-        Icon={<MdVerifiedUser size={22} className=" fill-purple" />}
-      /> */}
       <div className=" mb-8">
-        {/* <GenericFilterNavbar
-          setModalOpen={setModalOpen}
-          filterStrings={["username", "email"]}
+        <GenericFilterNavbar
+          setModalOpen={() => {
+            router.push("/dashboard/roles/create-role");
+          }}
           buttonTitle={"Create Role"}
-        /> */}
+          searchMethod={() => {}}
+          searchLabel={"Type role name"}
+        />
       </div>
       <div className="generic-table__container">
         <div className="generic-table__header">

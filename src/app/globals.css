@@ -517,3 +517,9 @@ input[type="checkbox"]:hover {
   height: 3rem;
   min-width: 12rem;
 }
+
+.subtle-container__background {
+  border-radius: 2rem;
+  padding: 1rem 2rem;
+  background-color: var(--hover-bg-color);
+}
