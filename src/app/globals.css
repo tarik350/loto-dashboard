@@ -498,3 +498,22 @@ input[type="checkbox"]:hover {
   color: white;
   transition: ease-in-out 0.1s;
 }
+.search-input {
+  min-width: 20rem;
+  border: 2px solid var(--purple);
+  height: 3rem;
+  font-weight: 500;
+  border-radius: 0.75rem;
+  padding: 0 1rem;
+}
+.generic-create__button {
+  background-color: var(--purple);
+  color: white;
+  border-radius: 0.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  height: 3rem;
+  min-width: 12rem;
+}

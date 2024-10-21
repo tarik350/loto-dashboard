@@ -10,9 +10,9 @@ import ConversationModel from "typesense/lib/Typesense/ConversationModel";
 const createResponse = <T>(
   status: number,
   message: string,
-  content: T
+  data: T
 ): GenericResponse<T> => {
-  return { status, message, content };
+  return { status, message, data };
 };
 
 const verifyIdToken = async (): Promise<{

@@ -86,12 +86,6 @@ export async function POST(request: NextRequest) {
       ticketPrice == null ||
       numberOfTicket == null
     ) {
-      const response: GenericResponse<null> = {
-        status: 400,
-        message: "Invalid request body",
-        content: null,
-      };
-      return NextResponse.json(response, { status: 400 });
     }
 
     // Store the data in Firestore
@@ -142,7 +136,7 @@ export async function POST(request: NextRequest) {
     const response: GenericResponse<string> = {
       status: 500,
       message: "Failed to create game category",
-      content: error.toString(),
+      data: error.toString(),
     };
 
     return NextResponse.json(response, { status: 500 });
@@ -185,7 +179,7 @@ export async function GET() {
     return NextResponse.json<GenericResponse<CreateGameCategoryResponseDto[]>>({
       status: 200,
       message: "Game categories retrieved successfully",
-      content: gameCategories,
+      data: gameCategories,
     });
   } catch (error: any) {
     console.error("Error retrieving game categories:", error);
@@ -194,7 +188,7 @@ export async function GET() {
     return NextResponse.json<GenericResponse<undefined>>({
       status: 500,
       message: "Internal server error",
-      content: undefined,
+      data: null,
       error: error.toString(),
     });
   }

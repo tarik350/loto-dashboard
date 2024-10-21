@@ -1,13 +1,11 @@
 import { permissionApi } from "@/store/permissionApi";
 import style from "@/styles/table.module.css";
+import { PermissionDto } from "@/utils/dto/permissionDto";
+import { renderTableBody } from "@/utils/helper";
 import CustomePagination from "@/utils/widgets/CustomePagination";
-import {
-  default as LoadingSpiner,
-  default as LoadingSpinner,
-} from "@/utils/widgets/LoadingSpinner";
-import { Dispatch, use, useEffect } from "react";
+import { default as LoadingSpiner } from "@/utils/widgets/LoadingSpinner";
+import { Dispatch, useEffect } from "react";
 import { FaSort } from "react-icons/fa";
-import { IoWarning } from "react-icons/io5";
 import {
   PermissionActionType,
   PermissionTableActionTypes,
@@ -21,15 +19,15 @@ export default function PermissionTable({
   state: PermissionTableState;
   dispatch: Dispatch<PermissionActionType>;
 }) {
+  const [deletePermission] = permissionApi.useDeletePermissionMutation();
+
   //queries and mutations
   const { data, isLoading, isError, isSuccess, refetch, isFetching } =
     permissionApi.useGetPermissionsQuery({
       page: state.currentPage,
       category_id: state.filterCategoryId,
     });
-  const [deletePermission] = permissionApi.useDeletePermissionMutation();
 
-  //helper methods
   const resetAllCheckbox = () => {
     dispatch({
       type: PermissionTableActionTypes.ADD_ALL_ISCHECKED,
@@ -125,7 +123,11 @@ export default function PermissionTable({
             type="button"
             className="   text-white bg-red-600 rounded-xl  min-w-[6rem] min-h-[2.5rem]"
             onClick={() => {
-              onDelete(Object.keys(state.isChecked).map((key) => Number(key)));
+              onDelete(
+                Object.keys(state.isChecked)
+                  .filter((key) => state.isChecked[Number(key)])
+                  .map((key) => Number(key))
+              );
             }}
           >
             {state.bulkDeleteLoading.value === "loading" ? (
@@ -169,9 +171,69 @@ export default function PermissionTable({
               <th className="sortable">
                 <p>Permission Category</p>
               </th>
+              <th className="sortable">
+                <p>Permission Description</p>
+              </th>
             </tr>
           </thead>
-          <tbody>{renderTableBody(state, isLoading, isError, dispatch)}</tbody>
+          <tbody>
+            {renderTableBody<PermissionDto>({
+              data: state.permissions.permissions,
+              isError,
+              isLoading: isLoading || isFetching,
+              columns: [
+                {
+                  dataIndex: "categories",
+                  render(record) {
+                    return (
+                      <input
+                        checked={state.isChecked[record.id]}
+                        type="checkbox"
+                        onChange={(event) => {
+                          if (event.target.checked) {
+                            dispatch({
+                              type: PermissionTableActionTypes.ADD_ISCHECKED,
+                              payload: record.id,
+                            });
+                          } else {
+                            dispatch({
+                              type: PermissionTableActionTypes.REMOVE_ISCHECKED,
+                              payload: record.id,
+                            });
+                          }
+                        }}
+                      />
+                    );
+                  },
+                },
+                {
+                  dataIndex: "id",
+                  render(record) {
+                    return <div>{record.id}</div>;
+                  },
+                },
+                {
+                  dataIndex: "name",
+                  render(record) {
+                    return <div>{record.name}</div>;
+                  },
+                },
+                {
+                  dataIndex: "categories",
+                  render(record) {
+                    return <div>{record.categories.name}</div>;
+                  },
+                },
+                {
+                  dataIndex: "description",
+                  className: "max-w-[1rem]",
+                  render(record) {
+                    return <div className=" ">{record.description}</div>;
+                  },
+                },
+              ],
+            })}
+          </tbody>
         </table>
       </div>
       <div className=" mt-8">
@@ -187,76 +249,5 @@ export default function PermissionTable({
         />
       </div>
     </div>
-  );
-}
-
-function renderTableBody(
-  state: PermissionTableState,
-  isLoading: boolean,
-  isError: boolean,
-  dispatch: (value: PermissionActionType) => void
-) {
-  if (isLoading) {
-    return (
-      <tr>
-        <td className="p-5 text-center bg-purple-50" colSpan={8}>
-          <div className="flex justify-center items-center py-12">
-            <LoadingSpinner dimension={30} />
-          </div>
-        </td>
-      </tr>
-    );
-  }
-
-  if (isError) {
-    return (
-      <tr>
-        <td className="p-5 text-center text-red-500" colSpan={8}>
-          <div className="py-12 flex flex-col justify-center items-center">
-            <IoWarning size={30} />
-            <p className="font-[700] text-[1rem] ">Error fetching data</p>
-          </div>
-        </td>
-      </tr>
-    );
-  }
-
-  if (state.permissions && state.permissions.permissions.length > 0) {
-    return state.permissions.permissions.map((item, index) => (
-      <tr key={index}>
-        <td>
-          <input
-            checked={state.isChecked[item.id]}
-            onChange={(event) => {
-              if (event.target.checked) {
-                dispatch({
-                  type: PermissionTableActionTypes.ADD_ISCHECKED,
-                  payload: item.id,
-                });
-              } else {
-                dispatch({
-                  type: PermissionTableActionTypes.REMOVE_ISCHECKED,
-                  payload: item.id,
-                });
-              }
-            }}
-            type="checkbox"
-          />
-        </td>
-        <td>{item.id}</td>
-        <td className="font-[600]">{item.name}</td>
-        <td>{item.categories.name}</td>
-      </tr>
-    ));
-  }
-
-  return (
-    <tr>
-      <td className="p-5 text-center bg-purple-50" colSpan={8}>
-        <p className="font-[700] text-[1rem] text-gray-500 py-12 flex justify-center items-center">
-          No Data
-        </p>
-      </td>
-    </tr>
   );
 }

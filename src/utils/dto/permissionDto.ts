@@ -24,6 +24,7 @@ export interface PermissionDto {
   created_at: string;
   updated_at: string;
   categories: CategoryDto;
+  description?: string;
 }
 
 export interface CategoryDto {

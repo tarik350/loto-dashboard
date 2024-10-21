@@ -4,6 +4,9 @@ import { v4 as uuidv4 } from "uuid";
 import { httpRequestStatus, imageType } from "./constants";
 import { CreateGameCategoryResponseDto } from "./dto/createGameCategoryDto";
 import LoadingSpiner from "./widgets/LoadingSpinner";
+import { IoWarning } from "react-icons/io5";
+import LoadingSpinner from "./widgets/LoadingSpinner";
+import { ReactNode } from "react";
 export function passwordStrength(password: string) {
   let score = 0;
 
@@ -179,3 +182,68 @@ export function handleErrorResponse(error: any) {
   }
 }
 //api helpers
+
+export function renderTableBody<T>({
+  data,
+  isLoading,
+  isError,
+  columns,
+}: {
+  data: T[];
+  isLoading: boolean;
+  isError: boolean;
+  columns: {
+    dataIndex: keyof T;
+    render: (record: T) => ReactNode;
+    className?: string;
+  }[];
+}) {
+  if (isLoading) {
+    return (
+      <tr>
+        <td className="p-5 text-center bg-purple-50" colSpan={8}>
+          <div className="flex justify-center items-center py-12">
+            <LoadingSpinner dimension={30} />
+          </div>
+        </td>
+      </tr>
+    );
+  }
+
+  if (isError) {
+    return (
+      <tr>
+        <td className="p-5 text-center text-red-500" colSpan={8}>
+          <div className="py-12 flex flex-col justify-center items-center">
+            <IoWarning size={30} />
+            <p className="font-[700] text-[1rem] ">Error fetching data</p>
+          </div>
+        </td>
+      </tr>
+    );
+  }
+
+  if (data && data.length > 0) {
+    return data.map((item, index) => (
+      <tr key={index}>
+        {columns.map((column, columnIndex) => {
+          return (
+            <td className={column.className} key={columnIndex}>
+              {column.render(item)}
+            </td>
+          );
+        })}
+      </tr>
+    ));
+  }
+
+  return (
+    <tr>
+      <td className="p-5 text-center bg-purple-50" colSpan={8}>
+        <p className="font-[700] text-[1rem] text-gray-500 py-12 flex justify-center items-center">
+          No Data
+        </p>
+      </td>
+    </tr>
+  );
+}

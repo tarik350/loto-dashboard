@@ -34,11 +34,11 @@ export default function RolesPage() {
         Icon={<MdVerifiedUser size={22} className=" fill-purple" />}
       /> */}
       <div className=" mb-8">
-        <GenericFilterNavbar
+        {/* <GenericFilterNavbar
           setModalOpen={setModalOpen}
           filterStrings={["username", "email"]}
           buttonTitle={"Create Role"}
-        />
+        /> */}
       </div>
       <div className="generic-table__container">
         <div className="generic-table__header">

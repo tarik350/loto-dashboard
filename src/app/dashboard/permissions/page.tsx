@@ -1,7 +1,7 @@
 "use client";
 import CreatePermissionModal from "@/utils/modals/CreatePermissionModal";
 import GenericFilterNavbar from "@/utils/widgets/GenericFilterNavbar";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { useReducer, useState } from "react";
 import PermissionTable from "./widgets/PermissionTable";
 import {
@@ -11,7 +11,17 @@ import {
 } from "./widgets/permissionTableStore";
 import { permissionApi } from "@/store/permissionApi";
 import { handleErrorResponse } from "@/utils/helper";
+import PermissionFilter from "./widgets/PermissionFilter";
+import { BiFilter } from "react-icons/bi";
+import { IoIosArrowDown } from "react-icons/io";
 export default function PermissionsPage() {
+  const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const [isFitlerVisible, setIsFilterVisible] = useState<boolean>(false);
+  const [selectedDropdown, setSelectedDropdown] = useState<string | undefined>(
+    undefined
+  );
+
+  const fitlerButtonController = useAnimation();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [state, dispatch] = useReducer(permissionReducer, {
     currentPage: 1,
@@ -57,16 +67,38 @@ export default function PermissionsPage() {
       <AnimatePresence>
         {modalOpen && <CreatePermissionModal setIsOpen={setModalOpen} />}
       </AnimatePresence>
-      <div className=" mb-8">
-        <GenericFilterNavbar
-          dispatch={dispatch}
-          setModalOpen={setModalOpen}
-          filterStrings={["username", "email"]}
-          buttonTitle={"Create Permissions"}
-          searchMethod={searchPermission}
-          state={state}
+      <GenericFilterNavbar
+        buttonTitle={"Create Permissions"}
+        searchMethod={searchPermission}
+        setModalOpen={setModalOpen}
+        searchLabel={"Type Permission name"}
+      />
+      <motion.button
+        animate={fitlerButtonController}
+        onClick={() => {
+          if (isFitlerVisible) {
+            setIsFilterVisible(false);
+          } else {
+            setIsFilterVisible(true);
+          }
+        }}
+        type="button"
+        className="flex items-center gap-2 mt-4"
+      >
+        <BiFilter className=" text-purple" />
+        <p className="  font-[600] text-purple">Filter by</p>
+        <IoIosArrowDown
+          className={`${
+            !isFitlerVisible ? "" : " rotate-180"
+          } transition-all ease-in-out duration-150 text-purple `}
         />
-      </div>
+      </motion.button>
+      {isFitlerVisible && (
+        <PermissionFilter
+          dispatch={dispatch}
+          categoryId={state.filterCategoryId}
+        />
+      )}
       <PermissionTable state={state} dispatch={dispatch} />
     </div>
   );

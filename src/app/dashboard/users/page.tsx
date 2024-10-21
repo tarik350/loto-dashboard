@@ -34,11 +34,11 @@ export default function UsersPage() {
         Icon={<FaUser size={18} className=" fill-purple" />}
       /> */}
       <div className=" mb-8">
-        <GenericFilterNavbar
+        {/* <GenericFilterNavbar
           setModalOpen={setModalOpen}
           filterStrings={["username", "email"]}
           buttonTitle={"Create User"}
-        />
+        /> */}
       </div>
       <div className="generic-table__container">
         <div className="generic-table__header">
