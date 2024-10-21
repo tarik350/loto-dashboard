@@ -4,7 +4,7 @@ import {
   PermissionRequestDto,
 } from "@/utils/dto/permissionDto";
 import { GenericResponse } from "@/utils/types";
-import { api } from "./api";
+import { api } from "../api";
 import { PaginationDto, PaginationRequestDto } from "@/utils/dto/paginationDto";
 
 export const permissionApi = api.injectEndpoints({

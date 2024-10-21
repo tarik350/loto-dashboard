@@ -14,5 +14,5 @@ export const api = createApi({
       query: () => ({ method: "GET", url: "" }),
     }),
   }),
-  tagTypes: ["permissions", "categories"],
+  tagTypes: ["permissions", "categories", "roles"],
 });

@@ -6,7 +6,7 @@ import { BiSolidDownArrow } from "react-icons/bi";
 import LoadingSpiner from "../widgets/LoadingSpinner";
 import ModalLayout from "./ModalLayout";
 
-import { permissionApi } from "@/store/permissionApi";
+import { permissionApi } from "@/store/apis/permissionApi";
 import Skeleton from "react-loading-skeleton";
 import {
   CategoryDto,

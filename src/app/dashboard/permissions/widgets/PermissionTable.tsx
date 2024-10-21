@@ -1,10 +1,11 @@
-import { permissionApi } from "@/store/permissionApi";
+import { permissionApi } from "@/store/apis/permissionApi";
 import style from "@/styles/table.module.css";
 import { PermissionDto } from "@/utils/dto/permissionDto";
 import { renderTableBody } from "@/utils/helper";
+import useCheckboxState from "@/utils/hooks/useCheckboxState";
 import CustomePagination from "@/utils/widgets/CustomePagination";
 import { default as LoadingSpiner } from "@/utils/widgets/LoadingSpinner";
-import { Dispatch, useEffect } from "react";
+import { Dispatch, useEffect, useState } from "react";
 import { FaSort } from "react-icons/fa";
 import {
   PermissionActionType,
@@ -28,31 +29,9 @@ export default function PermissionTable({
       category_id: state.filterCategoryId,
     });
 
-  const resetAllCheckbox = () => {
-    dispatch({
-      type: PermissionTableActionTypes.ADD_ALL_ISCHECKED,
-      payload: state.permissions.permissions.reduce<Record<string, boolean>>(
-        (prev, current) => {
-          prev[current.id] = false;
-          return prev;
-        },
-        {}
-      ),
-    });
-  };
-
-  const setAllcheckbox = () => {
-    dispatch({
-      type: PermissionTableActionTypes.ADD_ALL_ISCHECKED,
-      payload: state.permissions.permissions.reduce<Record<string, boolean>>(
-        (prev, current) => {
-          prev[current.id] = true;
-          return prev;
-        },
-        {}
-      ),
-    });
-  };
+  const [permissionIds, setPermissionIds] = useState<number[]>([]);
+  const { isChecked, setAllCheckboxes, toggleCheckbox, isAllChecked } =
+    useCheckboxState(permissionIds);
 
   const onDelete = async (ids: number | number[]) => {
     const isBulk = Array.isArray(ids);
@@ -91,12 +70,13 @@ export default function PermissionTable({
           type: PermissionTableActionTypes.SET_DELETE_LOADING,
           paylaod: { key: ids, value: false },
         });
-      resetAllCheckbox();
+      setAllCheckboxes(false);
     }
   };
 
   useEffect(() => {
     if (isSuccess && data) {
+      setPermissionIds(data.data?.data.map((item) => item.id)!);
       dispatch({
         type: PermissionTableActionTypes.ADD_PERMISSIONS,
         payload: {
@@ -118,14 +98,14 @@ export default function PermissionTable({
     <div className={style.table__container__highlight}>
       <div className="flex justify-between items-end">
         <h2>Permissions</h2>
-        {Object.values(state.isChecked).some((item) => item === true) && (
+        {Object.values(isChecked).some((item) => item === true) && (
           <button
             type="button"
             className="   text-white bg-red-600 rounded-xl  min-w-[6rem] min-h-[2.5rem]"
             onClick={() => {
               onDelete(
-                Object.keys(state.isChecked)
-                  .filter((key) => state.isChecked[Number(key)])
+                Object.keys(isChecked)
+                  .filter((key) => isChecked[Number(key)])
                   .map((key) => Number(key))
               );
             }}
@@ -144,18 +124,9 @@ export default function PermissionTable({
             <tr>
               <th>
                 <input
-                  checked={
-                    Object.values(state.isChecked).length > 0 &&
-                    Object.values(state.isChecked).every(
-                      (item) => item === true
-                    )
-                  }
+                  checked={isAllChecked()}
                   onChange={(event) => {
-                    if (event.target.checked) {
-                      setAllcheckbox();
-                    } else {
-                      resetAllCheckbox();
-                    }
+                    setAllCheckboxes(event.target.checked);
                   }}
                   type="checkbox"
                 />
@@ -183,49 +154,34 @@ export default function PermissionTable({
               isLoading: isLoading || isFetching,
               columns: [
                 {
-                  dataIndex: "categories",
                   render(record) {
                     return (
                       <input
-                        checked={state.isChecked[record.id]}
+                        checked={isChecked[record.id]}
                         type="checkbox"
                         onChange={(event) => {
-                          if (event.target.checked) {
-                            dispatch({
-                              type: PermissionTableActionTypes.ADD_ISCHECKED,
-                              payload: record.id,
-                            });
-                          } else {
-                            dispatch({
-                              type: PermissionTableActionTypes.REMOVE_ISCHECKED,
-                              payload: record.id,
-                            });
-                          }
+                          toggleCheckbox(record.id);
                         }}
                       />
                     );
                   },
                 },
                 {
-                  dataIndex: "id",
                   render(record) {
                     return <div>{record.id}</div>;
                   },
                 },
                 {
-                  dataIndex: "name",
                   render(record) {
                     return <div>{record.name}</div>;
                   },
                 },
                 {
-                  dataIndex: "categories",
                   render(record) {
                     return <div>{record.categories.name}</div>;
                   },
                 },
                 {
-                  dataIndex: "description",
                   className: "max-w-[1rem]",
                   render(record) {
                     return <div className=" ">{record.description}</div>;

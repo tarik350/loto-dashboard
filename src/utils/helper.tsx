@@ -193,7 +193,7 @@ export function renderTableBody<T>({
   isLoading: boolean;
   isError: boolean;
   columns: {
-    dataIndex: keyof T;
+    // dataIndex: keyof T;
     render: (record: T) => ReactNode;
     className?: string;
   }[];
@@ -246,4 +246,30 @@ export function renderTableBody<T>({
       </td>
     </tr>
   );
+}
+
+export function formatToReadableDateTime(isoString: string): string {
+  const date = new Date(isoString);
+
+  // Using Intl.DateTimeFormat for formatting the date
+  const dayOfWeek = new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+  }).format(date);
+  const month = new Intl.DateTimeFormat("en-US", { month: "short" }).format(
+    date
+  );
+  const day = date.getDate();
+  const year = date.getFullYear();
+
+  // Get hours and minutes
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+
+  // Format hours and minutes
+  const formattedTime = `${hours % 12 || 12}:${String(minutes).padStart(
+    2,
+    "0"
+  )} ${hours < 12 ? "AM" : "PM"}`;
+
+  return `${dayOfWeek}, ${month} ${day}, ${year} ${formattedTime}`;
 }

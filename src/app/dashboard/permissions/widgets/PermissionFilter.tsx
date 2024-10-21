@@ -1,4 +1,4 @@
-import { permissionApi } from "@/store/permissionApi";
+import { permissionApi } from "@/store/apis/permissionApi";
 import { AnimatePresence, motion } from "framer-motion";
 import { Dispatch, useEffect, useRef, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";

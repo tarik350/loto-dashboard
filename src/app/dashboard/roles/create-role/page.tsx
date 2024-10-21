@@ -1,5 +1,7 @@
 "use client";
-import { permissionApi } from "@/store/permissionApi";
+import { permissionApi } from "@/store/apis/permissionApi";
+import { roleApi } from "@/store/apis/roleApi";
+import { handleErrorResponse, parseValidationErrors } from "@/utils/helper";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { BiListUl, BiPlus } from "react-icons/bi";
@@ -8,6 +10,7 @@ export default function CreateRole() {
   const { data, isSuccess } =
     permissionApi.useGetPermissionsWithCategoryQuery();
   const [isChecked, setIsChecked] = useState<Record<number, boolean>>({});
+  const [createRole] = roleApi.useCreateRoleMutation();
 
   useEffect(() => {
     if (isSuccess && data) {
@@ -51,11 +54,22 @@ export default function CreateRole() {
     );
     setIsChecked(updatedState);
   };
-  const onSubmit = ({ roleName }: { roleName: string }) => {
+  const onSubmit = async ({ roleName }: { roleName: string }) => {
     const permissions = Object.keys(isChecked)
       .filter((item) => isChecked[parseInt(item)])
       .map((key) => parseInt(key));
-    debugger;
+    try {
+      const response = await createRole({
+        name: roleName,
+        permissions,
+      }).unwrap();
+      if (response.status === 201) {
+        alert("success");
+      }
+    } catch (error) {
+      const messge = handleErrorResponse(error);
+      alert(messge);
+    }
   };
   return (
     <div className="  ">

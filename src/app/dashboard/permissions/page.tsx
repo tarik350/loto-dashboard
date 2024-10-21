@@ -9,7 +9,7 @@ import {
   permissionReducer,
   PermissionTableActionTypes,
 } from "./widgets/permissionTableStore";
-import { permissionApi } from "@/store/permissionApi";
+import { permissionApi } from "@/store/apis/permissionApi";
 import { handleErrorResponse } from "@/utils/helper";
 import PermissionFilter from "./widgets/PermissionFilter";
 import { BiFilter } from "react-icons/bi";
