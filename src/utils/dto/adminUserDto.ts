@@ -1,4 +1,4 @@
-export interface AdminUser {
+export interface AdminUserDto {
   id: number;
   firstname: string;
   lastname: string;
@@ -12,4 +12,12 @@ export interface AdminUser {
   created_at: string;
   updated_at: string;
   deleted_at: null;
+}
+
+export interface AdminUserRequestDto {
+  firstname: string;
+  lastname: string;
+  email: string;
+  password: string;
+  role_id: number;
 }

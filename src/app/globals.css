@@ -146,11 +146,14 @@
 .create-category__sidebar__container label {
   @apply text-white font-[600] grid gap-2 items-center;
 }
-.create-category__sidebar__container label input {
+.create-category__sidebar__container label input:not(.selected-dropdown) {
   @apply w-full h-[3rem] bg-white text-black font-[400] px-4;
 }
+.selected-dropdown {
+  @apply w-full h-[3rem] bg-green text-black font-[400] px-4 transition-all ease-in-out duration-150;
+}
 
-.create-category__sidebar__container button {
+.create-category__sidebar__container button[type="submit"] {
   @apply w-full h-[3rem] bg-white px-4;
 }
 .create-category__sidebar__container label > div {

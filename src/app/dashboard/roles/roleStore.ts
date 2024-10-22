@@ -1,46 +1,90 @@
-import { RoleDto } from "@/utils/dto/roleDto";
-
+// Define the action types
+interface Entity {
+  id: number; // Define the id property here
+}
 export const ActionTypes = {
-  FETCH_ROLES_SUCCESS: "FETCH_ROLES_SUCCESS",
+  FETCH_ENTITIES_SUCCESS: "FETCH_ENTITIES_SUCCESS",
   SET_CURRENT_PAGE: "SET_CURRENT_PAGE",
   TOGGLE_CHECKBOX: "TOGGLE_CHECKBOX",
   SET_ALL_CHECKBOXES: "SET_ALL_CHECKBOXES",
-  DELETE_ROLE: "DELETE_ROLE",
+  DELETE_ENTITY: "DELETE_ENTITY",
   SET_SEARCH_RESULTS: "SET_SEARCH_RESULTS",
 } as const;
-interface State {
+
+// Generic State Interface
+interface State<T extends Entity> {
   currentPage: number;
   lastPage?: number;
-  roles: RoleDto[];
+  entities: T[];
   isChecked: Record<number, boolean>;
 }
 
-interface Action {
-  type: keyof typeof ActionTypes;
-  payload?: any;
+// Generic Action Interface
+interface FetchEntitiesSuccessAction<T> {
+  type: typeof ActionTypes.FETCH_ENTITIES_SUCCESS;
+  payload: { entities: T[]; lastPage?: number };
 }
 
-export const initialState: State = {
+interface SetCurrentPageAction {
+  type: typeof ActionTypes.SET_CURRENT_PAGE;
+  payload: number;
+}
+
+interface ToggleCheckboxAction {
+  type: typeof ActionTypes.TOGGLE_CHECKBOX;
+  payload: number; // ID of the entity
+}
+
+interface SetAllCheckboxesAction {
+  type: typeof ActionTypes.SET_ALL_CHECKBOXES;
+  payload: boolean; // Checked state
+}
+
+interface DeleteEntityAction<T extends Entity> {
+  type: typeof ActionTypes.DELETE_ENTITY;
+  payload: number[];
+}
+
+interface SetSearchResultsAction<T> {
+  type: typeof ActionTypes.SET_SEARCH_RESULTS;
+  payload: { entities: T[]; lastPage?: number };
+}
+
+// Combine all action types into a single type
+
+type Action<T extends Entity> =
+  | FetchEntitiesSuccessAction<T>
+  | SetCurrentPageAction
+  | ToggleCheckboxAction
+  | SetAllCheckboxesAction
+  | DeleteEntityAction<T>
+  | SetSearchResultsAction<T>;
+
+// Initial State
+export const initialState: State<any> = {
   currentPage: 1,
   lastPage: undefined,
-  roles: [],
+  entities: [],
   isChecked: {},
 };
 
-export const roleReducer = (state: State, action: Action): State => {
+export const genericReducer = <T extends Entity>(
+  state: State<T>,
+  action: Action<T>
+): State<T> => {
   switch (action.type) {
-    case ActionTypes.FETCH_ROLES_SUCCESS:
-      const { roles, lastPage } = action.payload;
-      const isChecked = roles.reduce(
-        (acc: Record<number, boolean>, role: RoleDto) => {
-          acc[role.id] = false;
+    case ActionTypes.FETCH_ENTITIES_SUCCESS:
+      const { entities, lastPage } = action.payload;
+      const isChecked = entities.reduce(
+        (acc: Record<number, boolean>, entity) => {
+          acc[entity.id] = false; // TypeScript knows entity has an id property
           return acc;
         },
         {}
       );
       return {
         ...state,
-        roles,
+        entities,
         lastPage,
         isChecked,
       };
@@ -52,12 +96,11 @@ export const roleReducer = (state: State, action: Action): State => {
       };
 
     case ActionTypes.TOGGLE_CHECKBOX:
-      const id = action.payload;
       return {
         ...state,
         isChecked: {
           ...state.isChecked,
-          [id]: !state.isChecked[id],
+          [action.payload]: !state.isChecked[action.payload],
         },
       };
 
@@ -75,19 +118,19 @@ export const roleReducer = (state: State, action: Action): State => {
         isChecked: updatedIsChecked,
       };
 
-    case ActionTypes.DELETE_ROLE:
-      const remainingRoles = state.roles.filter(
-        (role) => !action.payload.includes(role.id)
+    case ActionTypes.DELETE_ENTITY:
+      const remainingEntities = state.entities.filter(
+        (entity) => !action.payload.includes(entity.id) // Now TypeScript knows entity has an id property
       );
       return {
         ...state,
-        roles: remainingRoles,
+        entities: remainingEntities,
       };
 
     case ActionTypes.SET_SEARCH_RESULTS:
       return {
         ...state,
-        roles: action.payload.roles,
+        entities: action.payload.entities,
         lastPage: action.payload.lastPage,
       };
 

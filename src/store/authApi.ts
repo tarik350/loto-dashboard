@@ -1,4 +1,4 @@
-import { AdminUser } from "@/utils/dto/adminUserDto";
+import { AdminUserDto } from "@/utils/dto/adminUserDto";
 import { GenericResponse } from "@/utils/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -10,7 +10,7 @@ export const authApi = createApi({
   }),
   endpoints: (builder) => ({
     login: builder.mutation<
-      GenericResponse<AdminUser>,
+      GenericResponse<AdminUserDto>,
       { email: string; password: string }
     >({
       query: (body) => ({

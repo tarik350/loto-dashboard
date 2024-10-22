@@ -1,12 +1,13 @@
 "use client";
 import { roleApi } from "@/store/apis/roleApi";
 import style from "@/styles/table.module.css";
+import { RoleDto } from "@/utils/dto/roleDto";
 import { formatToReadableDateTime, renderTableBody } from "@/utils/helper";
 import CustomePagination from "@/utils/widgets/CustomePagination";
 import GenericFilterNavbar from "@/utils/widgets/GenericFilterNavbar";
 import { useRouter } from "next/navigation";
 import { useEffect, useReducer } from "react";
-import { ActionTypes, initialState, roleReducer } from "./roleStore";
+import { ActionTypes, genericReducer, initialState } from "./roleStore";
 
 export default function RolesPage() {
   const router = useRouter();
@@ -15,8 +16,8 @@ export default function RolesPage() {
   const [deleteRole] = roleApi.useDeleteRoleMutation();
   const [searchRole] = roleApi.useSearchRoleMutation();
 
-  const [{ currentPage, lastPage, roles, isChecked }, dispatch] = useReducer(
-    roleReducer,
+  const [{ currentPage, lastPage, entities, isChecked }, dispatch] = useReducer(
+    genericReducer<RoleDto>,
     initialState
   );
 
@@ -31,7 +32,7 @@ export default function RolesPage() {
       .map((key) => parseInt(key));
     try {
       await deleteRole({ roles: selectedRoles }).unwrap();
-      dispatch({ type: ActionTypes.DELETE_ROLE, payload: selectedRoles });
+      dispatch({ type: ActionTypes.DELETE_ENTITY, payload: selectedRoles });
     } catch (error) {
       // todo show error message
     }
@@ -47,7 +48,7 @@ export default function RolesPage() {
       dispatch({
         type: ActionTypes.SET_SEARCH_RESULTS,
         payload: {
-          roles: response.data?.data!,
+          entities: response.data?.data!,
           lastPage: response.data?.last_page,
         },
       });
@@ -61,8 +62,8 @@ export default function RolesPage() {
       const fetchedRoles = data.data?.data || [];
       const lastPage = data.data?.last_page;
       dispatch({
-        type: ActionTypes.FETCH_ROLES_SUCCESS,
-        payload: { roles: fetchedRoles, lastPage },
+        type: ActionTypes.FETCH_ENTITIES_SUCCESS,
+        payload: { entities: fetchedRoles, lastPage },
       });
     }
   }, [isSuccess, data, isFetching]);
@@ -130,7 +131,7 @@ export default function RolesPage() {
             </thead>
             <tbody>
               {renderTableBody({
-                data: roles,
+                data: entities,
                 isLoading: isLoading || isFetching,
                 isError,
                 columns: [

@@ -27,6 +27,7 @@ export const roleApi = api.injectEndpoints({
       }),
       providesTags: ["roles"],
     }),
+
     deleteRole: builder.mutation<GenericResponse<void>, { roles: number[] }>({
       query: (body) => ({
         url: "admin/roles",
