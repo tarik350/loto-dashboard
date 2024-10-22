@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { BiListUl, BiPlus } from "react-icons/bi";
 
-export default function CreateRole() {
+export default function CreateRolePage() {
   const { data, isSuccess } =
     permissionApi.useGetPermissionsWithCategoryQuery();
   const [isChecked, setIsChecked] = useState<Record<number, boolean>>({});

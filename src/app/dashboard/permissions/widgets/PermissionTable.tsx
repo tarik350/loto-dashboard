@@ -5,7 +5,7 @@ import { renderTableBody } from "@/utils/helper";
 import useCheckboxState from "@/utils/hooks/useCheckboxState";
 import CustomePagination from "@/utils/widgets/CustomePagination";
 import { default as LoadingSpiner } from "@/utils/widgets/LoadingSpinner";
-import { Dispatch, useEffect, useState } from "react";
+import { Dispatch, useEffect } from "react";
 import { FaSort } from "react-icons/fa";
 import {
   PermissionActionType,
@@ -29,9 +29,13 @@ export default function PermissionTable({
       category_id: state.filterCategoryId,
     });
 
-  const [permissionIds, setPermissionIds] = useState<number[]>([]);
-  const { isChecked, setAllCheckboxes, toggleCheckbox, isAllChecked } =
-    useCheckboxState(permissionIds);
+  const {
+    isChecked,
+    setAllCheckboxes,
+    updateEntityIds,
+    toggleCheckbox,
+    isAllChecked,
+  } = useCheckboxState([]);
 
   const onDelete = async (ids: number | number[]) => {
     const isBulk = Array.isArray(ids);
@@ -76,7 +80,6 @@ export default function PermissionTable({
 
   useEffect(() => {
     if (isSuccess && data) {
-      setPermissionIds(data.data?.data.map((item) => item.id)!);
       dispatch({
         type: PermissionTableActionTypes.ADD_PERMISSIONS,
         payload: {
@@ -84,6 +87,7 @@ export default function PermissionTable({
           pages: data?.data?.last_page!,
         },
       });
+      updateEntityIds(data.data?.data.map((item) => item.id)!);
     }
   }, [isSuccess, isFetching, data]);
   useEffect(() => {

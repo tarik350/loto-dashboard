@@ -35,5 +35,15 @@ export const roleApi = api.injectEndpoints({
       }),
       invalidatesTags: ["roles"],
     }),
+    searchRole: builder.mutation<
+      GenericResponse<PaginationDto<RoleDto[]>>,
+      { query: string; query_by?: string }
+    >({
+      query: (params) => ({
+        url: "admin/search/roles",
+        method: "GET",
+        params,
+      }),
+    }),
   }),
 });

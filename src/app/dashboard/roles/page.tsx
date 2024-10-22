@@ -2,42 +2,70 @@
 import { roleApi } from "@/store/apis/roleApi";
 import style from "@/styles/table.module.css";
 import { formatToReadableDateTime, renderTableBody } from "@/utils/helper";
-import useCheckboxState from "@/utils/hooks/useCheckboxState";
 import CustomePagination from "@/utils/widgets/CustomePagination";
 import GenericFilterNavbar from "@/utils/widgets/GenericFilterNavbar";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { FaSort } from "react-icons/fa";
+import { useEffect, useReducer } from "react";
+import { ActionTypes, initialState, roleReducer } from "./roleStore";
+
 export default function RolesPage() {
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const router = useRouter();
+
+  // Mutations
+  const [deleteRole] = roleApi.useDeleteRoleMutation();
+  const [searchRole] = roleApi.useSearchRoleMutation();
+
+  const [{ currentPage, lastPage, roles, isChecked }, dispatch] = useReducer(
+    roleReducer,
+    initialState
+  );
+
   const { data, isError, isLoading, isFetching, isSuccess, refetch } =
     roleApi.useGetAllRolesQuery({
       page: currentPage,
     });
-  const [roleIds, setRoleIds] = useState<number[]>([]);
-  const { isChecked, setAllCheckboxes, toggleCheckbox } =
-    useCheckboxState(roleIds);
-  const [deleteRole] = roleApi.useDeleteRoleMutation();
-
-  useEffect(() => {
-    if (isSuccess && data) {
-      setRoleIds(data.data?.data.map((item) => item.id)!);
-    }
-  }, [isSuccess]);
-
-  const router = useRouter();
 
   const onDelete = async () => {
-    const roles = Object.keys(isChecked)
+    const selectedRoles = Object.keys(isChecked)
       .filter((item) => isChecked[parseInt(item)])
       .map((key) => parseInt(key));
     try {
-      const response = await deleteRole({ roles }).unwrap();
-      debugger;
+      await deleteRole({ roles: selectedRoles }).unwrap();
+      dispatch({ type: ActionTypes.DELETE_ROLE, payload: selectedRoles });
     } catch (error) {
-      debugger;
+      // todo show error message
     }
   };
+
+  const onSearch = async (query: string) => {
+    try {
+      if (!query) {
+        refetch();
+        return;
+      }
+      const response = await searchRole({ query }).unwrap();
+      dispatch({
+        type: ActionTypes.SET_SEARCH_RESULTS,
+        payload: {
+          roles: response.data?.data!,
+          lastPage: response.data?.last_page,
+        },
+      });
+    } catch (error) {
+      // todo show error message
+    }
+  };
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      const fetchedRoles = data.data?.data || [];
+      const lastPage = data.data?.last_page;
+      dispatch({
+        type: ActionTypes.FETCH_ROLES_SUCCESS,
+        payload: { roles: fetchedRoles, lastPage },
+      });
+    }
+  }, [isSuccess, data, isFetching]);
   return (
     <div>
       <div className=" mb-8">
@@ -46,7 +74,7 @@ export default function RolesPage() {
             router.push("/dashboard/roles/create-role");
           }}
           buttonTitle={"Create Role"}
-          searchMethod={() => {}}
+          searchMethod={onSearch}
           searchLabel={"Type role name"}
         />
       </div>
@@ -58,7 +86,7 @@ export default function RolesPage() {
             <button
               type="button"
               onClick={onDelete}
-              className="   text-white bg-red-600 rounded-xl  min-w-[6rem] min-h-[2.5rem]"
+              className=" text-white bg-red-600 rounded-xl min-w-[6rem] min-h-[2.5rem]"
             >
               Delete
             </button>
@@ -74,35 +102,34 @@ export default function RolesPage() {
                       (item) => item === true
                     )}
                     onChange={(event) => {
-                      setAllCheckboxes(event.target.checked);
+                      dispatch({
+                        type: ActionTypes.SET_ALL_CHECKBOXES,
+                        payload: event.target.checked,
+                      });
                     }}
                     type="checkbox"
                   />
                 </th>
                 <th className="sortable">
-                  <div className=" flex  items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <p>ID</p>
-                    <FaSort className="sort-icon" />
                   </div>
                 </th>
-                <th className="sortable   ">
+                <th className="sortable">
                   <div className="flex items-center gap-2">
                     <p>Role Name</p>
                   </div>
                 </th>
-
                 <th className="sortable">
-                  <div className=" flex  items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <p>Created At</p>
-                    <FaSort className="sort-icon" />
                   </div>
                 </th>
-                {/* <th></th> */}
               </tr>
             </thead>
             <tbody>
               {renderTableBody({
-                data: data?.data?.data!,
+                data: roles,
                 isLoading: isLoading || isFetching,
                 isError,
                 columns: [
@@ -112,8 +139,11 @@ export default function RolesPage() {
                         <input
                           checked={isChecked[record.id]}
                           type="checkbox"
-                          onChange={(event) => {
-                            toggleCheckbox(record.id);
+                          onChange={() => {
+                            dispatch({
+                              type: ActionTypes.TOGGLE_CHECKBOX,
+                              payload: record.id,
+                            });
                           }}
                         />
                       );
@@ -141,11 +171,14 @@ export default function RolesPage() {
             </tbody>
           </table>
         </div>
-        <div className=" mt-8">
+        <div className="mt-8">
           <CustomePagination
-            pageCount={data?.data?.last_page!}
+            pageCount={lastPage!}
             handlePageClick={({ selected }: { selected: number }) => {
-              setCurrentPage(selected + 1);
+              dispatch({
+                type: ActionTypes.SET_CURRENT_PAGE,
+                payload: selected + 1,
+              });
               refetch();
             }}
           />

@@ -1,19 +1,20 @@
 import { useState, useEffect } from "react";
 
-const useCheckboxState = (items: number[]) => {
+const useCheckboxState = (initialEntityIds: number[]) => {
   const [isChecked, setIsChecked] = useState<Record<number, boolean>>({});
+  const [entityIds, setEntityIds] = useState<number[]>(initialEntityIds);
 
-  // Generic function to set all checkboxes to the specified boolean value
+  // Generic function to set all checkboxes for the current entities
   const setAllCheckboxes = (checked: boolean) => {
     setIsChecked(
-      items.reduce<Record<number, boolean>>((prev, current) => {
+      entityIds.reduce<Record<number, boolean>>((prev, current) => {
         prev[current] = checked;
         return prev;
       }, {})
     );
   };
 
-  // Toggle checkbox state for a specific item
+  // Toggle checkbox state for a specific entity
   const toggleCheckbox = (id: number) => {
     setIsChecked((prev) => ({
       ...prev,
@@ -21,20 +22,35 @@ const useCheckboxState = (items: number[]) => {
     }));
   };
 
+  // Check if all checkboxes are checked
   const isAllChecked = (): boolean => {
-    return items.every((item) => isChecked[item] === true);
+    return entityIds.every((id) => isChecked[id] === true);
   };
 
-  // On mount, initialize checkboxes to false
+  // Only update checkboxes if entityIds change
   useEffect(() => {
-    setAllCheckboxes(false);
-  }, [items]);
+    if (entityIds.length > 0) {
+      setAllCheckboxes(false); // Reset all checkboxes to unchecked
+    }
+  }, [entityIds]);
+
+  // Function to update entityIds dynamically, only if different from previous
+  const updateEntityIds = (newEntityIds: number[]) => {
+    const entityIdsChanged =
+      newEntityIds.length !== entityIds.length ||
+      newEntityIds.some((id, index) => id !== entityIds[index]);
+
+    if (entityIdsChanged) {
+      setEntityIds(newEntityIds);
+    }
+  };
 
   return {
     isChecked,
-    setAllCheckboxes, // Now you can use this for both reset and checking all
+    setAllCheckboxes,
     toggleCheckbox,
     isAllChecked,
+    updateEntityIds,
   };
 };
 
