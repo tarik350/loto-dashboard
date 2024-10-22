@@ -98,9 +98,10 @@ export default function RolesPage() {
               <tr>
                 <th>
                   <input
-                    checked={Object.values(isChecked).every(
-                      (item) => item === true
-                    )}
+                    checked={
+                      Object.values(isChecked).length > 0 &&
+                      Object.values(isChecked).every((item) => item === true)
+                    }
                     onChange={(event) => {
                       dispatch({
                         type: ActionTypes.SET_ALL_CHECKBOXES,

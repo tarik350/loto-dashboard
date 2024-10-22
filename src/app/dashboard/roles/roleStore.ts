@@ -13,8 +13,6 @@ interface State {
   lastPage?: number;
   roles: RoleDto[];
   isChecked: Record<number, boolean>;
-  isLoading: boolean;
-  isError: boolean;
 }
 
 interface Action {
@@ -27,8 +25,6 @@ export const initialState: State = {
   lastPage: undefined,
   roles: [],
   isChecked: {},
-  isLoading: false,
-  isError: false,
 };
 
 export const roleReducer = (state: State, action: Action): State => {
@@ -47,8 +43,6 @@ export const roleReducer = (state: State, action: Action): State => {
         roles,
         lastPage,
         isChecked,
-        isLoading: false,
-        isError: false,
       };
 
     case ActionTypes.SET_CURRENT_PAGE:
