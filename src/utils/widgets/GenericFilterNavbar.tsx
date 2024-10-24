@@ -21,7 +21,7 @@ export default function GenericFilterNavbar({
           onClick={() => {
             setModalOpen(true);
           }}
-          className="generic-create__button"
+          className="generic-create__button px-4"
         >
           <BiPlusCircle className="" size={23} />
           <p className="  font-[600]">{buttonTitle}</p>

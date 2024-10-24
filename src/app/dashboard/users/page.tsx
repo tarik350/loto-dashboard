@@ -1,21 +1,17 @@
 "use client";
-import CustomePagination from "@/utils/widgets/CustomePagination";
+import { adminUserApi } from "@/store/apis/adminUserApis";
 import style from "@/styles/table.module.css";
+import { AdminUserDto } from "@/utils/dto/adminUserDto";
+import { RoleDto } from "@/utils/dto/roleDto";
+import { formatToReadableDateTime, renderTableBody } from "@/utils/helper";
+import CreateAdminUserModal from "@/utils/modals/CreateAdminUserModal";
+import CustomePagination from "@/utils/widgets/CustomePagination";
 import GenericFilterNavbar from "@/utils/widgets/GenericFilterNavbar";
+import LoadingSpiner from "@/utils/widgets/LoadingSpinner";
+import { AnimatePresence } from "framer-motion";
 import { useEffect, useReducer, useState } from "react";
 import { FaSort } from "react-icons/fa";
-import CreateAdminUserModal from "@/utils/modals/CreateAdminUserModal";
-import { AnimatePresence } from "framer-motion";
-import { adminUserApi } from "@/store/apis/adminUserApis";
-import { ActionTypes, initialState, genericReducer } from "../roles/roleStore";
-import { AdminUserDto } from "@/utils/dto/adminUserDto";
-import { formatToReadableDateTime, renderTableBody } from "@/utils/helper";
-import { isFloat32Array } from "util/types";
-import { recordTraceEvents } from "next/dist/trace";
-import { RoleDto } from "@/utils/dto/roleDto";
-import { RoleInput } from "./widgets/RoleSearchbleInput";
-import { roleApi } from "@/store/apis/roleApi";
-import LoadingSpiner from "@/utils/widgets/LoadingSpinner";
+import { ActionTypes, genericReducer, initialState } from "../roles/roleStore";
 export default function UsersPage() {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [{ currentPage, lastPage, entities, isChecked }, dispatch] = useReducer(

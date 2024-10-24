@@ -1,18 +1,16 @@
 import { useEffect, useState } from "react";
 
-interface RoleInputProps {
+interface RoleInputProps<T> {
   onSearch: (query: string) => void;
   setShowRoles: (value: boolean) => void;
-  selectedRole: {
-    name: string;
-  } | null;
+  selectedRole: T | null;
 }
 
-export const RoleInput: React.FC<RoleInputProps> = ({
+export default function RoleInput<T extends { name: string }>({
   onSearch,
   setShowRoles,
   selectedRole,
-}) => {
+}: RoleInputProps<T>) {
   // Local state to manage the input value
   const [inputValue, setInputValue] = useState<string>("");
 
@@ -34,7 +32,7 @@ export const RoleInput: React.FC<RoleInputProps> = ({
       value={inputValue}
       type="text"
       className={selectedRole !== undefined ? "selected-dropdown" : ""}
-      placeholder="Role"
+      placeholder="Type role name"
     />
   );
-};
+}

@@ -1,7 +1,6 @@
 "use client";
-import { createGameCategory } from "@/services/gameCategoryServices";
-import { httpRequestStatus } from "@/utils/constants";
-import { CreateGameCategoryRequestDto } from "@/utils/dto/createGameCategoryDto";
+import { gameCategoryApis } from "@/store/apis/gameCategoryApis";
+import { GameCategoryRequestDto } from "@/utils/dto/createGameCategoryDto";
 import LoadingSpiner from "@/utils/widgets/LoadingSpinner";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
@@ -9,14 +8,10 @@ import { useForm } from "react-hook-form";
 import { BiSolidDownArrow } from "react-icons/bi";
 
 export default function CreateGameCategoryForm({
-  refetch,
   isTitleVisible,
 }: {
-  refetch: () => void;
   isTitleVisible: boolean;
 }) {
-  const [createStatus, setCreateStatus] =
-    useState<httpRequestStatus>("initial");
   const {
     handleSubmit,
     formState: { errors },
@@ -25,32 +20,31 @@ export default function CreateGameCategoryForm({
     getValues,
     setError,
     clearErrors,
-  } = useForm<CreateGameCategoryRequestDto>();
-  const [showDurationDropdown, setShowDurationDropdown] =
+  } = useForm<GameCategoryRequestDto>();
+  const [showgame_durationDropdown, setShowgame_durationDropdown] =
     useState<boolean>(false);
-  const onSubmit = async (d: CreateGameCategoryRequestDto) => {
-    if (!d.duration) {
-      setError("duration", { message: "required" });
+  const [createGameCategory, { isLoading }] =
+    gameCategoryApis.useCreateGameCategoryMutation();
+  const onSubmit = async (data: GameCategoryRequestDto) => {
+    if (!data.game_duration) {
+      setError("game_duration", { message: "required" });
       return;
     }
 
     try {
-      setCreateStatus("loading");
-      const response = await createGameCategory(d);
-      if (response.status === 201) {
-        setCreateStatus("success");
-        refetch();
-      }
+      const response = await createGameCategory(data).unwrap();
+      debugger;
     } catch (err) {
-      setCreateStatus("error");
+      debugger;
     }
   };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className=" m-auto   create-category__sidebar__container   overflow-auto  py-12"
+      className="   create-category__sidebar__container   "
     >
+      <h2 className="heading-two text-center mb-4 ">Create Game Category</h2>
       <AnimatePresence>
         {isTitleVisible && (
           <motion.h2
@@ -68,11 +62,11 @@ export default function CreateGameCategoryForm({
         <div className=" ">
           <input
             type="text"
-            {...register("title.en", { required: true })}
+            {...register("title_en", { required: true })}
             className=" "
             placeholder="Game Category Title"
           />
-          {errors.title?.en && (
+          {errors.title_en && (
             <p className=" text-red-500 font-[500] ">required</p>
           )}
         </div>
@@ -81,44 +75,44 @@ export default function CreateGameCategoryForm({
         Game Title (Amharic)
         <div>
           <input
-            {...register("title.am", { required: true })}
+            {...register("title_am", { required: true })}
             type="text"
             className=" "
             placeholder="የጫዋታ እርእስ"
           />
-          {errors.title?.am && (
+          {errors.title_am && (
             <p className=" text-red-500 font-[500] ">required</p>
           )}
         </div>
       </label>{" "}
       <label className=" ">
-        Game Duration
+        Game game_duration
         <div className="relative">
           <button
             type="button"
             onClick={() => {
-              setShowDurationDropdown(!showDurationDropdown);
+              setShowgame_durationDropdown(!showgame_durationDropdown);
             }}
             className=" flex justify-between items-center "
           >
             <p
               className={`${
-                getValues("duration") ? "text-black " : "text-gray-400"
+                getValues("game_duration") ? "text-black " : "text-gray-400"
               } font-[500]`}
             >
-              {getValues("duration") ?? "Select Duration"}
+              {getValues("game_duration") ?? "Select game_duration"}
             </p>
             <BiSolidDownArrow className="fill-purple text-purple" size={20} />
           </button>
-          {showDurationDropdown && (
+          {showgame_durationDropdown && (
             <div className=" h-max w-full bg-white absolute top-[3.5rem] z-50 flex flex-col  justify-start text-black">
               <ul className="  ">
                 {["Hourly", "Daily", "Weekly", "Monthly"].map((item, index) => {
                   return (
                     <li
                       onClick={() => {
-                        setValue("duration", item.toLowerCase() as never);
-                        clearErrors("duration");
+                        setValue("game_duration", item.toLowerCase() as never);
+                        clearErrors("game_duration");
                       }}
                       className=" "
                       key={index}
@@ -130,7 +124,7 @@ export default function CreateGameCategoryForm({
               </ul>
             </div>
           )}
-          {errors.duration && (
+          {errors.game_duration && (
             <p className=" text-red-500 font-[500] ">required</p>
           )}
         </div>
@@ -139,11 +133,11 @@ export default function CreateGameCategoryForm({
         Winning Prize
         <p>
           <input
-            {...register("winningPrize", { required: true })}
+            {...register("winning_prize", { required: true })}
             type="number"
             placeholder="Winning prize"
           />
-          {errors.winningPrize && (
+          {errors.winning_prize && (
             <p className=" text-red-500 font-[500] ">required</p>
           )}
         </p>
@@ -152,12 +146,12 @@ export default function CreateGameCategoryForm({
         2nd Place prize
         <div>
           <input
-            {...register("secondPlacePrize", { required: true })}
+            {...register("second_winning_prize", { required: true })}
             type="number"
             className=" "
             placeholder="2nd place prize"
           />
-          {errors.secondPlacePrize && (
+          {errors.second_winning_prize && (
             <p className=" text-red-500 font-[500] ">required</p>
           )}
         </div>
@@ -166,12 +160,12 @@ export default function CreateGameCategoryForm({
         3nd Place prize
         <div>
           <input
-            {...register("thirdPlacePrize", { required: true })}
+            {...register("third_winning_prize", { required: true })}
             type="number"
             className=" "
             placeholder="3rd place prize"
           />
-          {errors.thirdPlacePrize && (
+          {errors.third_winning_prize && (
             <p className=" text-red-500 font-[500] ">required</p>
           )}
         </div>
@@ -180,12 +174,12 @@ export default function CreateGameCategoryForm({
         Ticket Price
         <div>
           <input
-            {...register("ticketPrice", { required: true })}
+            {...register("ticket_price", { required: true })}
             type="number"
             className=" "
             placeholder="Ticket price"
           />
-          {errors.ticketPrice && (
+          {errors.ticket_price && (
             <p className=" text-red-500 font-[500] ">required</p>
           )}
         </div>
@@ -194,19 +188,19 @@ export default function CreateGameCategoryForm({
         Number of Ticket
         <div>
           <input
-            {...register("numberOfTicket", { required: true })}
+            {...register("ticket_count", { required: true })}
             type="number"
             className=" "
             placeholder="Number of Ticket"
           />
-          {errors.numberOfTicket && (
+          {errors.ticket_count && (
             <p className=" text-red-500 font-[500] ">required</p>
           )}
         </div>
       </label>
-      <button type="submit" className="  mt-4 min-h-[3rem]">
+      <button type="submit" className="  mt-4 min-h-[3rem] mb-12">
         <p className=" gradient-text-color">
-          {createStatus === "loading" ? (
+          {isLoading ? (
             <div className=" flex justify-center items-center">
               <LoadingSpiner dimension={30} />
             </div>

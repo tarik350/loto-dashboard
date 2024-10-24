@@ -142,6 +142,7 @@ export default function PermissionTable({
                 </div>
               </th>
               <th className="sortable">Permission Name</th>
+              <th className="sortable">Permission Slug</th>
 
               <th className="sortable">
                 <p>Permission Category</p>
@@ -182,13 +183,18 @@ export default function PermissionTable({
                 },
                 {
                   render(record) {
+                    return <div>{record.slug}</div>;
+                  },
+                },
+                {
+                  render(record) {
                     return <div>{record.categories.name}</div>;
                   },
                 },
                 {
                   className: "max-w-[1rem]",
-                  render(record) {
-                    return <div className=" ">{record.description}</div>;
+                  render({ description }) {
+                    return <div className=" ">{description ?? "N/A"}</div>;
                   },
                 },
               ],

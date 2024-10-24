@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import { BiSolidDownArrow } from "react-icons/bi";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { validate } from "uuid";
-import { RoleInput } from "./RoleSearchbleInput";
+import RoleInput from "./RoleSearchbleInput";
 
 type AdminUserFormSchema = {
   firstname: string;
@@ -107,7 +107,7 @@ export default function CreateAdminUserForm() {
       <label className=" ">
         Role
         <div className=" relative">
-          <RoleInput
+          <RoleInput<RoleDto>
             setShowRoles={setShowRoles}
             onSearch={onSearch}
             selectedRole={getValues("selectedRole")}
@@ -172,8 +172,8 @@ export default function CreateAdminUserForm() {
           {errors.password && (
             <p className=" text-red-500 font-[500] ">required</p>
           )}
-          <div
-            className="absolute right-2 top-[.7rem] cursor-pointer "
+          <button
+            className="absolute right-2 top-[.7rem] cursor-pointer obscure-button"
             onClick={() => {
               setShowPassword(!showPassword);
             }}
@@ -183,7 +183,7 @@ export default function CreateAdminUserForm() {
             ) : (
               <FaRegEyeSlash size={"1.5rem"} className="fill-purple" />
             )}
-          </div>
+          </button>
         </div>
       </label>{" "}
       <label className=" ">
@@ -212,7 +212,7 @@ export default function CreateAdminUserForm() {
           )}
           <button
             type="button"
-            className="absolute right-2 top-[.7rem] cursor-pointer "
+            className="absolute right-2 top-[.7rem] cursor-pointer obscure-button "
             onClick={() => {
               setShowCPassword(!showCPassword);
             }}

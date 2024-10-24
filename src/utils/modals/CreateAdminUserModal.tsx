@@ -12,7 +12,7 @@ export default function CreateAdminUserModal({
         style={{
           height: "90%",
         }}
-        className="    flex  "
+        className="flex"
       >
         <CreateAdminUserForm />
       </div>

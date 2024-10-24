@@ -14,5 +14,12 @@ export const api = createApi({
       query: () => ({ method: "GET", url: "" }),
     }),
   }),
-  tagTypes: ["permissions", "categories", "roles", "adminuser"],
+  tagTypes: [
+    "permissions",
+    "categories",
+    "roles",
+    "adminuser",
+    "gamecategories",
+    "games",
+  ],
 });
