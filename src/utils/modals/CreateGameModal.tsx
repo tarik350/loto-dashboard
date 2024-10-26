@@ -50,7 +50,7 @@ export default function CreateGameModal({
       const response = await createGame({
         categoryId: selectedCategory.id,
       }).unwrap();
-      debugger;
+      // debugger;
     } catch (error) {
       debugger;
     }

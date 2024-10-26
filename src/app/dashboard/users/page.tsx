@@ -71,7 +71,7 @@ export default function UsersPage() {
     }
   };
   return (
-    <div>
+    <div className=" m-8">
       <AnimatePresence>
         {modalOpen && <CreateAdminUserModal setIsOpen={setModalOpen} />}
       </AnimatePresence>

@@ -1,8 +1,12 @@
 import { GenericResponse } from "@/utils/types";
 import { api } from "../api";
 import { PaginationDto } from "@/utils/dto/paginationDto";
-import { GameDto } from "@/utils/dto/gameDto";
-import { GameCategoryDto } from "@/utils/dto/createGameCategoryDto";
+import { GameDto, TicketDto } from "@/utils/dto/gameDto";
+import {
+  GameCategoryDto,
+  GameCategoryRequestDto,
+} from "@/utils/dto/createGameCategoryDto";
+import { query } from "firebase/firestore";
 
 export const gameApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -17,8 +21,10 @@ export const gameApi = api.injectEndpoints({
       }),
       invalidatesTags: ["games"],
     }),
-    getGameWithCategory: builder.query<
-      GenericResponse<(GameCategoryDto & { games: GameDto[] })[]>,
+    getAllGamesWithCategory: builder.query<
+      GenericResponse<
+        (GameCategoryDto & { games: GameDto[]; games_count: number })[]
+      >,
       void
     >({
       query: () => ({
@@ -26,6 +32,41 @@ export const gameApi = api.injectEndpoints({
         method: "GET",
       }),
       providesTags: ["games"],
+    }),
+    getAllGamesForParticularCategory: builder.query<
+      GenericResponse<{
+        category: GameCategoryDto;
+        games: PaginationDto<GameDto[]>;
+      }>,
+      { categoryId: string; page: number; gameStatus?: string }
+    >({
+      query: (params) => ({
+        url: "admin/games/category",
+        method: "GET",
+        params,
+      }),
+      providesTags: ["games"],
+    }),
+    searchGame: builder.mutation<
+      GenericResponse<PaginationDto<GameDto[]>>,
+      { query: string; categoryId: number; query_by?: string }
+    >({
+      query: (params) => ({
+        url: "admin/search/games",
+        method: "GET",
+        params,
+      }),
+    }),
+    getGame: builder.query<
+      GenericResponse<
+        GameDto & { category: GameCategoryDto; tickets: TicketDto[] }
+      >,
+      { gameId: string }
+    >({
+      query: (params) => ({
+        url: `admin/games/${params.gameId}`,
+        method: "GET",
+      }),
     }),
   }),
 });

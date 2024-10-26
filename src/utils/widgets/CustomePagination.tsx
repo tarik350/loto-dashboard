@@ -10,7 +10,7 @@ export default function CustomePagination({
   return (
     <div className="w-full  flex ">
       <ReactPaginate
-        className="flex flex-wrap mx-auto my-4 md:my-8 items-center gap-2"
+        className="flex flex-wrap mx-auto  md:my-8 items-center gap-2"
         pageLinkClassName=" h-max w-max px-4 py-2  rounded-xl flex items-center justify-center hover:bg-purple hover:text-white cursor-pointer transition-all ease-in-out border-2  "
         activeLinkClassName=" bg-purple text-white mx-2 px-4 py-2 border-2 border-purple "
         breakLabel="..."

@@ -5,7 +5,7 @@ import { httpRequestStatus, imageType } from "./constants";
 import LoadingSpiner from "./widgets/LoadingSpinner";
 import { IoWarning } from "react-icons/io5";
 import LoadingSpinner from "./widgets/LoadingSpinner";
-import { ReactNode } from "react";
+import { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 export function passwordStrength(password: string) {
   let score = 0;
 
@@ -187,6 +187,7 @@ export function renderTableBody<T>({
   isLoading,
   isError,
   columns,
+  onClick,
 }: {
   data: T[];
   isLoading: boolean;
@@ -196,7 +197,8 @@ export function renderTableBody<T>({
     render: (record: T) => ReactNode;
     className?: string;
   }[];
-}) {
+  onClick?: (record: T) => void;
+} & Omit<HTMLAttributes<HTMLTableRowElement>, "id" | "onClick">) {
   if (isLoading) {
     return (
       <tr>
@@ -224,7 +226,16 @@ export function renderTableBody<T>({
 
   if (data && data.length > 0) {
     return data.map((item, index) => (
-      <tr key={index}>
+      <tr
+        onClick={
+          onClick
+            ? () => {
+                onClick(item);
+              }
+            : undefined
+        }
+        key={index}
+      >
         {columns.map((column, columnIndex) => {
           return (
             <td className={column.className} key={columnIndex}>

@@ -134,6 +134,9 @@ export default function RolesPage() {
                 data: entities,
                 isLoading: isLoading || isFetching,
                 isError,
+                onClick: ({ id }) => {
+                  router.push(`/dashboard/games/${id}`);
+                },
                 columns: [
                   {
                     render(record) {

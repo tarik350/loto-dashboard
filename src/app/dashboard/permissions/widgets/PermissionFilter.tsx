@@ -55,7 +55,7 @@ export default function PermissionFilter({
   );
 }
 
-function GenericDropdown<T>({
+export function GenericDropdown<T>({
   listItem,
   title,
   selectedOption,

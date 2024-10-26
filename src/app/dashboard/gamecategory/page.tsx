@@ -71,7 +71,7 @@ export default function GameCategoryView() {
     }
   }, [isFetching, isSuccess, data]);
   return (
-    <div className=" ">
+    <div className=" m-8">
       <AnimatePresence>
         {modalOpen && <CreateGameCategoryModal setIsOpen={setModalOpen} />}
       </AnimatePresence>
