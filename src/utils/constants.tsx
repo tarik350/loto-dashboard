@@ -143,10 +143,16 @@ const userSchema: CollectionCreateSchema = {
 export type httpRequestStatus = "initial" | "loading" | "success" | "error";
 export type ticketNumberStatus = "sold" | "locked" | "free";
 export type gameStatus = "on-going" | "all-tickets-sold" | "finished";
+export type gameTicketStatus = "free" | "locked" | "sold";
 export const gameStatusTitle: Record<string, gameStatus> = {
   "On going": "on-going",
   Finished: "finished",
   "All tickets sold": "all-tickets-sold",
+};
+export const gameTicketStatusTitle: Record<string, gameTicketStatus> = {
+  Locked: "locked",
+  Free: "free",
+  Sold: "sold",
 };
 
 const authPages = ["login", "register"];

@@ -7,6 +7,7 @@ import {
   GameCategoryRequestDto,
 } from "@/utils/dto/createGameCategoryDto";
 import { query } from "firebase/firestore";
+import { gameTicketStatus } from "@/utils/constants";
 
 export const gameApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -47,6 +48,18 @@ export const gameApi = api.injectEndpoints({
       }),
       providesTags: ["games"],
     }),
+
+    getGame: builder.query<
+      GenericResponse<
+        GameDto & { category: GameCategoryDto; tickets: TicketDto[] }
+      >,
+      { gameId: string }
+    >({
+      query: (params) => ({
+        url: `admin/games/${params.gameId}`,
+        method: "GET",
+      }),
+    }),
     searchGame: builder.mutation<
       GenericResponse<PaginationDto<GameDto[]>>,
       { query: string; categoryId: number; query_by?: string }
@@ -57,15 +70,19 @@ export const gameApi = api.injectEndpoints({
         params,
       }),
     }),
-    getGame: builder.query<
-      GenericResponse<
-        GameDto & { category: GameCategoryDto; tickets: TicketDto[] }
-      >,
-      { gameId: string }
+    searchGameTicket: builder.mutation<
+      GenericResponse<TicketDto[]>,
+      {
+        query?: string;
+        gameId: number;
+        query_by?: string;
+        ticketStatus?: gameTicketStatus;
+      }
     >({
       query: (params) => ({
-        url: `admin/games/${params.gameId}`,
+        url: "admin/search/game/ticket",
         method: "GET",
+        params,
       }),
     }),
   }),
