@@ -2,7 +2,7 @@
 
 import { gameApi } from "@/store/apis/gameApis";
 import { gameTicketStatus, gameTicketStatusTitle } from "@/utils/constants";
-import { TicketDto } from "@/utils/dto/gameDto";
+import { GameDto, TicketDto } from "@/utils/dto/gameDto";
 import { useEffect, useReducer, useState } from "react";
 import { GenericDropdown } from "../../permissions/widgets/PermissionFilter";
 import Echo from "laravel-echo";
@@ -112,10 +112,21 @@ export default function GameDetailPage({
 
     channel.listen(
       ".ticket.locked",
-      ({ ticket, user }: { ticket: TicketDto; user: UserDto }) => {
+      ({
+        ticket,
+        user,
+        game,
+      }: {
+        ticket: TicketDto;
+        user: UserDto;
+        game: GameDto;
+      }) => {
         console.log("WebSocket handshake successful");
+        console.log(game);
+        if (parseInt(params.gameId) === game.id) {
+          refetch();
+        }
         // alert(`${user.full_name} has bought ticket ${ticket.ticket_number}`);
-        refetch();
       }
     );
 
