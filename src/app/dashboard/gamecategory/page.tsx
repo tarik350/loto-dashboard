@@ -5,7 +5,6 @@ import style from "@/styles/table.module.css";
 import { renderTableBody } from "@/utils/helper";
 import CustomePagination from "@/utils/widgets/CustomePagination";
 import LoadingSpiner from "@/utils/widgets/LoadingSpinner";
-
 import { GameCategoryDto } from "@/utils/dto/createGameCategoryDto";
 import CreateGameCategoryModal from "@/utils/modals/CreateGameCategoryModal";
 import GenericFilterNavbar from "@/utils/widgets/GenericFilterNavbar";
@@ -13,7 +12,6 @@ import { AnimatePresence } from "framer-motion";
 import { useEffect, useReducer, useState } from "react";
 import { FaSort } from "react-icons/fa";
 import { ActionTypes, genericReducer, initialState } from "../roles/roleStore";
-
 export default function GameCategoryView() {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [{ currentPage, lastPage, entities, isChecked }, dispatch] = useReducer(

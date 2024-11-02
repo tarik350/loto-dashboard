@@ -5,12 +5,36 @@ import { gameTicketStatus, gameTicketStatusTitle } from "@/utils/constants";
 import { TicketDto } from "@/utils/dto/gameDto";
 import { useEffect, useReducer, useState } from "react";
 import { GenericDropdown } from "../../permissions/widgets/PermissionFilter";
+import Echo from "laravel-echo";
+import Pusher, { Options } from "pusher-js";
 import {
   ActionTypes,
   genericReducer,
   initialState,
 } from "../../roles/roleStore";
 import { TicketCard } from "../widgets/GameCard";
+
+interface UserDto {
+  id: number;
+  full_name: string;
+  phone: string;
+  profile_picture: null;
+  phone_verified: number;
+  created_at: string;
+  updated_at: string;
+  balance: number;
+}
+// interface TicketDto {
+//   id: number;
+//   game_id: number;
+//   ticket_number: number;
+//   status: string;
+//   created_at: string;
+//   updated_at: string;
+//   user_id: number;
+//   lock_expires_at: string;
+//   sold_at: null;
+// }
 
 export default function GameDetailPage({
   params,
@@ -66,6 +90,50 @@ export default function GameDetailPage({
       onSearch();
     }
   }, [ticketStatusFilter]);
+
+  useEffect(() => {
+    const echo = new Echo({
+      broadcaster: "pusher",
+      client: new Pusher(`${process.env.NEXT_PUBLIC_PUSHER_APP_KEY}`, {
+        cluster: "NaN",
+        wsPath: process.env.NEXT_PUBLIC_PUSHER_APP_PATH,
+        wsHost: process.env.NEXT_PUBLIC_PUSHER_HOST,
+        wssPort: parseInt(process.env.NEXT_PUBLIC_PUSHER_PORT!) ?? 443,
+        wsPort: parseInt(process.env.NEXT_PUBLIC_PUSHER_PORT!) ?? 80,
+        forceTLS:
+          (process.env.NEXT_PUBLIC_PUSHER_SCHEME ?? "https") === "https",
+        enableStats: false,
+        enabledTransports: ["ws", "wss"],
+      }),
+    });
+
+    const channel = echo.channel("ticket-lock");
+    const soldChannel = echo.channel("ticket-sold");
+
+    channel.listen(
+      ".ticket.locked",
+      ({ ticket, user }: { ticket: TicketDto; user: UserDto }) => {
+        console.log("WebSocket handshake successful");
+        // alert(`${user.full_name} has bought ticket ${ticket.ticket_number}`);
+        refetch();
+      }
+    );
+
+    soldChannel
+      .subscribed(() => {
+        console.log("subscribed to locked channel");
+      })
+      .listen(
+        ".ticket.sold",
+        ({ tickets, user }: { tickets: TicketDto[]; user: UserDto }) => {
+          refetch();
+        }
+      );
+    return () => {
+      echo.disconnect();
+    };
+  }, []);
+
   return (
     <div className=" bg-black bg-opacity-5 h-screen flex gap-8 p-8 ">
       <div className="flex flex-col   w-[65%] xl:w-[75%] gap-8">
