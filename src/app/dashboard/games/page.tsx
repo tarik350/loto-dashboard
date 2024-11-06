@@ -67,89 +67,93 @@ export default function Games() {
                     </div>
                   </div>
                 )}
-                <div className={style.table__container__fullheight}>
-                  <table className={style.table}>
-                    <thead>
-                      <tr>
-                        <th className="sortable">
-                          <div className="flex items-center gap-2">
-                            <p>ID</p>
-                          </div>
-                        </th>
-                        <th className="sortable">
-                          <div className="flex items-center gap-2">
-                            <p>Game Name</p>
-                          </div>
-                        </th>
-                        <th className="sortable">
-                          <div className="flex items-center gap-2">
-                            <p>Status</p>
-                          </div>
-                        </th>
-                        <th className="sortable">
-                          <div className="flex items-center gap-2">
-                            <p>Sold Tickets</p>
-                          </div>
-                        </th>
-                        <th className="sortable">
-                          <div className="flex items-center gap-2">
-                            <p>Created At</p>
-                          </div>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {renderTableBody({
-                        data: category.games,
-                        isLoading: isLoading || isFetching,
-                        isError,
-                        onClick: ({ id }) => {
-                          //route to game page
-                        },
-                        columns: [
-                          {
-                            render(record) {
-                              return <div>{record.id}</div>;
-                            },
+                {category.games.length !== 0 && (
+                  <div className={style.table__container__fullheight}>
+                    <table className={style.table}>
+                      <thead>
+                        <tr>
+                          <th className="sortable">
+                            <div className="flex items-center gap-2">
+                              <p>ID</p>
+                            </div>
+                          </th>
+                          <th className="sortable">
+                            <div className="flex items-center gap-2">
+                              <p>Game Name</p>
+                            </div>
+                          </th>
+                          <th className="sortable">
+                            <div className="flex items-center gap-2">
+                              <p>Status</p>
+                            </div>
+                          </th>
+                          <th className="sortable">
+                            <div className="flex items-center gap-2">
+                              <p>Sold Tickets</p>
+                            </div>
+                          </th>
+                          <th className="sortable">
+                            <div className="flex items-center gap-2">
+                              <p>Created At</p>
+                            </div>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {renderTableBody({
+                          data: category.games,
+                          isLoading: isLoading || isFetching,
+                          isError,
+                          onClick: ({ id }) => {
+                            //route to game page
                           },
-                          {
-                            render(record) {
-                              return <div>{record.name}</div>;
+                          columns: [
+                            {
+                              render(record) {
+                                return <div>{record.id}</div>;
+                              },
                             },
-                          },
-                          {
-                            render(record) {
-                              return (
-                                <div className=" bg-purple text-white px-2 font-bold w-max rounded-xl">
-                                  {record.status}
-                                </div>
-                              );
+                            {
+                              render(record) {
+                                return <div>{record.name}</div>;
+                              },
                             },
-                          },
-                          {
-                            render(record) {
-                              return (
-                                <p className=" font-bold text-[1rem] ">
-                                  {record.sold_ticket_count} /{" "}
-                                  {category.ticket_count}
-                                </p>
-                              );
+                            {
+                              render(record) {
+                                return (
+                                  <div className=" bg-purple text-white px-2 font-bold w-max rounded-xl">
+                                    {record.status}
+                                  </div>
+                                );
+                              },
                             },
-                          },
-                          {
-                            render(record) {
-                              return (
-                                <div>
-                                  {formatToReadableDateTime(record.updated_at)}
-                                </div>
-                              );
+                            {
+                              render(record) {
+                                return (
+                                  <p className=" font-bold text-[1rem] ">
+                                    {record.sold_ticket_count} /{" "}
+                                    {category.ticket_count}
+                                  </p>
+                                );
+                              },
                             },
-                          },
-                        ],
-                      })}
-                    </tbody>
-                  </table>
-                </div>
+                            {
+                              render(record) {
+                                return (
+                                  <div>
+                                    {formatToReadableDateTime(
+                                      record.updated_at
+                                    )}
+                                  </div>
+                                );
+                              },
+                            },
+                          ],
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </ul>
             );
           })}
