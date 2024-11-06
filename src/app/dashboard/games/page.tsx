@@ -105,7 +105,7 @@ export default function Games() {
                           isLoading: isLoading || isFetching,
                           isError,
                           onClick: ({ id }) => {
-                            //route to game page
+                            router.push(`/dashboard/games/${id}`);
                           },
                           columns: [
                             {

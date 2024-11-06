@@ -1,6 +1,6 @@
 import { TicketDto } from "@/utils/dto/gameDto";
 import { useRouter } from "next/navigation";
-import { ButtonHTMLAttributes } from "react";
+import { AllHTMLAttributes, ButtonHTMLAttributes } from "react";
 
 export function GameCard({
   id,
@@ -43,9 +43,13 @@ export function GameCard({
   );
 }
 
-export const TicketCard = ({ ticket }: { ticket: TicketDto }) => {
+export const TicketCard = ({
+  ticket,
+  onClick,
+}: { ticket: TicketDto } & AllHTMLAttributes<HTMLDivElement>) => {
   return (
     <div
+      onClick={onClick}
       className={`ticket-card card ${
         ticket.status === "free"
           ? "ticket-free"

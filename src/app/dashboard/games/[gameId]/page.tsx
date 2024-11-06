@@ -2,39 +2,13 @@
 
 import { gameApi } from "@/store/apis/gameApis";
 import { gameTicketStatus, gameTicketStatusTitle } from "@/utils/constants";
-import { GameDto, TicketDto } from "@/utils/dto/gameDto";
-import { useEffect, useReducer, useState } from "react";
-import { GenericDropdown } from "../../permissions/widgets/PermissionFilter";
+import { GameAnalyticsDto, GameDto, TicketDto } from "@/utils/dto/gameDto";
+import { UserDto } from "@/utils/dto/userDto";
 import Echo from "laravel-echo";
-import Pusher, { Options } from "pusher-js";
-import {
-  ActionTypes,
-  genericReducer,
-  initialState,
-} from "../../roles/roleStore";
+import Pusher from "pusher-js";
+import { useEffect, useState } from "react";
+import { GenericDropdown } from "../../permissions/widgets/PermissionFilter";
 import { TicketCard } from "../widgets/GameCard";
-
-interface UserDto {
-  id: number;
-  full_name: string;
-  phone: string;
-  profile_picture: null;
-  phone_verified: number;
-  created_at: string;
-  updated_at: string;
-  balance: number;
-}
-// interface TicketDto {
-//   id: number;
-//   game_id: number;
-//   ticket_number: number;
-//   status: string;
-//   created_at: string;
-//   updated_at: string;
-//   user_id: number;
-//   lock_expires_at: string;
-//   sold_at: null;
-// }
 
 export default function GameDetailPage({
   params,
@@ -44,23 +18,30 @@ export default function GameDetailPage({
   const [ticketStatusFilter, setTicketStatusFilter] = useState<
     gameTicketStatus | undefined
   >(undefined);
-  const [{ currentPage, lastPage, entities }, dispatch] = useReducer(
-    genericReducer<TicketDto>,
-    initialState
+  const [tickets, setTickets] = useState<TicketDto[]>([]);
+  const [users, setUsers] = useState<
+    Pick<UserDto, "phone" | "full_name" | "id" | "profile_picture">[]
+  >([]);
+  const [analytics, setAnalytics] = useState<GameAnalyticsDto | undefined>(
+    undefined
   );
+
   const [searchGameTicket] = gameApi.useSearchGameTicketMutation();
+  const [getUserTickets] = gameApi.useGetUserTicketsInGameMutation();
+  const [getTicketOwner] = gameApi.useGetTicketOwnerInGameMutation();
   const { data, isLoading, isSuccess, isFetching, refetch } =
     gameApi.useGetGameQuery({
       gameId: params.gameId,
     });
   useEffect(() => {
     if (isSuccess && data) {
-      const tickets = data.data?.tickets || [];
-      //   const lastPage = data.data?.l;
-      dispatch({
-        type: ActionTypes.FETCH_ENTITIES_SUCCESS,
-        payload: { entities: tickets },
-      });
+      const tickets = data.data?.game.tickets || [];
+      const users = data.data?.users;
+      const analytics = data.data?.analytics;
+
+      setTickets(tickets);
+      setUsers(users!);
+      setAnalytics(analytics);
     }
   }, [isSuccess, data, isFetching]);
   const onSearch = async (query?: string) => {
@@ -72,15 +53,16 @@ export default function GameDetailPage({
 
       const response = await searchGameTicket({
         query,
-        gameId: data?.data?.id!,
+        gameId: data?.data?.game.id!,
         ticketStatus: ticketStatusFilter,
       }).unwrap();
-      dispatch({
-        type: ActionTypes.SET_SEARCH_RESULTS,
-        payload: {
-          entities: response.data!,
-        },
-      });
+      setTickets(response.data!);
+      // dispatch({
+      //   type: ActionTypes.SET_SEARCH_RESULTS,
+      //   payload: {
+      //     entities: response.data!,
+      //   },
+      // });
     } catch (error) {
       // todo show error message
     }
@@ -145,6 +127,32 @@ export default function GameDetailPage({
     };
   }, []);
 
+  const getTickets = async (userId: number) => {
+    try {
+      const response = await getUserTickets({
+        gameId: parseInt(params.gameId),
+        userId,
+      }).unwrap();
+      setTickets(response.data?.tickets!);
+      // debugger;
+    } catch (error) {
+      // debugger;
+    }
+  };
+
+  const getUser = async (ticketNumber: number) => {
+    try {
+      const response = await getTicketOwner({
+        gameId: parseInt(params.gameId),
+        ticketNumber: ticketNumber,
+      }).unwrap();
+      setUsers(response.data!);
+      debugger;
+    } catch (error) {
+      //if 404 ticket has no woner
+      debugger;
+    }
+  };
   return (
     <div className=" bg-black bg-opacity-5 h-screen flex gap-8 p-8 ">
       <div className="flex flex-col   w-[65%] xl:w-[75%] gap-8">
@@ -182,7 +190,7 @@ export default function GameDetailPage({
             className="  search-input"
           />
         </div>
-        {entities.length === 0 && (
+        {tickets.length === 0 && (
           <div className=" flex-grow  flex justify-center items-center bg-softLavender rounded-2xl  ">
             <p className=" m-auto text-purple text-center ">
               <p className="font-light">No tickets found</p>
@@ -199,13 +207,44 @@ export default function GameDetailPage({
         )}
 
         <ul className=" grid xl:grid-cols-7 lg:grid-cols-4   w-full gap-2    overflow-y-auto ">
-          {entities.length !== 0 &&
-            entities.map((ticket, index) => {
-              return <TicketCard ticket={ticket} />;
+          {tickets.length !== 0 &&
+            tickets.map((ticket, index) => {
+              return (
+                <TicketCard
+                  ticket={ticket}
+                  onClick={() => {
+                    getUser(ticket.ticket_number);
+                  }}
+                />
+              );
             })}
         </ul>
       </div>
-      <div className="  bg-softLavender border-[1px] border-purple border-opacity-20 flex-grow rounded-xl"></div>
+      <div className="  bg-softLavender border-[1px] border-purple border-opacity-20 flex-grow rounded-xl">
+        <ul className=" h-full w-full overflow-x-hidden overflow-y-auto flex flex-col justify-start items-center p-2">
+          <input
+            type="text"
+            onChange={(event) => {
+              onSearch(event.target.value);
+            }}
+            placeholder={"Search for user"}
+            className="  search-input mb-4"
+          />
+          {users &&
+            users.map((user, index) => (
+              <li
+                onClick={() => {
+                  getTickets(user.id);
+                }}
+                key={index}
+                className=" bg-gray-400 rounded-xl w-full mx-4 p-4  cursor-pointer mb-2"
+              >
+                <p className=" text-black fongn-bold">{user.full_name}</p>
+                <p>{user.phone}</p>
+              </li>
+            ))}
+        </ul>
+      </div>
     </div>
   );
 }

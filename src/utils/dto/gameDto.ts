@@ -19,3 +19,10 @@ export interface TicketDto {
   created_at: string;
   updated_at: string;
 }
+
+export interface GameAnalyticsDto {
+  total_tickets: number;
+  tickets_sold: number;
+  tickets_locked: number;
+  unique_users: number;
+}

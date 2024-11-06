@@ -1,12 +1,13 @@
 import { GenericResponse } from "@/utils/types";
 import { api } from "../api";
 import { PaginationDto } from "@/utils/dto/paginationDto";
-import { GameDto, TicketDto } from "@/utils/dto/gameDto";
+import { GameAnalyticsDto, GameDto, TicketDto } from "@/utils/dto/gameDto";
 import {
   GameCategoryDto,
   GameCategoryRequestDto,
 } from "@/utils/dto/createGameCategoryDto";
 import { gameTicketStatus } from "@/utils/constants";
+import { UserDto } from "@/utils/dto/userDto";
 
 export const gameApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -50,9 +51,22 @@ export const gameApi = api.injectEndpoints({
     }),
 
     getGame: builder.query<
-      GenericResponse<
-        GameDto & { category: GameCategoryDto; tickets: TicketDto[] }
-      >,
+      GenericResponse<{
+        game: GameDto & {
+          category: GameCategoryDto;
+          tickets: (TicketDto & {
+            owner: Pick<
+              UserDto,
+              "phone" | "full_name" | "id" | "profile_picture"
+            >;
+          })[];
+        };
+        analytics: GameAnalyticsDto;
+        users: Pick<
+          UserDto,
+          "phone" | "full_name" | "id" | "profile_picture"
+        >[];
+      }>,
       { gameId: string }
     >({
       query: (params) => ({
@@ -81,6 +95,33 @@ export const gameApi = api.injectEndpoints({
     >({
       query: (params) => ({
         url: "admin/search/game/ticket",
+        method: "GET",
+        params,
+      }),
+    }),
+    getUserTicketsInGame: builder.mutation<
+      GenericResponse<{
+        ticket_count: number;
+        locked_count: number;
+        sold_count: number;
+        tickets: TicketDto[];
+      }>,
+      { userId: number; gameId: number }
+    >({
+      query: (params) => ({
+        url: "admin/game/user/tickets",
+        method: "GET",
+        params,
+      }),
+    }),
+    getTicketOwnerInGame: builder.mutation<
+      GenericResponse<
+        Pick<UserDto, "full_name" | "phone" | "profile_picture" | "id">[]
+      >,
+      { ticketNumber: number; gameId: number }
+    >({
+      query: (params) => ({
+        url: "admin/game/ticket/owner",
         method: "GET",
         params,
       }),
