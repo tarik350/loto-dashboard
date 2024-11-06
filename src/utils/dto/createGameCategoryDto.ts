@@ -1,5 +1,3 @@
-import { Extensions } from "firebase-admin/extensions";
-
 export interface GameCategoryRequestDto {
   title_en: string;
   title_am: string;

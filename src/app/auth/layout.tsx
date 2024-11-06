@@ -1,9 +1,9 @@
 "use client";
 import { store } from "@/store/store";
+import { authPages } from "@/utils/constants";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { Provider } from "react-redux";
-import "./globals.css";
 
 export default function RootLayout({
   children,
@@ -15,10 +15,16 @@ export default function RootLayout({
     console.log(pathname);
   }, [pathname]);
   return (
-    <Provider store={store}>
-      <html lang="en">
-        <body className="  ">{children}</body>
-      </html>
-    </Provider>
+    <div className=" h-screen w-screen   flex bg-softLavender">
+      <div className="  m-auto w-[28rem] ">
+        <div>
+          {/* logo goes here */}
+          <h1 className=" text-center font-bold text-[2rem] mb-12">
+            EDIL DASHBOARD
+          </h1>
+        </div>
+        <main>{children}</main>
+      </div>
+    </div>
   );
 }

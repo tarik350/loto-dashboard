@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "emulator": "firebase emulators:start"
+    "lint": "next lint"
   },
   "dependencies": {
     "@babel/runtime": "^7.25.7",
@@ -15,8 +14,6 @@
     "@reduxjs/toolkit": "^2.2.8",
     "@types/uuid": "^10.0.0",
     "babel-runtime": "^6.26.0",
-    "firebase": "^10.12.5",
-    "firebase-admin": "^12.6.0",
     "framer-motion": "^11.3.24",
     "js-cookie": "^3.0.5",
     "next": "14.2.5",

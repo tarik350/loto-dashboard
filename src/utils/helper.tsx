@@ -1,5 +1,3 @@
-import { Timestamp } from "firebase/firestore";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { httpRequestStatus, imageType } from "./constants";
 import LoadingSpiner from "./widgets/LoadingSpinner";
@@ -29,44 +27,22 @@ export function passwordStrength(password: string) {
   return Math.min(score, 4);
 }
 
-export const uploadImageToStorage = async ({
-  file,
-  path,
-}: {
-  file: File;
-  path: imageType;
-}): Promise<string> => {
-  try {
-    const storage = getStorage();
-    const uuid = uuidv4();
+// export function convertFirebaseTimestampToDate(timestamp: Timestamp): string {
+//   // Convert the Firebase timestamp to a JavaScript Date object
+//   const date = timestamp.toDate();
 
-    const imagePath = `${path}/${uuid}`;
-    const storageRef = ref(storage, imagePath);
-
-    const snapshot = await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(snapshot.ref);
-    return url;
-  } catch (error) {
-    throw "Error uploading image";
-  }
-};
-
-export function convertFirebaseTimestampToDate(timestamp: Timestamp): string {
-  // Convert the Firebase timestamp to a JavaScript Date object
-  const date = timestamp.toDate();
-
-  // Format the date to a human-readable string
-  return date.toLocaleString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    second: "numeric",
-    hour12: true,
-  });
-}
+//   // Format the date to a human-readable string
+//   return date.toLocaleString("en-US", {
+//     weekday: "long",
+//     year: "numeric",
+//     month: "long",
+//     day: "numeric",
+//     hour: "numeric",
+//     minute: "numeric",
+//     second: "numeric",
+//     hour12: true,
+//   });
+// }
 
 export function normalizePhoneNumber(value: string): string {
   if (value.startsWith("09") || value.startsWith("07")) {

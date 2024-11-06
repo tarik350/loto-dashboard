@@ -6,7 +6,6 @@ import {
   GameCategoryDto,
   GameCategoryRequestDto,
 } from "@/utils/dto/createGameCategoryDto";
-import { query } from "firebase/firestore";
 import { gameTicketStatus } from "@/utils/constants";
 
 export const gameApi = api.injectEndpoints({
@@ -43,6 +42,7 @@ export const gameApi = api.injectEndpoints({
     >({
       query: (params) => ({
         url: "admin/games/category",
+
         method: "GET",
         params,
       }),
