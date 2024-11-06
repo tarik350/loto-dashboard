@@ -15,7 +15,7 @@ export default function RootLayout({
     console.log(pathname);
   }, [pathname]);
   return (
-    <div className=" h-screen w-screen   flex bg-softLavender">
+    <div className=" h-screen w-screen   flex  bg-softLavender">
       <div className="  m-auto w-[28rem] ">
         <div>
           {/* logo goes here */}
