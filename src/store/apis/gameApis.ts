@@ -130,5 +130,15 @@ export const gameApi = api.injectEndpoints({
         params,
       }),
     }),
+    searchUserInGame: builder.mutation<
+      GenericResponse<UserDto[]>,
+      { query: string; gameId: number; query_by?: string }
+    >({
+      query: (params) => ({
+        url: "admin/game/search/owner",
+        method: "GET",
+        params,
+      }),
+    }),
   }),
 });

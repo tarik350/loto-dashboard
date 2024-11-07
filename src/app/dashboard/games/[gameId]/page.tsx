@@ -10,6 +10,9 @@ import { useEffect, useState } from "react";
 import { GenericDropdown } from "../../permissions/widgets/PermissionFilter";
 import { TicketCard } from "../widgets/GameCard";
 import Games from "../page";
+import { userApi } from "@/store/apis/userApi";
+import { queryByConstForUser, queryByTypeForUser } from "../../users/page";
+import { BiFilter } from "react-icons/bi";
 
 export default function GameDetailPage({
   params,
@@ -26,10 +29,13 @@ export default function GameDetailPage({
   const [analytics, setAnalytics] = useState<GameAnalyticsDto | undefined>(
     undefined
   );
+  const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const [queryBy, setQueryBy] = useState<queryByTypeForUser>("Name");
 
   const [searchGameTicket] = gameApi.useSearchGameTicketMutation();
   const [getUserTickets] = gameApi.useGetUserTicketsInGameMutation();
   const [getTicketOwner] = gameApi.useGetTicketOwnerInGameMutation();
+  const [searchUserInGame] = gameApi.useSearchUserInGameMutation();
   const { data, isLoading, isSuccess, isFetching, refetch } =
     gameApi.useGetGameQuery({
       gameId: params.gameId,
@@ -58,15 +64,28 @@ export default function GameDetailPage({
         ticketStatus: ticketStatusFilter,
       }).unwrap();
       setTickets(response.data!);
-      // dispatch({
-      //   type: ActionTypes.SET_SEARCH_RESULTS,
-      //   payload: {
-      //     entities: response.data!,
-      //   },
-      // });
     } catch (error) {
       // todo show error message
     }
+  };
+  const onUserSearch = async (query?: string) => {
+    try {
+      if (!query) {
+        refetch();
+        return;
+      }
+      const response = await searchUserInGame({
+        query,
+        query_by:
+          queryBy === "Name"
+            ? "full_name"
+            : queryBy === "ID"
+            ? "searchable_id"
+            : "phone",
+        gameId: parseInt(params.gameId),
+      }).unwrap();
+      setUsers(response.data!);
+    } catch (error) {}
   };
   useEffect(() => {
     if (ticketStatusFilter) {
@@ -261,15 +280,58 @@ export default function GameDetailPage({
         </ul>
       </div>
       <div className="  bg-softLavender border-[1px] border-purple border-opacity-20 flex-grow rounded-xl">
-        <ul className=" h-full w-full overflow-x-hidden overflow-y-auto flex flex-col justify-start items-center p-2">
+        <div className=" flex justify-center w-full ">
           <input
             type="text"
+            className=" border-2 border-purple  w-full rounded-l-xl  px-4 outline-none "
             onChange={(event) => {
-              onSearch(event.target.value);
+              onUserSearch(event.target.value);
+            }}
+            placeholder="Search User"
+          />
+          <div className=" relative">
+            <button
+              type="button"
+              onClick={() => {
+                setShowDropdown(!showDropdown);
+              }}
+              className="h-[3rem] bg-purple rounded-r-xl  px-2 text-white flex gap-2  justify-center items-center"
+            >
+              <p>{queryBy}</p>
+              <BiFilter />
+            </button>
+            {showDropdown && (
+              <ul className=" absolute z-50 min-w-max bg-purple text-white font-[600] w-full mt-2 border-2  border-softLavender">
+                {queryByConstForUser.map((value, index) => {
+                  return (
+                    <li
+                      key={index}
+                      onClick={() => {
+                        setQueryBy(value);
+                        setShowDropdown(false);
+                      }}
+                      className={`${
+                        index !== queryByConstForUser.length - 1 &&
+                        "border-b-[1px] border-white"
+                      } py-[.5rem] px-2 cursor-pointer  hover:bg-white  hover:text-purple transition-all ease-in-out duration-150  `}
+                    >
+                      {value}{" "}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+        </div>
+        <ul className=" h-full w-full overflow-x-hidden overflow-y-auto flex flex-col justify-start items-center p-2">
+          {/* <input
+            type="text"
+            onChange={(event) => {
+              onUserSearch(event.target.value);
             }}
             placeholder={"Search for user"}
             className="  search-input mb-4"
-          />
+          /> */}
           {users &&
             users.map((user, index) => (
               <li

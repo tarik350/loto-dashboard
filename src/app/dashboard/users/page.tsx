@@ -11,8 +11,12 @@ import { FaSort } from "react-icons/fa";
 import { ActionTypes, genericReducer, initialState } from "../roles/roleStore";
 import { GenericResponse } from "@/utils/types";
 import { PaginationDto } from "@/utils/dto/paginationDto";
-type queryByType = "Name" | "ID" | "Phone";
-const queryByConst: queryByType[] = ["Name", "ID", "Phone"];
+export type queryByTypeForUser = "Name" | "ID" | "Phone";
+export const queryByConstForUser: queryByTypeForUser[] = [
+  "Name",
+  "ID",
+  "Phone",
+];
 export default function UsersPage() {
   const [{ currentPage, lastPage, entities, isChecked }, dispatch] = useReducer(
     genericReducer<UserDto>,
@@ -23,7 +27,7 @@ export default function UsersPage() {
     SortDto<"id" | "created_at" | "balance"> | undefined
   >(undefined);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
-  const [queryBy, setQueryBy] = useState<queryByType>("Name");
+  const [queryBy, setQueryBy] = useState<queryByTypeForUser>("Name");
 
   const { data, isLoading, isError, isSuccess, isFetching, refetch } =
     userApi.useGetAllUsersQuery({
@@ -107,7 +111,7 @@ export default function UsersPage() {
           </button>
           {showDropdown && (
             <ul className=" absolute z-50 min-w-max bg-purple text-white font-[600] w-full mt-2 border-2  border-softLavender">
-              {queryByConst.map((value, index) => {
+              {queryByConstForUser.map((value, index) => {
                 return (
                   <li
                     key={index}
@@ -116,7 +120,7 @@ export default function UsersPage() {
                       setShowDropdown(false);
                     }}
                     className={`${
-                      index !== queryByConst.length - 1 &&
+                      index !== queryByConstForUser.length - 1 &&
                       "border-b-[1px] border-white"
                     } py-[.5rem] px-2 cursor-pointer  hover:bg-white  hover:text-purple transition-all ease-in-out duration-150  `}
                   >
