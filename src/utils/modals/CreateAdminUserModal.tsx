@@ -1,4 +1,4 @@
-import CreateAdminUserForm from "@/app/dashboard/users/widgets/CreateAdminUserForm";
+import CreateAdminUserForm from "@/app/dashboard/admin/users/widgets/CreateAdminUserForm";
 import ModalLayout from "./ModalLayout";
 
 export default function CreateAdminUserModal({

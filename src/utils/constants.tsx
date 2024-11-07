@@ -75,6 +75,12 @@ const sidebarItems: sidebarItemType[] = [
     route: "/dashboard/financialreport",
   },
   {
+    title: "Users",
+    icon: FaUser,
+    className: "sidebar-icon",
+    route: "/dashboard/users",
+  },
+  {
     title: "Admin users",
     icon: BiLock,
     className: "sidebar-icon",
@@ -83,7 +89,7 @@ const sidebarItems: sidebarItemType[] = [
       {
         title: "Users",
         icon: FaUser,
-        route: "/dashboard/users",
+        route: "/dashboard/admin/users",
       },
       {
         title: "Roles",

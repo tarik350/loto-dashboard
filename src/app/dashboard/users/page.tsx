@@ -1,30 +1,44 @@
 "use client";
-import { adminUserApi } from "@/store/apis/adminUserApis";
-import style from "@/styles/table.module.css";
-import { AdminUserDto } from "@/utils/dto/adminUserDto";
-import { RoleDto } from "@/utils/dto/roleDto";
 import { formatToReadableDateTime, renderTableBody } from "@/utils/helper";
-import CreateAdminUserModal from "@/utils/modals/CreateAdminUserModal";
 import CustomePagination from "@/utils/widgets/CustomePagination";
-import GenericFilterNavbar from "@/utils/widgets/GenericFilterNavbar";
-import LoadingSpiner from "@/utils/widgets/LoadingSpinner";
-import { AnimatePresence } from "framer-motion";
+import style from "@/styles/table.module.css";
+import { ActionTypes, genericReducer, initialState } from "../roles/roleStore";
+import { AdminUserDto } from "@/utils/dto/adminUserDto";
+import { UserDto } from "@/utils/dto/userDto";
 import { useEffect, useReducer, useState } from "react";
 import { FaSort } from "react-icons/fa";
-import { ActionTypes, genericReducer, initialState } from "../roles/roleStore";
+import { userApi } from "@/store/apis/userApi";
+import { SortDto } from "@/utils/dto/sortDto";
 export default function UsersPage() {
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [{ currentPage, lastPage, entities, isChecked }, dispatch] = useReducer(
-    genericReducer<AdminUserDto & { role?: RoleDto }>,
+    genericReducer<UserDto>,
     initialState
   );
 
-  //qeury and mutations
-  const [searchAdminUser] = adminUserApi.useSearchAdminUserMutation();
-  const [deleteAdminUser, { isLoading: deleteLoading }] =
-    adminUserApi.useDeleteAdminUserMutation();
-  const { data, isLoading, isFetching, isSuccess, isError, refetch } =
-    adminUserApi.useGetAdminUserQuery({ page: currentPage });
+  const [sort, setSort] = useState<
+    SortDto<"id" | "created_at" | "balance"> | undefined
+  >(undefined);
+
+  const { data, isLoading, isError, isSuccess, isFetching, refetch } =
+    userApi.useGetAllUsersQuery({
+      page: currentPage,
+      sortBy: sort?.sortBy ?? undefined,
+      sortOrder: sort?.sortOrder ?? undefined,
+    });
+
+  const onDelete = async () => {
+    const selectedAdmins = Object.keys(isChecked)
+      .filter((item) => isChecked[parseInt(item)])
+      .map((key) => parseInt(key));
+    try {
+      // await deleteAdminUser({ ids: selectedAdmins }).unwrap();
+      // dispatch({ type: ActionTypes.DELETE_ENTITY, payload: selectedAdmins });
+      //todo show success message
+    } catch (error) {
+      // todo show error message
+      debugger;
+    }
+  };
 
   useEffect(() => {
     if (isSuccess && data) {
@@ -36,86 +50,34 @@ export default function UsersPage() {
       });
     }
   }, [isSuccess, data, isFetching]);
-  const [showRoles, setShowRoles] = useState<boolean>(false);
-  const [roles, setRoles] = useState<RoleDto[]>([]);
-
-  const onAdminSearch = async (query: string) => {
-    try {
-      if (!query) {
-        refetch();
-        return;
-      }
-      const response = await searchAdminUser({ query }).unwrap();
-      dispatch({
-        type: ActionTypes.SET_SEARCH_RESULTS,
-        payload: {
-          entities: response.data?.data!,
-          lastPage: response.data?.last_page,
-        },
-      });
-    } catch (error) {
-      debugger;
-    }
-  };
-  const onDelete = async () => {
-    const selectedAdmins = Object.keys(isChecked)
-      .filter((item) => isChecked[parseInt(item)])
-      .map((key) => parseInt(key));
-    try {
-      await deleteAdminUser({ ids: selectedAdmins }).unwrap();
-      dispatch({ type: ActionTypes.DELETE_ENTITY, payload: selectedAdmins });
-      //todo show success message
-    } catch (error) {
-      // todo show error message
-      debugger;
-    }
-  };
   return (
-    <div className=" m-8">
-      <AnimatePresence>
-        {modalOpen && <CreateAdminUserModal setIsOpen={setModalOpen} />}
-      </AnimatePresence>
-      <div className=" mb-8">
-        <GenericFilterNavbar
-          setModalOpen={setModalOpen}
-          buttonTitle={"Create Admin User"}
-          searchMethod={onAdminSearch}
-          searchLabel={"ID, Email , Name"}
-        />
-      </div>
+    <div className="m-8">
       <div className={style.table__container__highlight}>
         <div className="generic-table__header">
-          <h2>Admin Users</h2>
-          {Object.values(isChecked).some((item) => item === true) && (
+          <h2>Users</h2>
+          {/* {Object.values(isChecked).some((item) => item === true) && (
             <button
               type="button"
               onClick={onDelete}
               className="   text-white bg-red-600 rounded-xl  min-w-[6rem] min-h-[2.5rem]"
             >
-              {deleteLoading ? <LoadingSpiner dimension={30} /> : "Delete"}
+              {"Delete"}
             </button>
-          )}
+          )} */}
         </div>
         <div className={style.table__container__fullheight}>
           <table className={style.table}>
             <thead>
               <tr>
-                <th>
-                  <input
-                    checked={
-                      Object.values(isChecked).length > 0 &&
-                      Object.values(isChecked).every((item) => item === true)
-                    }
-                    onChange={(event) => {
-                      dispatch({
-                        type: ActionTypes.SET_ALL_CHECKBOXES,
-                        payload: event.target.checked,
-                      });
-                    }}
-                    type="checkbox"
-                  />
-                </th>
-                <th className="sortable">
+                <th
+                  className="sortable"
+                  onClick={() => {
+                    setSort({
+                      sortBy: "id",
+                      sortOrder: sort?.sortOrder === "asc" ? "desc" : "asc",
+                    });
+                  }}
+                >
                   <div className=" flex  items-center gap-2">
                     <p>ID</p>
                     <FaSort className="sort-icon" />
@@ -126,12 +88,33 @@ export default function UsersPage() {
                     <p>Full Name</p>
                   </div>
                 </th>
-                <th className="sortable">Email</th>
-                <th className="sortable">Role</th>
-                <th className="sortable">Email Verified</th>
+                <th
+                  className="sortable"
+                  onClick={() => {
+                    setSort({
+                      sortBy: "balance",
+                      sortOrder: sort?.sortOrder === "asc" ? "desc" : "asc",
+                    });
+                  }}
+                >
+                  <div className=" flex  items-end gap-2">
+                    <p>Balance</p>
+                    <FaSort className="sort-icon" />
+                  </div>
+                </th>
+                <th className="sortable">Phone</th>
+                <th className="sortable">Phone Verified</th>
                 <th className="sortable">Suspended</th>
 
-                <th className="sortable">
+                <th
+                  className="sortable"
+                  onClick={() => {
+                    setSort({
+                      sortBy: "created_at",
+                      sortOrder: sort?.sortOrder === "asc" ? "desc" : "asc",
+                    });
+                  }}
+                >
                   <div className=" flex  items-center gap-2">
                     <p>Created At</p>
                     <FaSort className="sort-icon" />
@@ -147,80 +130,28 @@ export default function UsersPage() {
                 columns: [
                   {
                     render(record) {
-                      return (
-                        <input
-                          checked={isChecked[record.id]}
-                          type="checkbox"
-                          onChange={() => {
-                            dispatch({
-                              type: ActionTypes.TOGGLE_CHECKBOX,
-                              payload: record.id,
-                            });
-                          }}
-                        />
-                      );
-                    },
-                  },
-                  {
-                    render(record) {
                       return <p>{record.id}</p>;
                     },
                   },
                   {
                     render(record) {
-                      return <p>{record.firstname + " " + record.lastname}</p>;
+                      return <p>{record.full_name}</p>;
                     },
                   },
                   {
                     render(record) {
-                      return <p>{record.email}</p>;
+                      return <p>{record.balance}</p>;
                     },
                   },
                   {
                     render(record) {
-                      return (
-                        <div className=" relative">
-                          <p>{record.role?.name}</p>
-                          {/* <RoleInput
-                            onSearch={onSearch}
-                            setShowRoles={setShowRoles}
-                            selectedRole={record.role!}
-                          /> */}
-                          {showRoles && (
-                            <div className=" h-max w-full bg-white absolute top-[3.5rem] z-50 flex flex-col  justify-start text-black">
-                              {roles.length === 0 && (
-                                <div className=" min-h-[5rem]  flex justify-center items-center">
-                                  <p className=" m-auto">
-                                    No Roles with this name.
-                                  </p>
-                                </div>
-                              )}
-                              {roles.length !== 0 && (
-                                <ul>
-                                  {roles.map((role) => (
-                                    <li
-                                      key={role.id}
-                                      onClick={() => {
-                                        // setValue("selectedRole", role);
-                                        setShowRoles(false);
-                                        // clearErrors("selectedRole");
-                                      }}
-                                    >
-                                      {role.name}
-                                    </li>
-                                  ))}
-                                </ul>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      );
-                      // return <p>{record.role?.name}</p>;
+                      return <p>{record.phone}</p>;
                     },
                   },
+
                   {
                     render(record) {
-                      return <p>{!record.is_email_verified ? "No" : "Yes"}</p>;
+                      return <p>{!record.phone_verified ? "No" : "Yes"}</p>;
                     },
                   },
                   {
@@ -228,6 +159,7 @@ export default function UsersPage() {
                       return <p>{!record.is_suspended ? "No" : "Yes"}</p>;
                     },
                   },
+
                   {
                     render(record) {
                       return (

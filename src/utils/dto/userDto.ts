@@ -7,4 +7,5 @@ export interface UserDto {
   created_at: string;
   updated_at: string;
   balance: number;
+  is_suspended: boolean;
 }
