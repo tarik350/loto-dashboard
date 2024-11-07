@@ -39,11 +39,15 @@ export const gameApi = api.injectEndpoints({
         category: GameCategoryDto;
         games: PaginationDto<GameDto[]>;
       }>,
-      { categoryId: string; page: number; gameStatus?: string }
+      {
+        categoryId: string;
+        page: number;
+        gameStatus?: string;
+        sortOrder?: "asc" | "desc";
+      }
     >({
       query: (params) => ({
         url: "admin/games/category",
-
         method: "GET",
         params,
       }),
@@ -61,7 +65,7 @@ export const gameApi = api.injectEndpoints({
             >;
           })[];
         };
-        analytics: GameAnalyticsDto;
+        analytic: GameAnalyticsDto;
         users: Pick<
           UserDto,
           "phone" | "full_name" | "id" | "profile_picture"

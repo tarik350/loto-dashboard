@@ -617,3 +617,20 @@ input[type="checkbox"]:hover {
   font-weight: 600;
   font-size: 1rem;
 }
+
+.game-detail {
+  @apply bg-softLavender border-[1px] border-purple border-opacity-20 min-h-[10rem] flex-grow  rounded-xl  p-4 flex  gap-[5rem];
+}
+.game-detail p {
+  @apply text-[1.2rem] font-[300] leading-[2rem];
+}
+.game-detail > div > p > span {
+  @apply font-bold text-purple;
+}
+/* .game-detail div:first-child > p:first-child,
+.game-detail div:first-child > p:first-child > span {
+  @apply text-[2.2rem] text-purple leading-[4rem];
+} */
+.game-detail > p {
+  @apply text-[2.2rem] text-purple leading-[4rem] font-bold;
+}

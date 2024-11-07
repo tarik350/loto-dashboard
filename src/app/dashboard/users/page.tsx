@@ -1,14 +1,18 @@
 "use client";
+import { userApi } from "@/store/apis/userApi";
+import style from "@/styles/table.module.css";
+import { SortDto } from "@/utils/dto/sortDto";
+import { UserDto } from "@/utils/dto/userDto";
 import { formatToReadableDateTime, renderTableBody } from "@/utils/helper";
 import CustomePagination from "@/utils/widgets/CustomePagination";
-import style from "@/styles/table.module.css";
-import { ActionTypes, genericReducer, initialState } from "../roles/roleStore";
-import { AdminUserDto } from "@/utils/dto/adminUserDto";
-import { UserDto } from "@/utils/dto/userDto";
 import { useEffect, useReducer, useState } from "react";
+import { BiFilter } from "react-icons/bi";
 import { FaSort } from "react-icons/fa";
-import { userApi } from "@/store/apis/userApi";
-import { SortDto } from "@/utils/dto/sortDto";
+import { ActionTypes, genericReducer, initialState } from "../roles/roleStore";
+import { GenericResponse } from "@/utils/types";
+import { PaginationDto } from "@/utils/dto/paginationDto";
+type queryByType = "Name" | "ID" | "Phone";
+const queryByConst: queryByType[] = ["Name", "ID", "Phone"];
 export default function UsersPage() {
   const [{ currentPage, lastPage, entities, isChecked }, dispatch] = useReducer(
     genericReducer<UserDto>,
@@ -18,6 +22,8 @@ export default function UsersPage() {
   const [sort, setSort] = useState<
     SortDto<"id" | "created_at" | "balance"> | undefined
   >(undefined);
+  const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const [queryBy, setQueryBy] = useState<queryByType>("Name");
 
   const { data, isLoading, isError, isSuccess, isFetching, refetch } =
     userApi.useGetAllUsersQuery({
@@ -25,6 +31,8 @@ export default function UsersPage() {
       sortBy: sort?.sortBy ?? undefined,
       sortOrder: sort?.sortOrder ?? undefined,
     });
+
+  const [searchUser] = userApi.useSearchUserMutation();
 
   const onDelete = async () => {
     const selectedAdmins = Object.keys(isChecked)
@@ -42,28 +50,87 @@ export default function UsersPage() {
 
   useEffect(() => {
     if (isSuccess && data) {
-      const fetchedAdminUsers = data.data?.data || [];
+      const fetchedUser = data.data?.data || [];
       const lastPage = data.data?.last_page;
       dispatch({
         type: ActionTypes.FETCH_ENTITIES_SUCCESS,
-        payload: { entities: fetchedAdminUsers, lastPage },
+        payload: { entities: fetchedUser, lastPage },
       });
     }
   }, [isSuccess, data, isFetching]);
+
+  const onSearch = async (query: string) => {
+    try {
+      if (!query) {
+        refetch();
+        return;
+      }
+      const response = (await searchUser({
+        query,
+        query_by:
+          queryBy === "Name"
+            ? "full_name"
+            : queryBy === "ID"
+            ? "searchable_id"
+            : "phone",
+        paginate: true,
+      }).unwrap()) as GenericResponse<PaginationDto<UserDto[]>>;
+      const fetchedUser = response.data?.data!;
+      const lastPage = response.data?.last_page;
+      dispatch({
+        type: ActionTypes.FETCH_ENTITIES_SUCCESS,
+        payload: { entities: fetchedUser, lastPage },
+      });
+    } catch (error) {}
+  };
   return (
     <div className="m-8">
+      <div className=" flex justify-self-end">
+        <input
+          type="text"
+          className=" border-2 border-purple min-w-[15rem] rounded-l-xl  px-4 outline-none"
+          onChange={(event) => {
+            onSearch(event.target.value);
+          }}
+          placeholder="Search User"
+        />
+        <div className=" relative">
+          <button
+            type="button"
+            onClick={() => {
+              setShowDropdown(!showDropdown);
+            }}
+            className="h-[3rem] bg-purple rounded-r-xl w-max px-2 text-white flex gap-2  justify-center items-center"
+          >
+            <p>{queryBy}</p>
+            <BiFilter />
+          </button>
+          {showDropdown && (
+            <ul className=" absolute z-50 min-w-max bg-purple text-white font-[600] w-full mt-2 border-2  border-softLavender">
+              {queryByConst.map((value, index) => {
+                return (
+                  <li
+                    key={index}
+                    onClick={() => {
+                      setQueryBy(value);
+                      setShowDropdown(false);
+                    }}
+                    className={`${
+                      index !== queryByConst.length - 1 &&
+                      "border-b-[1px] border-white"
+                    } py-[.5rem] px-2 cursor-pointer  hover:bg-white  hover:text-purple transition-all ease-in-out duration-150  `}
+                  >
+                    {value}{" "}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </div>
       <div className={style.table__container__highlight}>
         <div className="generic-table__header">
           <h2>Users</h2>
-          {/* {Object.values(isChecked).some((item) => item === true) && (
-            <button
-              type="button"
-              onClick={onDelete}
-              className="   text-white bg-red-600 rounded-xl  min-w-[6rem] min-h-[2.5rem]"
-            >
-              {"Delete"}
-            </button>
-          )} */}
         </div>
         <div className={style.table__container__fullheight}>
           <table className={style.table}>

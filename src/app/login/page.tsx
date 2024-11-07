@@ -8,6 +8,8 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 import { authApi } from "@/store/authApi";
 import LoadingSpiner from "@/utils/widgets/LoadingSpinner";
+import { useAppDispatch } from "@/store/rootHooks";
+import { setSessionExpired } from "@/store/features/sessionSlice";
 
 export default function Login() {
   const router = useRouter();
@@ -16,6 +18,8 @@ export default function Login() {
   const [modalMessage, setModalMessage] = useState<string | undefined>(
     undefined
   );
+
+  const dispatch = useAppDispatch();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -32,6 +36,7 @@ export default function Login() {
       const { email, password } = d;
       const response = await login({ email, password }).unwrap();
       Cookies.set("token", response?.data?.token!);
+      dispatch(setSessionExpired("active"));
       router.push("/dashboard");
     } catch (e) {
       setModalMessage("Wrong credentials please try again");

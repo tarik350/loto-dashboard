@@ -9,6 +9,7 @@ import Pusher from "pusher-js";
 import { useEffect, useState } from "react";
 import { GenericDropdown } from "../../permissions/widgets/PermissionFilter";
 import { TicketCard } from "../widgets/GameCard";
+import Games from "../page";
 
 export default function GameDetailPage({
   params,
@@ -37,7 +38,7 @@ export default function GameDetailPage({
     if (isSuccess && data) {
       const tickets = data.data?.game.tickets || [];
       const users = data.data?.users;
-      const analytics = data.data?.analytics;
+      const analytics = data.data?.analytic;
 
       setTickets(tickets);
       setUsers(users!);
@@ -157,7 +158,46 @@ export default function GameDetailPage({
     <div className=" bg-black bg-opacity-5 h-screen flex gap-8 p-8 ">
       <div className="flex flex-col   w-[65%] xl:w-[75%] gap-8">
         <div className="flex w-full gap-4">
-          <div className="  bg-softLavender border-[1px] border-purple border-opacity-20 min-h-[10rem] flex-grow  rounded-xl"></div>
+          <div className="  game-detail">
+            <p>
+              Game ID <span>{data?.data?.game.id}</span>
+            </p>
+            <div>
+              <p>
+                Game Name: <span>{data?.data?.game.name}</span>
+              </p>
+
+              <p>
+                Game Category:{" "}
+                <span className="">
+                  {data?.data?.game.category.title_en}(
+                  {data?.data?.game.category.title_am})
+                </span>
+              </p>
+              <p>
+                Game Total Ticket:{" "}
+                <span>{data?.data?.game.category.ticket_count}</span>
+              </p>
+            </div>
+            <div>
+              <p>
+                Total Locked Tickets: <span>{analytics?.tickets_locked}</span>
+              </p>
+              <p>
+                Total Sold Tickets: <span>{analytics?.tickets_sold}</span>
+              </p>
+              <p>
+                Total Remaining Ticket:{" "}
+                <span>
+                  {analytics?.total_tickets! - analytics?.tickets_sold!}
+                </span>
+              </p>
+              <p>
+                Total users who bought the ticket:{" "}
+                <span>{analytics?.unique_users}</span>
+              </p>
+            </div>
+          </div>
         </div>
         <div className="flex justify-between items-end">
           <div className=" flex gap-2">

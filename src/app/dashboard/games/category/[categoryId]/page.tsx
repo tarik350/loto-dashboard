@@ -9,6 +9,7 @@ import { gameApi } from "@/store/apis/gameApis";
 import style from "@/styles/table.module.css";
 import { gameStatus, gameStatusTitle } from "@/utils/constants";
 import { GameDto } from "@/utils/dto/gameDto";
+import { SortDto } from "@/utils/dto/sortDto";
 import { formatToReadableDateTime, renderTableBody } from "@/utils/helper";
 import CustomePagination from "@/utils/widgets/CustomePagination";
 import { FilterButton } from "@/utils/widgets/FilterButton";
@@ -20,6 +21,11 @@ import {
   useReducer,
   useState,
 } from "react";
+import { BiFilter } from "react-icons/bi";
+import { FaSort } from "react-icons/fa";
+
+type queryByType = "Name" | "ID";
+const queryByConst: queryByType[] = ["Name", "ID"];
 
 export default function GamesOfGameCategory({
   params,
@@ -35,6 +41,11 @@ export default function GamesOfGameCategory({
   const [statusFitler, setStatusFitler] = useState<gameStatus | undefined>(
     undefined
   );
+  const [sort, setSort] = useState<SortDto<"id" | "created_at"> | undefined>(
+    undefined
+  );
+  const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const [queryBy, setQueryBy] = useState<queryByType>("Name");
 
   //query and mutation
   const { data, refetch, isSuccess, isLoading, isFetching, isError } =
@@ -42,6 +53,7 @@ export default function GamesOfGameCategory({
       categoryId: params.categoryId,
       page: currentPage,
       gameStatus: statusFitler,
+      sortOrder: sort?.sortOrder,
     });
   const [searchGame, { isLoading: searchLoading }] =
     gameApi.useSearchGameMutation();
@@ -55,6 +67,7 @@ export default function GamesOfGameCategory({
       });
     }
   }, [isSuccess, data, isFetching]);
+
   const onDelete = () => {
     try {
       const gameIds = Object.keys(isChecked)
@@ -72,6 +85,10 @@ export default function GamesOfGameCategory({
       }
       const response = await searchGame({
         query,
+        query_by:
+          queryBy.toLowerCase() === "id"
+            ? "searchable_id"
+            : queryBy.toLowerCase(),
         categoryId: data?.data?.category.id!,
       }).unwrap();
       dispatch({
@@ -89,6 +106,7 @@ export default function GamesOfGameCategory({
   useEffect(() => {
     refetch();
   }, [statusFitler]);
+
   return (
     <div className=" px-8 py-4 h-screen overflow-y-auto ">
       <div className="flex justify-between items-end">
@@ -96,15 +114,47 @@ export default function GamesOfGameCategory({
           {data?.data?.category.title_en} ({data?.data?.category.title_am})
           Games
         </h1>
-        <div className="">
+        <div className=" flex">
           <input
             type="text"
+            className=" border-2 border-purple min-w-[15rem] rounded-l-xl  px-4 outline-none"
             onChange={(event) => {
               onSearch(event.target.value);
             }}
-            placeholder={"Search for a game"}
-            className="  search-input"
           />
+          <div className=" relative">
+            <button
+              type="button"
+              onClick={() => {
+                setShowDropdown(!showDropdown);
+              }}
+              className="h-[3rem] bg-purple rounded-r-xl w-max px-2 text-white flex gap-2  justify-center items-center"
+            >
+              <p>{queryBy}</p>
+              <BiFilter />
+            </button>
+            {showDropdown && (
+              <ul className=" absolute min-w-max bg-purple text-white font-[600] w-full mt-2 border-2  border-purple">
+                {queryByConst.map((value, index) => {
+                  return (
+                    <li
+                      key={index}
+                      onClick={() => {
+                        setQueryBy(value);
+                        setShowDropdown(false);
+                      }}
+                      className={`${
+                        index !== queryByConst.length - 1 &&
+                        "border-b-[1px] border-white"
+                      } py-[.5rem] px-2 cursor-pointer  hover:bg-white  hover:text-purple transition-all ease-in-out duration-150  `}
+                    >
+                      {value}{" "}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
         </div>
       </div>
       <FilterButton
@@ -150,9 +200,18 @@ export default function GamesOfGameCategory({
                     type="checkbox"
                   />
                 </th>
-                <th className="sortable">
+                <th
+                  onClick={() => {
+                    setSort({
+                      sortBy: "id",
+                      sortOrder: sort?.sortOrder === "asc" ? "desc" : "asc",
+                    });
+                  }}
+                  className="sortable"
+                >
                   <div className="flex items-center gap-2">
                     <p>ID</p>
+                    <FaSort />
                   </div>
                 </th>
                 <th className="sortable">
@@ -170,9 +229,18 @@ export default function GamesOfGameCategory({
                     <p>Sold Tickets</p>
                   </div>
                 </th>
-                <th className="sortable">
+                <th
+                  onClick={() => {
+                    setSort({
+                      sortBy: "created_at",
+                      sortOrder: sort?.sortOrder === "asc" ? "desc" : "asc",
+                    });
+                  }}
+                  className="sortable"
+                >
                   <div className="flex items-center gap-2">
                     <p>Created At</p>
+                    <FaSort />
                   </div>
                 </th>
               </tr>

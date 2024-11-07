@@ -1,8 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { rootReducer } from "./rootReducers";
+
 import { api } from "./api";
 import { authApi } from "./authApi";
 import { thunk } from "redux-thunk";
+import rootReducer from "./rootReducers";
 
 const store = configureStore({
   reducer: rootReducer,

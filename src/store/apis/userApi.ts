@@ -20,5 +20,15 @@ export const userApi = api.injectEndpoints({
       }),
       providesTags: ["users"],
     }),
+    searchUser: builder.mutation<
+      GenericResponse<PaginationDto<UserDto[]>> | GenericResponse<UserDto[]>,
+      { query: string; query_by?: string; paginate: boolean }
+    >({
+      query: (params) => ({
+        url: "admin/search/user",
+        method: "GET",
+        params,
+      }),
+    }),
   }),
 });
