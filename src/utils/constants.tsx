@@ -63,6 +63,12 @@ const sidebarItems: sidebarItemType[] = [
     route: "/dashboard/deposit",
   },
   {
+    title: "Withdrawal",
+    icon: CiMoneyBill,
+    className: "sidebar-icon",
+    route: "/dashboard/withdrawal",
+  },
+  {
     title: "Financial Report",
     icon: BiSolidBank,
     className: "sidebar-icon",

@@ -147,10 +147,10 @@ export default function GameDetailPage({
         ticketNumber: ticketNumber,
       }).unwrap();
       setUsers(response.data!);
-      debugger;
+      // debugger;
     } catch (error) {
       //if 404 ticket has no woner
-      debugger;
+      // debugger;
     }
   };
   return (
