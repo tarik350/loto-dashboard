@@ -9,14 +9,13 @@ import { useEffect, useReducer, useState } from "react";
 import { BiFilter } from "react-icons/bi";
 import { FaSort } from "react-icons/fa";
 import { ActionTypes, genericReducer, initialState } from "../roles/roleStore";
-import { GenericResponse } from "@/utils/types";
+import {
+  GenericResponse,
+  queryByConstForUser,
+  QueryByTypeForUser,
+} from "@/utils/types";
 import { PaginationDto } from "@/utils/dto/paginationDto";
-export type QueryByTypeForUser = "Name" | "ID" | "Phone";
-export const queryByConstForUser: QueryByTypeForUser[] = [
-  "Name",
-  "ID",
-  "Phone",
-];
+
 export default function UsersPage() {
   const [{ currentPage, lastPage, entities, isChecked }, dispatch] = useReducer(
     genericReducer<UserDto>,

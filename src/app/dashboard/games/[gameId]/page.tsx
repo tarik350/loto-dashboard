@@ -17,10 +17,11 @@ import Pusher from "pusher-js";
 import { useEffect, useState } from "react";
 import { FaPlusCircle } from "react-icons/fa";
 import { GenericDropdown } from "../../permissions/widgets/PermissionFilter";
-import { queryByConstForUser, QueryByTypeForUser } from "../../users/page";
+
 import { TicketCard } from "../widgets/GameCard";
 import { AnimatePresence } from "framer-motion";
 import SetWinningNumberModal from "@/utils/modals/SetWinningNumbersModal";
+import { queryByConstForUser, QueryByTypeForUser } from "@/utils/types";
 
 export default function GameDetailPage({
   params,

@@ -34,3 +34,10 @@ interface Error {
 //       ]
 //   }
 // }
+
+export type QueryByTypeForUser = "Name" | "ID" | "Phone";
+export const queryByConstForUser: QueryByTypeForUser[] = [
+  "Name",
+  "ID",
+  "Phone",
+];
