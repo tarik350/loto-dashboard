@@ -105,7 +105,7 @@ export default function ModalLayout({
         // initial="initial"
         // animate="animate"
         // exit="exit"
-        className="modal-container  blackpurple-gradient-background"
+        className="modal-container  blackpurple-gradient-background h-screen overflow-auto"
       >
         {children}
       </motion.div>

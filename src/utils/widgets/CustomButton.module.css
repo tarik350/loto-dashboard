@@ -1,0 +1,29 @@
+/* CustomButton.module.css */
+
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem; /* Matches `rounded-xl` */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Matches default shadow-md */
+  transition: all 0.3s ease-in-out;
+  transform: translateY(0); /* For hover translate effect */
+}
+
+.button:hover:not(.disabled) {
+  box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.15); /* Matches `hover:shadow-lg` */
+  transform: translateY(3px);
+  z-index: 10;
+}
+
+.button:active:not(.disabled) {
+  transform: scale(0.95); /* Matches `active:scale-95` */
+}
+
+.disabled {
+  background-color: rgba(128, 128, 128, 0.4);
+  color: white;
+  cursor: not-allowed;
+  pointer-events: none;
+}

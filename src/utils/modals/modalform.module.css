@@ -1,0 +1,128 @@
+/* SetWinningNumberModal.module.css */
+
+.container {
+  padding: 1.5rem;
+  max-width: 28rem; /* max-w-md */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* space-y-4 */
+  color: white;
+}
+
+.heading {
+  font-size: 1.25rem; /* text-2xl */
+  font-weight: 600; /* font-semibold */
+}
+
+.subheading {
+  font-size: 1rem; /* text-lg */
+  font-weight: 500; /* font-medium */
+  color: #e5e5e5; /* text-gray-300 */
+}
+
+.note {
+  font-size: 0.875rem; /* text-sm */
+  color: #b3b3b3; /* text-gray-400 */
+  margin-bottom: 1rem; /* mb-4 */
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* space-y-2 */
+}
+
+.inputField {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background-color: #333333; /* bg-gray-700 */
+  border: 1px solid #444444; /* border-gray-600 */
+  border-radius: 0.375rem; /* rounded */
+  outline: none;
+  transition: all 0.2s;
+}
+
+.inputField:focus {
+  border-color: #6b46c1; /* focus:ring-2 focus:ring-purple-600 */
+  box-shadow: 0 0 0 2px rgba(107, 70, 193, 0.5);
+}
+
+.errorText {
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 600; /* font-semibold */
+  color: #f87171; /* text-red-500 */
+}
+
+.submitButtonWrapper {
+  margin-top: 1.5rem; /* mt-6 */
+}
+
+.submitButton {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background-color: #ffffff;
+  color: #6b46c1; /* text-purple */
+  font-weight: 600; /* font-semibold */
+  border-radius: 0.375rem; /* rounded */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* shadow-md */
+  transition: all 0.3s ease;
+}
+
+.submitButton:hover {
+  background-color: #6b46c1; /* hover:bg-purple-700 */
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* hover:shadow-lg */
+}
+
+.submitButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(107, 70, 193, 0.5); /* focus:ring-2 focus:ring-purple-500 */
+}
+
+.submitButton:active {
+  transform: scale(0.95); /* active:scale-95 */
+}
+
+/* Video Upload Specific */
+.videoUploadWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.videoUploadInput {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background-color: #333333;
+  border: 1px solid #444444;
+  border-radius: 0.375rem;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.videoUploadInput:hover {
+  border-color: #6b46c1;
+  box-shadow: 0 0 0 2px rgba(107, 70, 193, 0.5);
+}
+
+.videoPreview {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+
+  justify-content: start;
+  align-items: start;
+  width: 100%;
+}
+
+.videoElement {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.375rem;
+}

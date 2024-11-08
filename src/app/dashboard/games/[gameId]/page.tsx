@@ -2,8 +2,14 @@
 
 import { gameApi } from "@/store/apis/gameApis";
 import { gameTicketStatus, gameTicketStatusTitle } from "@/utils/constants";
-import { GameAnalyticsDto, GameDto, TicketDto } from "@/utils/dto/gameDto";
+import {
+  GameAnalyticsDto,
+  GameDto,
+  GameStatusEnum,
+  TicketDto,
+} from "@/utils/dto/gameDto";
 import { UserDto } from "@/utils/dto/userDto";
+import CustomButton from "@/utils/widgets/CustomButton";
 import SearchWithDropdown from "@/utils/widgets/SearchWithDropDown";
 import { Profile } from "assets/image/imageAsset";
 import Echo from "laravel-echo";
@@ -13,6 +19,8 @@ import { FaPlusCircle } from "react-icons/fa";
 import { GenericDropdown } from "../../permissions/widgets/PermissionFilter";
 import { queryByConstForUser, QueryByTypeForUser } from "../../users/page";
 import { TicketCard } from "../widgets/GameCard";
+import { AnimatePresence } from "framer-motion";
+import SetWinningNumberModal from "@/utils/modals/SetWinningNumbersModal";
 
 export default function GameDetailPage({
   params,
@@ -38,6 +46,8 @@ export default function GameDetailPage({
   const [selectedTicket, setSelectedTicket] = useState<number | undefined>(
     undefined
   );
+  const [showWinningNumberModal, setShowWinningNumberModal] =
+    useState<boolean>(false);
 
   //mutations
   const [searchGameTicket] = gameApi.useSearchGameTicketMutation();
@@ -196,13 +206,30 @@ export default function GameDetailPage({
 
   return (
     <main className="h-screen flex flex-col bg-gray-100 p-8">
+      <AnimatePresence>
+        {showWinningNumberModal && data?.data?.game && (
+          <SetWinningNumberModal
+            setIsOpen={setShowWinningNumberModal}
+            game={{
+              ...data.data.game,
+              category: data.data.game.category,
+            }}
+            isOpen={showWinningNumberModal}
+          />
+        )}
+      </AnimatePresence>
       <div className="flex h-full gap-4">
         <div className="flex flex-col overflow-y-auto w-2/3 xl:w-3/4 gap-4">
           <CustomButton
             label="Set Winners"
             icon={<FaPlusCircle />}
-            onClick={() => {}}
+            onClick={() => {
+              setShowWinningNumberModal(!showWinningNumberModal);
+            }}
             bgColor="bg-purple"
+            disabled={
+              data?.data?.game.status !== GameStatusEnum.ALL_TICKETS_SOLD
+            }
           />
           <div className="bg-white p-6 rounded-lg shadow-lg space-y-6">
             <div className="text-xl font-semibold text-gray-700">
@@ -365,46 +392,3 @@ export default function GameDetailPage({
     </main>
   );
 }
-
-interface CustomButtonProps {
-  label: string;
-  icon: React.ReactNode;
-  onClick: () => void;
-  width?: string;
-  height?: string;
-  bgColor?: string;
-  textColor?: string;
-}
-
-import React from "react";
-
-interface CustomButtonProps {
-  label: string;
-  icon: React.ReactNode;
-  onClick: () => void;
-  width?: string;
-  height?: string;
-  bgColor?: string;
-  textColor?: string;
-}
-
-const CustomButton: React.FC<CustomButtonProps> = ({
-  label,
-  icon,
-  onClick,
-  width = "w-[12rem]",
-  height = "min-h-[3rem]",
-  bgColor = "bg-purple-600",
-  textColor = "text-white",
-}) => {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`${bgColor} ${textColor} ${width} ${height} rounded-xl flex justify-center items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:translate-y-[3px] hover:z-10 relative active:scale-95`}
-    >
-      <span className="flex items-center">{icon}</span>
-      <p className="font-semibold">{label}</p>
-    </button>
-  );
-};

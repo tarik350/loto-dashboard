@@ -134,9 +134,12 @@
   z-index: 10;
   gap: 1rem;
   padding: 0 1rem;
-  margin: auto 0;
   height: 100vh;
   overflow-y: auto;
+}
+
+.create-category__sidebar__container > .winning-tickets__form {
+  margin-top: 5rem;
 }
 
 .create-gamemodal__container {
@@ -147,7 +150,7 @@
   height: 50%;
 }
 .create-category__sidebar__container label {
-  @apply text-white font-[600] grid gap-2 items-center;
+  @apply text-white font-[600] grid  gap-2 items-center;
 }
 .create-category__sidebar__container label input:not(.selected-dropdown) {
   @apply w-full h-[3rem] bg-white text-black font-[400] px-4;
