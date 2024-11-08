@@ -4,12 +4,13 @@ import { GameCategoryDto } from "../dto/createGameCategoryDto";
 import { GameDto } from "../dto/gameDto";
 import styles from "./modalform.module.css"; // Import CSS Module
 import ModalLayout from "./ModalLayout";
+import { winningTicketApi } from "@/store/apis/winningTicketApi";
 
 type WinningNumberFormSchema = {
   first: number;
   second: number;
   third: number;
-  video?: File; // Add video file as optional field
+  video?: string;
 };
 
 export default function SetWinningNumberModal({
@@ -24,9 +25,9 @@ export default function SetWinningNumberModal({
     register,
     handleSubmit,
     formState: { errors },
-    getValues,
     setError,
     clearErrors,
+    setValue,
     watch,
     reset,
   } = useForm<WinningNumberFormSchema>();
@@ -49,6 +50,7 @@ export default function SetWinningNumberModal({
       setVideoFile(file);
       const previewUrl = URL.createObjectURL(file);
       setVideoPreview(previewUrl);
+      setValue("video", previewUrl);
       clearErrors("video");
     }
   };
@@ -72,17 +74,25 @@ export default function SetWinningNumberModal({
     // debugger;
   }, [videoPreview]);
 
-  const onSubmit = (data: WinningNumberFormSchema) => {
+  const [setWinningNumbers] = winningTicketApi.useSetWinningTicketMutation();
+
+  const onSubmit = async (data: WinningNumberFormSchema) => {
     try {
+      const { first, second, third, video } = data;
       if (!data.video) {
         setError("video", {
           message: "Please provide a video of the winning process",
         });
         return;
       }
-      debugger;
-
-      //todo make request to the endpoint setting the winning number
+      const video_url = video?.replace("blob:", "")!;
+      const reponse = await setWinningNumbers({
+        gameId: game.id!,
+        first: first,
+        second: second,
+        third: third,
+        video_url,
+      }).unwrap();
     } catch (error) {}
   };
 
