@@ -11,8 +11,8 @@ import { FaSort } from "react-icons/fa";
 import { ActionTypes, genericReducer, initialState } from "../roles/roleStore";
 import { GenericResponse } from "@/utils/types";
 import { PaginationDto } from "@/utils/dto/paginationDto";
-export type queryByTypeForUser = "Name" | "ID" | "Phone";
-export const queryByConstForUser: queryByTypeForUser[] = [
+export type QueryByTypeForUser = "Name" | "ID" | "Phone";
+export const queryByConstForUser: QueryByTypeForUser[] = [
   "Name",
   "ID",
   "Phone",
@@ -27,7 +27,7 @@ export default function UsersPage() {
     SortDto<"id" | "created_at" | "balance"> | undefined
   >(undefined);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
-  const [queryBy, setQueryBy] = useState<queryByTypeForUser>("Name");
+  const [queryBy, setQueryBy] = useState<QueryByTypeForUser>("Name");
 
   const { data, isLoading, isError, isSuccess, isFetching, refetch } =
     userApi.useGetAllUsersQuery({

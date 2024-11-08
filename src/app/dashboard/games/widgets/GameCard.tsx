@@ -46,11 +46,12 @@ export function GameCard({
 export const TicketCard = ({
   ticket,
   onClick,
+  className,
 }: { ticket: TicketDto } & AllHTMLAttributes<HTMLDivElement>) => {
   return (
     <div
       onClick={onClick}
-      className={`ticket-card card ${
+      className={`ticket-card card ${className} ${
         ticket.status === "free"
           ? "ticket-free"
           : ticket.status === "sold"

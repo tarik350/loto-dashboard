@@ -4,21 +4,22 @@ import { gameApi } from "@/store/apis/gameApis";
 import { gameTicketStatus, gameTicketStatusTitle } from "@/utils/constants";
 import { GameAnalyticsDto, GameDto, TicketDto } from "@/utils/dto/gameDto";
 import { UserDto } from "@/utils/dto/userDto";
+import SearchWithDropdown from "@/utils/widgets/SearchWithDropDown";
+import { Profile } from "assets/image/imageAsset";
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 import { useEffect, useState } from "react";
+import { FaPlusCircle } from "react-icons/fa";
 import { GenericDropdown } from "../../permissions/widgets/PermissionFilter";
+import { queryByConstForUser, QueryByTypeForUser } from "../../users/page";
 import { TicketCard } from "../widgets/GameCard";
-import Games from "../page";
-import { userApi } from "@/store/apis/userApi";
-import { queryByConstForUser, queryByTypeForUser } from "../../users/page";
-import { BiFilter } from "react-icons/bi";
 
 export default function GameDetailPage({
   params,
 }: {
   params: { gameId: string };
 }) {
+  //STATES
   const [ticketStatusFilter, setTicketStatusFilter] = useState<
     gameTicketStatus | undefined
   >(undefined);
@@ -30,27 +31,27 @@ export default function GameDetailPage({
     undefined
   );
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
-  const [queryBy, setQueryBy] = useState<queryByTypeForUser>("Name");
+  const [queryBy, setQueryBy] = useState<QueryByTypeForUser>("Name");
+  const [selectedUser, setSelectedUser] = useState<number | undefined>(
+    undefined
+  );
+  const [selectedTicket, setSelectedTicket] = useState<number | undefined>(
+    undefined
+  );
 
+  //mutations
   const [searchGameTicket] = gameApi.useSearchGameTicketMutation();
   const [getUserTickets] = gameApi.useGetUserTicketsInGameMutation();
   const [getTicketOwner] = gameApi.useGetTicketOwnerInGameMutation();
   const [searchUserInGame] = gameApi.useSearchUserInGameMutation();
+
+  //queries
   const { data, isLoading, isSuccess, isFetching, refetch } =
     gameApi.useGetGameQuery({
       gameId: params.gameId,
     });
-  useEffect(() => {
-    if (isSuccess && data) {
-      const tickets = data.data?.game.tickets || [];
-      const users = data.data?.users;
-      const analytics = data.data?.analytic;
 
-      setTickets(tickets);
-      setUsers(users!);
-      setAnalytics(analytics);
-    }
-  }, [isSuccess, data, isFetching]);
+  //METHODS
   const onSearch = async (query?: string) => {
     try {
       if (!query && !ticketStatusFilter) {
@@ -68,6 +69,7 @@ export default function GameDetailPage({
       // todo show error message
     }
   };
+
   const onUserSearch = async (query?: string) => {
     try {
       if (!query) {
@@ -87,11 +89,25 @@ export default function GameDetailPage({
       setUsers(response.data!);
     } catch (error) {}
   };
+
+  ///EFFECTS
   useEffect(() => {
     if (ticketStatusFilter) {
       onSearch();
     }
   }, [ticketStatusFilter]);
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      const tickets = data.data?.game.tickets || [];
+      const users = data.data?.users;
+      const analytics = data.data?.analytic;
+
+      setTickets(tickets);
+      setUsers(users!);
+      setAnalytics(analytics);
+    }
+  }, [isSuccess, data, isFetching]);
 
   useEffect(() => {
     const echo = new Echo({
@@ -128,7 +144,6 @@ export default function GameDetailPage({
         if (parseInt(params.gameId) === game.id) {
           refetch();
         }
-        // alert(`${user.full_name} has bought ticket ${ticket.ticket_number}`);
       }
     );
 
@@ -149,204 +164,247 @@ export default function GameDetailPage({
 
   const getTickets = async (userId: number) => {
     try {
+      if (selectedUser && userId === selectedUser) {
+        refetch();
+        setSelectedUser(undefined);
+        return;
+      }
       const response = await getUserTickets({
         gameId: parseInt(params.gameId),
         userId,
       }).unwrap();
+      setSelectedUser(userId);
       setTickets(response.data?.tickets!);
-      // debugger;
-    } catch (error) {
-      // debugger;
-    }
+    } catch (error) {}
   };
 
   const getUser = async (ticketNumber: number) => {
     try {
+      if (selectedTicket && selectedTicket === ticketNumber) {
+        setSelectedTicket(undefined);
+        refetch();
+        return;
+      }
       const response = await getTicketOwner({
         gameId: parseInt(params.gameId),
         ticketNumber: ticketNumber,
       }).unwrap();
+      setSelectedTicket(ticketNumber);
       setUsers(response.data!);
-      // debugger;
-    } catch (error) {
-      //if 404 ticket has no woner
-      // debugger;
-    }
+    } catch (error) {}
   };
-  return (
-    <div className=" bg-black bg-opacity-5 h-screen flex gap-8 p-8 ">
-      <div className="flex flex-col   w-[65%] xl:w-[75%] gap-8">
-        <div className="flex w-full gap-4">
-          <div className="  game-detail">
-            <p>
-              Game ID <span>{data?.data?.game.id}</span>
-            </p>
-            <div>
-              <p>
-                Game Name: <span>{data?.data?.game.name}</span>
-              </p>
 
-              <p>
-                Game Category:{" "}
-                <span className="">
-                  {data?.data?.game.category.title_en}(
-                  {data?.data?.game.category.title_am})
-                </span>
-              </p>
-              <p>
-                Game Total Ticket:{" "}
-                <span>{data?.data?.game.category.ticket_count}</span>
-              </p>
+  return (
+    <main className="h-screen flex flex-col bg-gray-100 p-8">
+      <div className="flex h-full gap-4">
+        <div className="flex flex-col overflow-y-auto w-2/3 xl:w-3/4 gap-4">
+          <CustomButton
+            label="Set Winners"
+            icon={<FaPlusCircle />}
+            onClick={() => {}}
+            bgColor="bg-purple"
+          />
+          <div className="bg-white p-6 rounded-lg shadow-lg space-y-6">
+            <div className="text-xl font-semibold text-gray-700">
+              Game ID:{" "}
+              <span className="font-bold text-indigo-600">
+                {data?.data?.game.id}
+              </span>
             </div>
-            <div>
-              <p>
-                Total Locked Tickets: <span>{analytics?.tickets_locked}</span>
-              </p>
-              <p>
-                Total Sold Tickets: <span>{analytics?.tickets_sold}</span>
-              </p>
-              <p>
-                Total Remaining Ticket:{" "}
-                <span>
+
+            <div className="space-y-4">
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>Game Name:</span>
+                <span className="font-bold text-gray-900">
+                  {data?.data?.game.name}
+                </span>
+              </div>
+
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>Game Category:</span>
+                <span className="font-bold text-gray-900">
+                  {data?.data?.game.category.title_en} (
+                  <span className="italic text-gray-600">
+                    {data?.data?.game.category.title_am}
+                  </span>
+                  )
+                </span>
+              </div>
+
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>Game Total Ticket:</span>
+                <span className="font-bold text-gray-900">
+                  {data?.data?.game.category.ticket_count}
+                </span>
+              </div>
+
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>Game Status:</span>
+                <span className="font-bold text-gray-900 uppercase">
+                  {data?.data?.game.status.split("-").join(" ")}
+                </span>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-200 pt-4 space-y-4">
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>Total Locked Tickets:</span>
+                <span className="font-bold text-gray-900">
+                  {analytics?.tickets_locked}
+                </span>
+              </div>
+
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>Total Sold Tickets:</span>
+                <span className="font-bold text-gray-900">
+                  {analytics?.tickets_sold}
+                </span>
+              </div>
+
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>Total Remaining Ticket:</span>
+                <span className="font-bold text-gray-900">
                   {analytics?.total_tickets! - analytics?.tickets_sold!}
                 </span>
-              </p>
-              <p>
-                Total users who bought the ticket:{" "}
-                <span>{analytics?.unique_users}</span>
-              </p>
+              </div>
+
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>Total Users Who Bought Tickets:</span>
+                <span className="font-bold text-gray-900">
+                  {analytics?.unique_users}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="flex justify-between items-end">
-          <div className=" flex gap-2">
-            <GenericDropdown<string>
-              listItem={Object.keys(gameTicketStatusTitle)}
-              selectedOption={ticketStatusFilter}
-              title={"Ticket Status"}
-              callback={(value: string) => {
-                const ticketStatus = gameTicketStatusTitle[value];
-                setTicketStatusFilter(ticketStatus);
-              }}
+          <div className=" flex justify-between">
+            <div className="flex items-center gap-4 mt-4">
+              <GenericDropdown<string>
+                listItem={Object.keys(gameTicketStatusTitle)}
+                selectedOption={ticketStatusFilter}
+                title="Ticket Status"
+                callback={(value: string) => {
+                  const ticketStatus = gameTicketStatusTitle[value];
+                  setTicketStatusFilter(ticketStatus);
+                }}
+              />
+              <button
+                onClick={() => {
+                  setTicketStatusFilter(undefined);
+                  setSelectedTicket(undefined);
+                  setSelectedUser(undefined);
+                  refetch();
+                }}
+                className="border border-purple rounded-lg px-4 py-2"
+              >
+                Clear Filter
+              </button>
+            </div>
+            <input
+              type="text"
+              placeholder="Search for ticket"
+              onChange={(event) => onSearch(event.target.value)}
+              className="mt-4 p-2 border border-gray-300 rounded-lg "
             />
-            <button
-              type="button"
-              onClick={() => {
-                setTicketStatusFilter(undefined);
-                refetch();
-              }}
-              className=" border-2  border-purple  rounded-xl px-2 py-1 min-w-max flex justify-between items-center gap-4"
-            >
-              Clear Filter
-            </button>
           </div>
-          <input
-            type="text"
-            onChange={(event) => {
-              onSearch(event.target.value);
-            }}
-            placeholder={"Search for ticket"}
-            className="  search-input"
-          />
-        </div>
-        {tickets.length === 0 && (
-          <div className=" flex-grow  flex justify-center items-center bg-softLavender rounded-2xl  ">
-            <p className=" m-auto text-purple text-center ">
-              <p className="font-light">No tickets found</p>
-              {ticketStatusFilter && (
-                <p className=" block  font-bold ">
-                  {" with status "}
-                  <span className="your-custom-class ">
-                    {ticketStatusFilter}
-                  </span>
-                </p>
-              )}
-            </p>
-          </div>
-        )}
-
-        <ul className=" grid xl:grid-cols-7 lg:grid-cols-4   w-full gap-2    overflow-y-auto ">
-          {tickets.length !== 0 &&
-            tickets.map((ticket, index) => {
-              return (
+          {tickets.length === 0 ? (
+            <div className="flex items-center justify-center text-purple-600 text-lg mt-4">
+              <p>No tickets found</p>
+            </div>
+          ) : (
+            <ul className="grid xl:grid-cols-7 lg:grid-cols-4 gap-4 mt-4">
+              {tickets.map((ticket, index) => (
                 <TicketCard
+                  className={`${
+                    selectedTicket === ticket.ticket_number &&
+                    "bg-purple text-white"
+                  } transition-all ease-in-out duration-150`}
+                  key={index}
                   ticket={ticket}
-                  onClick={() => {
-                    getUser(ticket.ticket_number);
-                  }}
+                  onClick={() => getUser(ticket.ticket_number)}
                 />
-              );
-            })}
-        </ul>
-      </div>
-      <div className="  bg-softLavender border-[1px] border-purple border-opacity-20 flex-grow rounded-xl">
-        <div className=" flex justify-center w-full ">
-          <input
-            type="text"
-            className=" border-2 border-purple  w-full rounded-l-xl  px-4 outline-none "
-            onChange={(event) => {
-              onUserSearch(event.target.value);
-            }}
-            placeholder="Search User"
-          />
-          <div className=" relative">
-            <button
-              type="button"
-              onClick={() => {
-                setShowDropdown(!showDropdown);
-              }}
-              className="h-[3rem] bg-purple rounded-r-xl  px-2 text-white flex gap-2  justify-center items-center"
-            >
-              <p>{queryBy}</p>
-              <BiFilter />
-            </button>
-            {showDropdown && (
-              <ul className=" absolute z-50 min-w-max bg-purple text-white font-[600] w-full mt-2 border-2  border-softLavender">
-                {queryByConstForUser.map((value, index) => {
-                  return (
-                    <li
-                      key={index}
-                      onClick={() => {
-                        setQueryBy(value);
-                        setShowDropdown(false);
-                      }}
-                      className={`${
-                        index !== queryByConstForUser.length - 1 &&
-                        "border-b-[1px] border-white"
-                      } py-[.5rem] px-2 cursor-pointer  hover:bg-white  hover:text-purple transition-all ease-in-out duration-150  `}
-                    >
-                      {value}{" "}
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
+              ))}
+            </ul>
+          )}
         </div>
-        <ul className=" h-full w-full overflow-x-hidden overflow-y-auto flex flex-col justify-start items-center p-2">
-          {/* <input
-            type="text"
-            onChange={(event) => {
-              onUserSearch(event.target.value);
-            }}
-            placeholder={"Search for user"}
-            className="  search-input mb-4"
-          /> */}
-          {users &&
-            users.map((user, index) => (
-              <li
+        <div className="bg-white border border-gray-300 rounded-lg shadow-md flex flex-col p-4 w-1/3 xl:w-1/4">
+          <SearchWithDropdown
+            onSearch={onUserSearch}
+            queryBy={queryBy}
+            setQueryBy={(value: QueryByTypeForUser) => setQueryBy(value)}
+            dropdownList={queryByConstForUser}
+          />
+          <ul className="mt-4">
+            {users.length === 0 && (
+              <p className=" text-center">No user found.</p>
+            )}
+            {users?.map((user) => (
+              <button
+                type="button"
                 onClick={() => {
                   getTickets(user.id);
                 }}
-                key={index}
-                className=" bg-gray-400 rounded-xl w-full mx-4 p-4  cursor-pointer mb-2"
+                key={user.id}
+                className={`flex items-center w-full gap-2 border-2 border-gray-300 my-1 rounded-xl px-2 py-1  cursor-pointer ${
+                  selectedUser === user.id && " bg-purple  text-white "
+                } transition-all ease-in-out duration-150`}
               >
-                <p className=" text-black fongn-bold">{user.full_name}</p>
-                <p>{user.phone}</p>
-              </li>
+                <img
+                  src={user.profile_picture ?? Profile.src}
+                  alt={user.full_name}
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+                <div className=" flex flex-col justify-start items-start ">
+                  <span>{user.full_name}</span>
+                  <span className=" font-bol">{user.phone}</span>
+                </div>
+              </button>
             ))}
-        </ul>
+          </ul>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
+
+interface CustomButtonProps {
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+  width?: string;
+  height?: string;
+  bgColor?: string;
+  textColor?: string;
+}
+
+import React from "react";
+
+interface CustomButtonProps {
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+  width?: string;
+  height?: string;
+  bgColor?: string;
+  textColor?: string;
+}
+
+const CustomButton: React.FC<CustomButtonProps> = ({
+  label,
+  icon,
+  onClick,
+  width = "w-[12rem]",
+  height = "min-h-[3rem]",
+  bgColor = "bg-purple-600",
+  textColor = "text-white",
+}) => {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`${bgColor} ${textColor} ${width} ${height} rounded-xl flex justify-center items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:translate-y-[3px] hover:z-10 relative active:scale-95`}
+    >
+      <span className="flex items-center">{icon}</span>
+      <p className="font-semibold">{label}</p>
+    </button>
+  );
+};

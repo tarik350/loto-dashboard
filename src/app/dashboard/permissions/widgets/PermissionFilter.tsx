@@ -96,7 +96,7 @@ export function GenericDropdown<T>({
         onClick={() => {
           setShowOptions(!showOptions);
         }}
-        className={`border-2  border-purple  rounded-xl px-2 py-1 min-w-max flex justify-between items-center gap-4 ${
+        className={`border-2  border-purple  rounded-xl px-2 py-2 min-w-max flex justify-between items-center gap-4 ${
           displayTitle !== title
             ? " bg-purple text-white fill-white"
             : "text-purple fill-purple s"
@@ -124,7 +124,7 @@ export function GenericDropdown<T>({
               ease: "easeInOut",
               duration: 0.1,
             }}
-            className=" filter-dropdown__container absolute top-10 z-50 bg-white text-black border-purple border-2"
+            className=" filter-dropdown__container absolute top-12 z-50 bg-white text-black border-purple border-2"
           >
             {listItem?.map((item, index) => {
               return (
