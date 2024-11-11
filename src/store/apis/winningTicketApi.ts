@@ -38,5 +38,23 @@ export const winningTicketApi = api.injectEndpoints({
         params: { category },
       }),
     }),
+    reportGame: builder.mutation<
+      GenericResponse<{ game: GameDto }>,
+      { gameId: number }
+    >({
+      query: ({ gameId }) => ({
+        url: `admin/winnig-tickets/audit/report/${gameId}`,
+        method: "POST",
+      }),
+    }),
+    markGameAudited: builder.mutation<
+      GenericResponse<{ game: GameDto }>,
+      { gameId: number }
+    >({
+      query: ({ gameId }) => ({
+        url: `admin/winning-tickets/audit/${gameId}/`,
+        method: "POST",
+      }),
+    }),
   }),
 });

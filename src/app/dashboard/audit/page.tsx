@@ -21,6 +21,7 @@ import {
 import { FaSort } from "react-icons/fa";
 import { GenericDropdown } from "../permissions/widgets/PermissionFilter";
 import { ActionTypes, genericReducer, initialState } from "../roles/roleStore";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function AuditView() {
   //state
@@ -80,6 +81,7 @@ export default function AuditView() {
       // todo show error message
     }
   };
+
   return (
     <div className="m-8">
       <div className="flex justify-between">

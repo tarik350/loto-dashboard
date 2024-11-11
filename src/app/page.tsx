@@ -13,9 +13,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import buttonStyle from "@/styles/CustomButton.module.css";
 import { useForm } from "react-hook-form";
 import LoadingSpiner from "@/utils/widgets/LoadingSpinner";
-import { useRouter } from "next/navigation";
-import { MdArrowForwardIos } from "react-icons/md";
-import { IoArrowForward } from "react-icons/io5";
 
 type FormSchema = {
   description: string;
@@ -49,9 +46,9 @@ export default function CompletedGameDetailPage({
       debugger;
     }
   };
-  const router = useRouter();
+
   return (
-    <div className="flex flex-col h-[93vh] m-8">
+    <div className="flex flex-col h-screen ">
       <AnimatePresence>
         {isModalOpen && (
           <motion.div
@@ -111,24 +108,11 @@ export default function CompletedGameDetailPage({
           </motion.div>
         )}
       </AnimatePresence>
-
-      <div className="flex-grow mb-8">
+      <div className=" m-8">
         {isLoading && (
           <Skeleton baseColor="#d1d5db" className="w-full h-[15rem]" />
         )}
-        <div className=" flex flex-col">
-          <button
-            type="button"
-            onClick={() => {
-              router.push(`/dashboard/games/${params.gameId}`);
-            }}
-            className={`${buttonStyle.button} bg-purple text-[1rem] h-[3rem]  text-white font-bold w-max px-4 mb-2`}
-          >
-            See Game Detail
-            <IoArrowForward strokeWidth={5} />
-          </button>
-          {data && <GameDetails game={data.data?.game!} />}
-        </div>
+        {data && <GameDetails game={data.data?.game!} />}
         <div className={style.table__container__highlight}>
           <div className="generic-table__header">
             <h2>Winning Tickets</h2>
@@ -158,7 +142,7 @@ export default function CompletedGameDetailPage({
                   <th>Winner Name</th>
 
                   <th>Place</th>
-                  <th>Winning Prize</th>
+                  <th>winning Prize</th>
                   <th>Winning Ticket Number</th>
 
                   <th className="sortable">
@@ -204,6 +188,7 @@ export default function CompletedGameDetailPage({
                           third: data?.data?.game.category.third_winning_prize,
                         };
 
+                        // Ensure record.place is one of the expected keys
                         return (
                           <p className=" font-bold">
                             {prizes[record.place as keyof typeof prizes]} BIRR
@@ -242,26 +227,31 @@ export default function CompletedGameDetailPage({
             Your browser does not support the video tag.
           </video>
         </div>
+        <div className="flex items-center gap-2  pb-12">
+          <button
+            onClick={onAudit}
+            type="button"
+            className="bg-green text-black font-bold  rounded-full w-[12rem] h-[3rem]"
+          >
+            {auditLoading ? (
+              <LoadingSpiner dimension={30} />
+            ) : (
+              "Mark As Audited"
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setIsModalOpen(!isModalOpen);
+            }}
+            className="bg-primary font-bold text-white rounded-full w-[12rem] h-[3rem]"
+          >
+            Report
+          </button>
+        </div>
       </div>
 
-      <div className="flex gap-4 mt-auto ">
-        <button
-          onClick={onAudit}
-          type="button"
-          className="bg-green text-black font-bold rounded-full w-[12rem] h-[3rem]"
-        >
-          {auditLoading ? <LoadingSpiner dimension={30} /> : "Mark As Audited"}
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            setIsModalOpen(!isModalOpen);
-          }}
-          className="bg-primary font-bold text-white rounded-full w-[12rem] h-[3rem]"
-        >
-          Report
-        </button>
-      </div>
+      {/* This div will stick to the bottom */}
     </div>
   );
 }
