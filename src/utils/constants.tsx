@@ -166,6 +166,8 @@ export const gameTicketStatusTitle: Record<string, gameTicketStatus> = {
   Free: "free",
   Sold: "sold",
 };
+export type GenericQueryByType = "Name" | "ID";
+export const genericQueryByConst: GenericQueryByType[] = ["Name", "ID"];
 
 const authPages = ["login", "register"];
 export { sidebarItems, authPages };

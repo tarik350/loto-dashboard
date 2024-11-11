@@ -3,11 +3,13 @@
 import { gameApi } from "@/store/apis/gameApis";
 import { gameCategoryApis } from "@/store/apis/gameCategoryApis";
 import style from "@/styles/table.module.css";
+import { genericQueryByConst, GenericQueryByType } from "@/utils/constants";
 import { GameCategoryDto } from "@/utils/dto/createGameCategoryDto";
 import { GameDto } from "@/utils/dto/gameDto";
 import { formatToReadableDateTime, renderTableBody } from "@/utils/helper";
 import CustomePagination from "@/utils/widgets/CustomePagination";
 import { FilterButton } from "@/utils/widgets/FilterButton";
+import SearchWithDropdown from "@/utils/widgets/SearchWithDropDown";
 import { useRouter } from "next/navigation";
 import {
   Dispatch,
@@ -19,15 +21,13 @@ import {
 import { FaSort } from "react-icons/fa";
 import { GenericDropdown } from "../permissions/widgets/PermissionFilter";
 import { ActionTypes, genericReducer, initialState } from "../roles/roleStore";
-import SearchWithDropdown from "@/utils/widgets/SearchWithDropDown";
-import { queryByConst, QueryByType } from "../games/category/[categoryId]/page";
 
 export default function AuditView() {
   //state
   const [categoryFilter, setCategoryFilter] = useState<string | undefined>(
     undefined
   );
-  const [queryBy, setQueryBy] = useState<QueryByType>("Name");
+  const [queryBy, setQueryBy] = useState<GenericQueryByType>("Name");
   const [showFilter, setShowFilter] = useState<boolean>(false);
   const [{ currentPage, lastPage, entities, isChecked }, dispatch] = useReducer(
     genericReducer<GameDto & { category: GameCategoryDto }>,
@@ -90,10 +90,10 @@ export default function AuditView() {
         <SearchWithDropdown
           onSearch={onSearch}
           queryBy={queryBy}
-          setQueryBy={(value: QueryByType) => {
+          setQueryBy={(value: GenericQueryByType) => {
             setQueryBy(value);
           }}
-          dropdownList={queryByConst}
+          dropdownList={genericQueryByConst}
         />
       </div>
       {showFilter && (

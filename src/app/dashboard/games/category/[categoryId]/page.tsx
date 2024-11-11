@@ -7,7 +7,12 @@ import {
 } from "@/app/dashboard/roles/roleStore";
 import { gameApi } from "@/store/apis/gameApis";
 import style from "@/styles/table.module.css";
-import { gameStatus, gameStatusTitle } from "@/utils/constants";
+import {
+  gameStatus,
+  gameStatusTitle,
+  genericQueryByConst,
+  GenericQueryByType,
+} from "@/utils/constants";
 import { GameDto } from "@/utils/dto/gameDto";
 import { SortDto } from "@/utils/dto/sortDto";
 import { formatToReadableDateTime, renderTableBody } from "@/utils/helper";
@@ -23,9 +28,6 @@ import {
   useState,
 } from "react";
 import { FaSort } from "react-icons/fa";
-
-export type QueryByType = "Name" | "ID";
-export const queryByConst: QueryByType[] = ["Name", "ID"];
 
 export default function GamesOfGameCategory({
   params,
@@ -44,7 +46,7 @@ export default function GamesOfGameCategory({
   const [sort, setSort] = useState<SortDto<"id" | "created_at"> | undefined>(
     undefined
   );
-  const [queryBy, setQueryBy] = useState<QueryByType>("Name");
+  const [queryBy, setQueryBy] = useState<GenericQueryByType>("Name");
 
   //query and mutation
   const { data, refetch, isSuccess, isLoading, isFetching, isError } =
@@ -116,10 +118,10 @@ export default function GamesOfGameCategory({
         <SearchWithDropdown
           onSearch={onSearch}
           queryBy={queryBy}
-          setQueryBy={(value: QueryByType) => {
+          setQueryBy={(value: GenericQueryByType) => {
             setQueryBy(value);
           }}
-          dropdownList={queryByConst}
+          dropdownList={genericQueryByConst}
         />
       </div>
       <FilterButton
