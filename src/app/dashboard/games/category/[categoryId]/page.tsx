@@ -24,8 +24,8 @@ import {
 } from "react";
 import { FaSort } from "react-icons/fa";
 
-type QueryByType = "Name" | "ID";
-const queryByConst: QueryByType[] = ["Name", "ID"];
+export type QueryByType = "Name" | "ID";
+export const queryByConst: QueryByType[] = ["Name", "ID"];
 
 export default function GamesOfGameCategory({
   params,

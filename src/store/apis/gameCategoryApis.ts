@@ -30,6 +30,13 @@ export const gameCategoryApis = api.injectEndpoints({
       }),
       providesTags: ["gamecategories"],
     }),
+    getAllUnpaginated: builder.query<GenericResponse<GameCategoryDto[]>, void>({
+      query: () => ({
+        url: "admin/game-category/all",
+        method: "GET",
+      }),
+      providesTags: ["gamecategories"],
+    }),
     deleteGameCategories: builder.mutation<
       GenericResponse<void>,
       { categories: number[] }

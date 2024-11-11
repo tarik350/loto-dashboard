@@ -22,6 +22,7 @@ import { TicketCard } from "../widgets/GameCard";
 import { AnimatePresence } from "framer-motion";
 import SetWinningNumberModal from "@/utils/modals/SetWinningNumbersModal";
 import { queryByConstForUser, QueryByTypeForUser } from "@/utils/types";
+import GameDetails from "@/utils/widgets/GameDetailCard";
 
 export default function GameDetailPage({
   params,
@@ -232,7 +233,14 @@ export default function GameDetailPage({
               data?.data?.game.status !== GameStatusEnum.ALL_TICKETS_SOLD
             }
           />
-          <div className="bg-white p-6 rounded-lg shadow-lg space-y-6">
+          {data && (
+            <GameDetails
+              game={data?.data?.game!}
+              analytics={data?.data?.analytic!}
+            />
+          )}
+
+          {/* <div className="bg-white p-6 rounded-lg shadow-lg space-y-6">
             <div className="text-xl font-semibold text-gray-700">
               Game ID:{" "}
               <span className="font-bold text-indigo-600">
@@ -303,7 +311,7 @@ export default function GameDetailPage({
                 </span>
               </div>
             </div>
-          </div>
+          </div> */}
           <div className=" flex justify-between">
             <div className="flex items-center gap-4 mt-4">
               <GenericDropdown<string>

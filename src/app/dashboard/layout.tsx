@@ -1,11 +1,9 @@
 "use client";
 import Sidebar from "@/components/sidebar/view/SidebarView";
-import type { Metadata } from "next";
-import "../globals.css";
-import { useEffect, useState } from "react";
 import { useAppSelector } from "@/store/rootHooks";
-import { debug } from "console";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import "../globals.css";
 
 export default function RootLayout({
   children,
@@ -21,8 +19,6 @@ export default function RootLayout({
 
   const router = useRouter();
   useEffect(() => {
-    console.log("your session has expird");
-    console.log(session.isSessionExpired);
     if (session.isSessionExpired === "expired") {
       router.push("/login");
     }
@@ -30,9 +26,9 @@ export default function RootLayout({
   return (
     <>
       {isMounted && (
-        <div className="grid grid-cols-[18rem_calc(100%_-18rem)] w-screen h-screen overflow-hidden">
-          <Sidebar className="h-full overflow-hidden shadow-xl bg-purple flex flex-col justify-between" />
-          <main className="  ">{children}</main>
+        <div className="grid grid-cols-[18rem_calc(100%_-18rem)] w-screen h-screen overflow-hidden ">
+          <Sidebar className="h-full overflow-hidden  shadow-xl bg-purple flex flex-col justify-between" />
+          <main className=" overflow-y-auto h-screen  ">{children}</main>
         </div>
       )}
     </>

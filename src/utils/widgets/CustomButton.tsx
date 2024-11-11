@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./CustomButton.module.css";
+import styles from "@/styles/CustomButton.module.css";
 
 interface CustomButtonProps {
   label: string;

@@ -1,5 +1,10 @@
 import { GenericResponse } from "@/utils/types";
 import { api } from "../api";
+import { METHODS } from "http";
+import { GameDto, TicketDto } from "@/utils/dto/gameDto";
+import { GameCategoryDto } from "@/utils/dto/createGameCategoryDto";
+import { UserDto } from "@/utils/dto/userDto";
+import { WinningTicketDto } from "@/utils/dto/winningTicketDto";
 
 export const winningTicketApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -14,9 +19,23 @@ export const winningTicketApi = api.injectEndpoints({
       }
     >({
       query: (body) => ({
-        url: "admin/winning-numbers",
+        url: "admin/winning-tickets",
         method: "POST",
         body,
+      }),
+      invalidatesTags: ["game"],
+    }),
+    getWinningTicketsForGame: builder.query<
+      GenericResponse<{
+        game: GameDto & { category: GameCategoryDto };
+        tickets: WinningTicketDto[];
+      }>,
+      { category?: string; gameId: number }
+    >({
+      query: ({ category, gameId }) => ({
+        url: `admin/winning-tickets/${gameId}`,
+        method: "GET",
+        params: { category },
       }),
     }),
   }),

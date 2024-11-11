@@ -8,6 +8,7 @@ import {
 } from "@/utils/dto/createGameCategoryDto";
 import { gameTicketStatus } from "@/utils/constants";
 import { UserDto } from "@/utils/dto/userDto";
+import { CategoryDto } from "@/utils/dto/permissionDto";
 
 export const gameApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -77,6 +78,20 @@ export const gameApi = api.injectEndpoints({
         url: `admin/games/${params.gameId}`,
         method: "GET",
       }),
+      providesTags: ["game"],
+    }),
+    getCompletedGames: builder.query<
+      GenericResponse<
+        PaginationDto<(GameDto & { category: GameCategoryDto })[]>
+      >,
+      { category?: string; page: number }
+    >({
+      query: (params) => ({
+        url: "admin/games/completed",
+        method: "GET",
+        params,
+      }),
+      providesTags: ["games"],
     }),
     searchGame: builder.mutation<
       GenericResponse<PaginationDto<GameDto[]>>,
@@ -136,6 +151,18 @@ export const gameApi = api.injectEndpoints({
     >({
       query: (params) => ({
         url: "admin/game/search/owner",
+        method: "GET",
+        params,
+      }),
+    }),
+    searchCompletedGames: builder.mutation<
+      GenericResponse<
+        PaginationDto<(GameDto & { category: GameCategoryDto })[]>
+      >,
+      { query: string; query_by?: string }
+    >({
+      query: (params) => ({
+        url: "admin/search/games/completed",
         method: "GET",
         params,
       }),

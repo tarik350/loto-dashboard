@@ -11,6 +11,7 @@ export interface GameDto {
   third_place_winner_id: null;
   name: string;
   sold_ticket_count: number;
+  winning_video_url?: string;
 }
 
 export interface TicketDto {

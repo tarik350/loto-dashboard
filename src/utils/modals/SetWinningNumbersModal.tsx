@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { GameCategoryDto } from "../dto/createGameCategoryDto";
 import { GameDto } from "../dto/gameDto";
-import styles from "./modalform.module.css"; // Import CSS Module
+import styles from "@/styles/modalform.module.css";
+
 import ModalLayout from "./ModalLayout";
 import { winningTicketApi } from "@/store/apis/winningTicketApi";
 

@@ -42,6 +42,7 @@ export const api = createApi({
     "adminuser",
     "gamecategories",
     "games",
+    "game",
     "users",
   ],
 });
