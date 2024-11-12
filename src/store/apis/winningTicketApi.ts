@@ -52,9 +52,10 @@ export const winningTicketApi = api.injectEndpoints({
       { gameId: number }
     >({
       query: ({ gameId }) => ({
-        url: `admin/winning-tickets/audit/${gameId}/`,
+        url: `admin/winning-tickets/audit/${gameId}`,
         method: "POST",
       }),
+      invalidatesTags: ["games"],
     }),
   }),
 });

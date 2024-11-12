@@ -39,9 +39,9 @@ export default function CompletedGameDetailPage({
     formState: { errors },
   } = useForm<FormSchema>();
   const onSubmitReport = (data: FormSchema) => {};
-  const onAudit = () => {
+  const onAudit = async () => {
     try {
-      const response = markGameAudited({
+      const response = await markGameAudited({
         gameId: parseInt(params.gameId),
       }).unwrap();
       debugger;
