@@ -13,7 +13,7 @@ import { useEffect, useReducer, useState } from "react";
 import { FaSort } from "react-icons/fa";
 import { ActionTypes, genericReducer, initialState } from "../roles/roleStore";
 export default function GameCategoryView() {
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(true);
   const [{ currentPage, lastPage, entities, isChecked }, dispatch] = useReducer(
     genericReducer<GameCategoryDto>,
     initialState

@@ -259,3 +259,22 @@ export function formatToReadableDateTime(isoString: string): string {
 
   return `${dayOfWeek}, ${month} ${day}, ${year} ${formattedTime}`;
 }
+
+///hex color to decimal converter
+export function hexToDecimalColor(hex: string): number {
+  // Remove the '#' if present
+  const cleanHex = hex.startsWith("#") ? hex.slice(1) : hex;
+
+  // Convert the hex string to a decimal number
+  return parseInt(cleanHex, 16);
+}
+
+export function decimalToHexColor(decimal: number): string {
+  if (!decimal) {
+    return "";
+  }
+  const hex = decimal.toString(16);
+
+  // Ensure the hex string is exactly 6 characters long (for RGB)
+  return `#${hex.padStart(6, "0")}`;
+}

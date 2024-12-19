@@ -1,9 +1,13 @@
 "use client";
 import { gameCategoryApis } from "@/store/apis/gameCategoryApis";
+import styles from "@/styles/modalform.module.css";
 import { GameCategoryRequestDto } from "@/utils/dto/createGameCategoryDto";
+import { decimalToHexColor, hexToDecimalColor } from "@/utils/helper";
 import LoadingSpiner from "@/utils/widgets/LoadingSpinner";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, color, motion } from "framer-motion";
+import { watch } from "fs";
 import { useState } from "react";
+import { HexColorPicker } from "react-colorful";
 import { useForm } from "react-hook-form";
 import { BiSolidDownArrow } from "react-icons/bi";
 
@@ -12,6 +16,17 @@ export default function CreateGameCategoryForm({
 }: {
   isTitleVisible: boolean;
 }) {
+  const [forgroundColor, setforegroundColor] = useState<string>("");
+  const [backgroundColor, setBackgroundColor] = useState<string>("");
+  const [avatar, setAvatar] = useState<string>("");
+
+  const [showForgroundPicker, setShowForgroundPicker] =
+    useState<boolean>(false);
+  const [showBackgroundPicker, setShowBackgroundPickte] =
+    useState<boolean>(false);
+
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
   const {
     handleSubmit,
     formState: { errors },
@@ -19,6 +34,7 @@ export default function CreateGameCategoryForm({
     setValue,
     getValues,
     setError,
+    watch,
     clearErrors,
   } = useForm<GameCategoryRequestDto>();
   const [showgame_durationDropdown, setShowgame_durationDropdown] =
@@ -31,12 +47,45 @@ export default function CreateGameCategoryForm({
       return;
     }
 
+    if (!data.fg_color) {
+      setError("fg_color", { message: "required" });
+      return;
+    }
+
+    if (!data.bg_color) {
+      setError("bg_color", { message: "required" });
+      return;
+    }
+    if (!data.avatar) {
+      setError("avatar", { message: "required" });
+      return;
+    }
+
+    data.avatar = "https://example.com";
+
     try {
       const response = await createGameCategory(data).unwrap();
       debugger;
     } catch (err) {
       debugger;
     }
+  };
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+        setValue("avatar", reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImagePreview(null);
+    setValue("avatar", "");
   };
 
   return (
@@ -57,6 +106,34 @@ export default function CreateGameCategoryForm({
           </motion.h2>
         )}
       </AnimatePresence>
+      <div className={styles.videoUploadWrapper}>
+        <label className="block text-sm font-medium">
+          Upload Winning Image
+        </label>
+        <input
+          type="file"
+          accept="image/*" // Changed from video/* to image/*
+          onChange={handleImageChange} // Update the handler to handle image changes
+          className={styles.videoUploadInput}
+        />
+        {errors.avatar && <p className={styles.errorText}>requried</p>}
+        {imagePreview && (
+          <div className={`${styles.videoPreview}`}>
+            <img
+              className={styles.videoElement}
+              src={imagePreview}
+              alt="Preview"
+            />
+            <button
+              type="button"
+              className="bg-white rounded-xl text-purple font-bold mt-2"
+              onClick={handleRemoveImage} // Update the handler to remove the image
+            >
+              Remove image
+            </button>
+          </div>
+        )}
+      </div>
       <label className=" ">
         Game Title
         <div className=" ">
@@ -128,7 +205,77 @@ export default function CreateGameCategoryForm({
             <p className=" text-red-500 font-[500] ">required</p>
           )}
         </div>
-      </label>{" "}
+      </label>
+      <label className=" ">
+        Forground Color
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => {
+              setShowForgroundPicker(!showForgroundPicker);
+            }}
+            className=" flex justify-between items-center "
+          >
+            <p className={` font-[500] text-gray-400 `}>
+              Select Forground Color
+            </p>
+            <div
+              className={`w-[2rem] h-[2rem] `}
+              style={{
+                backgroundColor: decimalToHexColor(watch("fg_color")),
+              }}
+            ></div>
+          </button>
+          {showForgroundPicker && (
+            <div className=" w-full  absolute top-[3.5rem]">
+              <ColorPicker
+                color={forgroundColor}
+                setColor={(color) =>
+                  setValue("fg_color", hexToDecimalColor(color))
+                }
+              />
+            </div>
+          )}
+          {errors.fg_color && (
+            <p className=" text-red-500 font-[500] ">required</p>
+          )}
+        </div>
+      </label>
+      <label className=" ">
+        Background Color
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => {
+              setShowBackgroundPickte(!showBackgroundPicker);
+            }}
+            className=" flex justify-between items-center "
+          >
+            <p className={` font-[500] text-gray-400 `}>
+              Select Background Color
+            </p>
+            <div
+              className={`w-[2rem] h-[2rem] `}
+              style={{
+                backgroundColor: decimalToHexColor(watch("bg_color")),
+              }}
+            ></div>
+          </button>
+          {showBackgroundPicker && (
+            <div className=" w-full  absolute top-[3.5rem]">
+              <ColorPicker
+                color={backgroundColor}
+                setColor={(color) =>
+                  setValue("bg_color", hexToDecimalColor(color))
+                }
+              />
+            </div>
+          )}
+          {errors.fg_color && (
+            <p className=" text-red-500 font-[500] ">required</p>
+          )}
+        </div>
+      </label>
       <label className=" ">
         Winning Prize
         <p>
@@ -210,5 +357,26 @@ export default function CreateGameCategoryForm({
         </p>
       </button>
     </form>
+  );
+}
+
+function ColorPicker({
+  color,
+  setColor,
+}: {
+  color: string;
+  setColor: (color: string) => void;
+}) {
+  return (
+    <HexColorPicker
+      className="min-w-full"
+      style={{
+        borderRadius: "40px",
+        zIndex: "100",
+      }}
+      color={color}
+      onChange={setColor}
+      onClick={(e) => e.preventDefault()}
+    />
   );
 }

@@ -3,6 +3,9 @@ export interface GameCategoryRequestDto {
   title_am: string;
   game_duration: string;
   winning_prize: number;
+  fg_color: number;
+  bg_color: number;
+  avatar: string;
   second_winning_prize: number;
   third_winning_prize: number;
   ticket_count: number;
