@@ -41,10 +41,10 @@ export default function CreateGameCategoryForm({
   const [createGameCategory, { isLoading }] =
     gameCategoryApis.useCreateGameCategoryMutation();
   const onSubmit = async (data: GameCategoryRequestDto) => {
-    if (!data.game_duration) {
-      setError("game_duration", { message: "required" });
-      return;
-    }
+    // if (!data.game_duration) {
+    //   setError("game_duration", { message: "required" });
+    //   return;
+    // }
 
     if (!data.fg_color) {
       setError("fg_color", { message: "required" });
@@ -161,7 +161,7 @@ export default function CreateGameCategoryForm({
           )}
         </div>
       </label>{" "}
-      <label className=" ">
+      {/* <label className=" ">
         Game game_duration
         <div className="relative">
           <button
@@ -204,7 +204,7 @@ export default function CreateGameCategoryForm({
             <p className=" text-red-500 font-[500] ">required</p>
           )}
         </div>
-      </label>
+      </label> */}
       <label className=" ">
         Forground Color
         <div className="relative">

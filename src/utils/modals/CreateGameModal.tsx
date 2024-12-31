@@ -120,72 +120,70 @@ export default function CreateGameModal({
 
   return (
     <ModalLayout setIsOpen={setIsOpen}>
-      <div className="create-gamemodal__container ">
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className=" create-category__sidebar__container min-w-full flex"
-        >
-          <h2 className=" heading-two  text-center mb-4">Create Game</h2>
-          {/* <label className=" ">
-            Game Name
-            <div>
-              <input
-                {...register("name", { required: true })}
-                type="text"
-                className=" "
-                placeholder="Name"
-              />
-              {errors.name && (
-                <p className=" text-red-500 font-[500] ">required</p>
-              )}
-            </div>
-          </label>{" "} */}
-          <label className=" ">
-            Game Category
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search by category name"
-                onChange={(event) => {
-                  if (!event.target.value) {
-                    setShowCategories(false);
-                    setInputValue("");
-                    return;
-                  }
-                  setInputValue(event.target.value);
-                  onSearch(event.target.value);
-                  setSelectedCategory(null);
-                  setShowCategories(true);
-                }}
-                value={inputValue}
-                className={selectedCategory ? "selected-dropdown" : "bg-white"}
-              />
-              <BiSolidDownArrow
-                className="fill-purple text-purple absolute right-2 top-[.9rem]"
-                size={20}
-              />
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className=" create-category__sidebar__container min-w-full flex"
+      >
+        <h2 className=" heading-two  text-center mb-4">Create Game</h2>
+        {/* <label className=" ">
+          Game Name
+          <div>
+            <input
+              {...register("name", { required: true })}
+              type="text"
+              className=" "
+              placeholder="Name"
+            />
+            {errors.name && (
+              <p className=" text-red-500 font-[500] ">required</p>
+            )}
+          </div>
+        </label>{" "} */}
+        <label className=" ">
+          Game Category
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search by category name"
+              onChange={(event) => {
+                if (!event.target.value) {
+                  setShowCategories(false);
+                  setInputValue("");
+                  return;
+                }
+                setInputValue(event.target.value);
+                onSearch(event.target.value);
+                setSelectedCategory(null);
+                setShowCategories(true);
+              }}
+              value={inputValue}
+              className={selectedCategory ? "selected-dropdown" : "bg-white"}
+            />
+            <BiSolidDownArrow
+              className="fill-purple text-purple absolute right-2 top-[.9rem]"
+              size={20}
+            />
 
-              {showCategories && (
-                <div
-                  ref={dropdownRef}
-                  className=" h-max w-full bg-white absolute top-[3.5rem] z-50 flex flex-col  justify-start text-black"
-                >
-                  {getDropdownContent()}
-                </div>
-              )}
-              {errors.category && (
-                <p className=" text-red-500 font-[500] ">
-                  {errors.category.message}
-                </p>
-              )}
-            </div>
-          </label>
-          <button type="submit" className="  mt-4 min-h-[3rem]">
-            <p className=" gradient-text-color">Create Game</p>
-          </button>
-          <div className="tableFixHead"></div>
-        </form>
-      </div>
+            {showCategories && (
+              <div
+                ref={dropdownRef}
+                className=" h-max w-full bg-white absolute top-[3.5rem] z-50 flex flex-col  justify-start text-black"
+              >
+                {getDropdownContent()}
+              </div>
+            )}
+            {errors.category && (
+              <p className=" text-red-500 font-[500] ">
+                {errors.category.message}
+              </p>
+            )}
+          </div>
+        </label>
+        <button type="submit" className="  mt-4 min-h-[3rem]">
+          <p className=" gradient-text-color">Create Game</p>
+        </button>
+        <div className="tableFixHead"></div>
+      </form>
     </ModalLayout>
   );
 }

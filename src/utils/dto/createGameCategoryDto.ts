@@ -1,7 +1,7 @@
 export interface GameCategoryRequestDto {
   title_en: string;
   title_am: string;
-  game_duration: string;
+  // game_duration: string;
   winning_prize: number;
   fg_color: number;
   bg_color: number;
@@ -15,7 +15,7 @@ export interface GameCategoryRequestDto {
 export interface GameCategoryDto {
   title_en: string;
   title_am: string;
-  game_duration: string;
+  // game_duration: string;
   winning_prize: number;
   second_winning_prize: number;
   third_winning_prize: number;
@@ -24,4 +24,7 @@ export interface GameCategoryDto {
   updated_at: string;
   created_at: string;
   id: number;
+  fg_color?: number;
+  bg_color?: number;
+  avatar?: string;
 }
